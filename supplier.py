@@ -1,8 +1,8 @@
 # backend/app/models/supplier.py
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Integer, Numeric, Text, ForeignKey
 from sqlalchemy.orm import relationship
-from ..database import Base
 from datetime import datetime
+from .base import BaseModel
 
 class Supplier(BaseModel):
     __tablename__ = "supplier"
@@ -90,3 +90,56 @@ class SupplierGroup(BaseModel):
     
     def __repr__(self):
         return f"<SupplierGroup(name='{self.name}')>"
+
+class Staff(BaseModel):
+    __tablename__ = "staff"
+    
+    # Basic Information
+    code = Column(String(20), unique=True, nullable=False, index=True)
+    name = Column(String(200), nullable=False)
+    mobile = Column(String(15), nullable=True)
+    role = Column(String(50), default='Sales')
+    email = Column(String(100), nullable=True)
+    address = Column(Text, nullable=True)
+    
+    # Employment Information
+    joining_date = Column(DateTime, nullable=True)
+    basic_salary = Column(Numeric(10, 2), nullable=True)
+    commission_enabled = Column(Boolean, default=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=True)
+    
+    # Status
+    active = Column(Boolean, default=True)
+    
+    # Relationships
+    user = relationship("User")
+    
+    def __repr__(self):
+        return f"<Staff(code='{self.code}', name='{self.name}')>"
+
+class StaffTarget(BaseModel):
+    __tablename__ = "staff_target"
+    
+    staff_id = Column(Integer, ForeignKey('staff.id'), nullable=False)
+    period_start = Column(DateTime, nullable=False)
+    period_end = Column(DateTime, nullable=False)
+    target_amount = Column(Numeric(12, 2), nullable=False)
+    incentive_type = Column(String(20), default='percent')  # percent or flat
+    incentive_slabs = Column(Text, nullable=True)  # JSON data
+    min_achievement_for_incentive = Column(Numeric(5, 2), default=80)
+    
+    # Relationships
+    staff = relationship("Staff")
+    
+    def __repr__(self):
+        return f"<StaffTarget(staff_id={self.staff_id}, amount={self.target_amount})>"
+
+class PaymentMode(BaseModel):
+    __tablename__ = "payment_mode"
+    
+    name = Column(String(50), unique=True, nullable=False)
+    settlement_type = Column(String(20), nullable=False)  # cash, bank, supplier
+    active = Column(Boolean, default=True)
+    
+    def __repr__(self):
+        return f"<PaymentMode(name='{self.name}')>"
