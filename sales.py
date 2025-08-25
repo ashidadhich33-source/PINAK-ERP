@@ -1,10 +1,183 @@
 # backend/app/models/sales.py
-from sqlalchemy import Column, Integer, String, Numeric, Boolean, DateTime, Text, ForeignKey, Date
+from sqlalchemy import Column, String, Numeric, Integer, ForeignKey, DateTime, Boolean, Date, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .base import BaseModel
 
+class BillSeries(BaseModel):
+    """Bill series configuration for different document types"""
+    __tablename__ = "bill_series"
+    
+    code = Column(String(20), unique=True, nullable=False)
+    description = Column(String(100))
+    prefix = Column(String(10), nullable=False)
+    next_no = Column(Integer, default=1)
+    width = Column(Integer, default=5)
+    fy = Column(String(10))  # Financial Year
+    default_tax_region = Column(String(20), default='local')
+    active = Column(Boolean, default=True)
+
+class Sale(BaseModel):
+    """POS Sale transaction"""
+    __tablename__ = "sale"
+    
+    # Bill Information
+    bill_no = Column(String(50), unique=True, nullable=False, index=True)
+    bill_date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    series_id = Column(Integer, ForeignKey('bill_series.id'))
+    
+    # Customer Information
+    customer_id = Column(Integer, ForeignKey('customer.id'), nullable=True)
+    customer_mobile = Column(String(15), nullable=True)
+    
+    # Staff Information
+    staff_id = Column(Integer, ForeignKey('staff.id'), nullable=True)
+    cashier_id = Column(Integer, ForeignKey('user.id'), nullable=True)
+    
+    # Tax Information
+    tax_region = Column(String(20), default='local')  # local or inter
+    
+    # Amount Information (All Inclusive)
+    gross_incl = Column(Numeric(12, 2), default=0)
+    discount_incl = Column(Numeric(10, 2), default=0)
+    coupon_incl = Column(Numeric(10, 2), default=0)
+    base_excl = Column(Numeric(12, 2), default=0)  # Base amount excluding tax
+    tax_amt_info = Column(Numeric(10, 2), default=0)  # Total tax amount
+    
+    # Loyalty Points
+    redeem_points = Column(Integer, default=0)
+    redeem_value = Column(Numeric(10, 2), default=0)
+    earned_points = Column(Integer, default=0)
+    
+    # Return Credit
+    return_credit_used = Column(String(50), nullable=True)  # Return credit ID
+    return_credit_used_value = Column(Numeric(10, 2), default=0)
+    
+    # Final Amount
+    final_payable = Column(Numeric(12, 2), default=0)
+    round_off = Column(Numeric(5, 2), default=0)
+    
+    # Status
+    status = Column(String(20), default='completed')  # completed, cancelled
+    
+    # Relationships
+    series = relationship("BillSeries")
+    customer = relationship("Customer")
+    staff = relationship("Staff")
+    cashier = relationship("User", foreign_keys=[cashier_id])
+    items = relationship("SaleItem", back_populates="sale")
+    payments = relationship("SalePayment", back_populates="sale")
+
+class SaleItem(BaseModel):
+    """Sale line items"""
+    __tablename__ = "sale_item"
+    
+    sale_id = Column(Integer, ForeignKey('sale.id'), nullable=False)
+    
+    # Item Information
+    barcode = Column(String(50), nullable=False)
+    style_code = Column(String(100), nullable=False)
+    color = Column(String(50))
+    size = Column(String(20))
+    hsn = Column(String(20))
+    
+    # Quantity and Pricing
+    qty = Column(Integer, default=1)
+    mrp_incl = Column(Numeric(10, 2), nullable=False)
+    disc_pct = Column(Numeric(5, 2), default=0)
+    line_inclusive = Column(Numeric(12, 2), nullable=False)
+    
+    # Tax Information
+    gst_rate = Column(Numeric(5, 2), default=0)
+    cgst_rate = Column(Numeric(5, 2), default=0)
+    sgst_rate = Column(Numeric(5, 2), default=0)
+    igst_rate = Column(Numeric(5, 2), default=0)
+    
+    # Base and Tax Amounts (for info)
+    base_excl_info = Column(Numeric(10, 2))
+    tax_info = Column(Numeric(10, 2))
+    
+    # Relationships
+    sale = relationship("Sale", back_populates="items")
+
+class SalePayment(BaseModel):
+    """Sale payment details"""
+    __tablename__ = "sale_payment"
+    
+    sale_id = Column(Integer, ForeignKey('sale.id'), nullable=False)
+    payment_mode_id = Column(Integer, ForeignKey('payment_mode.id'), nullable=False)
+    amount = Column(Numeric(12, 2), nullable=False)
+    settlement_type = Column(String(20))  # cash, bank, supplier
+    reference_no = Column(String(50))
+    
+    # Relationships
+    sale = relationship("Sale", back_populates="payments")
+    payment_mode = relationship("PaymentMode")
+
+class SaleReturn(BaseModel):
+    """Sale return transaction"""
+    __tablename__ = "sale_return"
+    
+    sr_no = Column(String(50), unique=True, nullable=False, index=True)
+    sr_date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    sr_series_id = Column(Integer, ForeignKey('bill_series.id'))
+    
+    customer_mobile = Column(String(15))
+    tax_region = Column(String(20), default='local')
+    total_incl = Column(Numeric(12, 2), default=0)
+    reason = Column(Text)
+    
+    # Relationships
+    items = relationship("SaleReturnItem", back_populates="sales_return")
+    return_credit = relationship("ReturnCredit", back_populates="sales_return", uselist=False)
+
+class SaleReturnItem(BaseModel):
+    """Sale return line items"""
+    __tablename__ = "sale_return_item"
+    
+    sales_return_id = Column(Integer, ForeignKey('sale_return.id'), nullable=False)
+    sale_id = Column(Integer, ForeignKey('sale.id'), nullable=False)
+    sale_item_id = Column(Integer, ForeignKey('sale_item.id'), nullable=False)
+    
+    # Item Information
+    barcode = Column(String(50), nullable=False)
+    style_code = Column(String(100), nullable=False)
+    color = Column(String(50))
+    size = Column(String(20))
+    hsn = Column(String(20))
+    
+    # Return Details
+    gst_rate = Column(Numeric(5, 2), default=0)
+    unit_mrp_incl = Column(Numeric(10, 2), nullable=False)
+    disc_pct_at_sale = Column(Numeric(5, 2), default=0)
+    return_qty = Column(Integer, default=1)
+    line_inclusive = Column(Numeric(12, 2), nullable=False)
+    
+    # Tax Info
+    base_excl_info = Column(Numeric(10, 2))
+    tax_info = Column(Numeric(10, 2))
+    
+    # Relationships
+    sales_return = relationship("SaleReturn", back_populates="items")
+    original_sale = relationship("Sale", foreign_keys=[sale_id])
+    original_sale_item = relationship("SaleItem", foreign_keys=[sale_item_id])
+
+class ReturnCredit(BaseModel):
+    """Return credit notes"""
+    __tablename__ = "return_credit"
+    
+    rc_no = Column(String(50), unique=True, nullable=False, index=True)
+    customer_mobile = Column(String(15))
+    sales_return_id = Column(Integer, ForeignKey('sale_return.id'), nullable=False)
+    rc_amount_incl = Column(Numeric(12, 2), nullable=False)
+    status = Column(String(20), default='open')  # open, partial, closed
+    closed_at = Column(DateTime)
+    
+    # Relationships
+    sales_return = relationship("SaleReturn", back_populates="return_credit")
+
 class SalesOrder(BaseModel):
+    """Sales order/quotation"""
     __tablename__ = "sales_order"
     
     # Document Information
@@ -14,7 +187,7 @@ class SalesOrder(BaseModel):
     
     # Customer Information
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
-    customer_name = Column(String(200), nullable=False)  # Denormalized for performance
+    customer_name = Column(String(200), nullable=False)
     customer_mobile = Column(String(15), nullable=True)
     
     # Status
@@ -34,20 +207,9 @@ class SalesOrder(BaseModel):
     # Relationships
     customer = relationship("Customer", back_populates="sales_orders")
     order_items = relationship("SalesOrderItem", back_populates="order")
-    
-    def calculate_totals(self):
-        """Calculate order totals from line items"""
-        self.subtotal = sum(item.line_total for item in self.order_items)
-        if self.discount_percent > 0:
-            self.discount_amount = self.subtotal * (self.discount_percent / 100)
-        total_before_tax = self.subtotal - self.discount_amount
-        self.tax_amount = sum(item.tax_amount for item in self.order_items)
-        self.total_amount = total_before_tax + self.tax_amount
-    
-    def __repr__(self):
-        return f"<SalesOrder(number='{self.order_number}', customer='{self.customer_name}')>"
 
 class SalesOrderItem(BaseModel):
+    """Sales order line items"""
     __tablename__ = "sales_order_item"
     
     order_id = Column(Integer, ForeignKey('sales_order.id'), nullable=False)
@@ -75,20 +237,9 @@ class SalesOrderItem(BaseModel):
     # Relationships
     order = relationship("SalesOrder", back_populates="order_items")
     item = relationship("Item")
-    
-    def calculate_line_total(self):
-        """Calculate line total including discount and tax"""
-        base_amount = self.quantity * self.unit_price
-        if self.discount_percent > 0:
-            self.discount_amount = base_amount * (self.discount_percent / 100)
-        self.line_total = base_amount - self.discount_amount
-        self.tax_amount = self.line_total * (self.tax_rate / 100)
-        self.pending_quantity = self.quantity - self.delivered_quantity
-    
-    def __repr__(self):
-        return f"<SalesOrderItem(order_id={self.order_id}, item='{self.item_name}')>"
 
 class SalesInvoice(BaseModel):
+    """Sales invoice"""
     __tablename__ = "sales_invoice"
     
     # Document Information
@@ -133,19 +284,9 @@ class SalesInvoice(BaseModel):
     order = relationship("SalesOrder")
     invoice_items = relationship("SalesInvoiceItem", back_populates="invoice")
     payments = relationship("Payment", back_populates="sales_invoice")
-    
-    def calculate_totals(self):
-        """Calculate invoice totals"""
-        self.subtotal = sum(item.line_total for item in self.invoice_items)
-        self.tax_amount = sum(item.tax_amount for item in self.invoice_items)
-        total_before_round = self.subtotal - self.discount_amount + self.tax_amount
-        self.total_amount = total_before_round + self.round_off
-        self.balance_amount = self.total_amount - self.paid_amount
-    
-    def __repr__(self):
-        return f"<SalesInvoice(number='{self.invoice_number}', amount={self.total_amount})>"
 
 class SalesInvoiceItem(BaseModel):
+    """Sales invoice line items"""
     __tablename__ = "sales_invoice_item"
     
     invoice_id = Column(Integer, ForeignKey('sales_invoice.id'), nullable=False)
@@ -179,14 +320,3 @@ class SalesInvoiceItem(BaseModel):
     # Relationships
     invoice = relationship("SalesInvoice", back_populates="invoice_items")
     item = relationship("Item")
-    
-    def calculate_tax(self):
-        """Calculate GST amounts"""
-        taxable_amount = self.line_total
-        self.cgst_amount = taxable_amount * (self.cgst_rate / 100)
-        self.sgst_amount = taxable_amount * (self.sgst_rate / 100)
-        self.igst_amount = taxable_amount * (self.igst_rate / 100)
-        self.tax_amount = self.cgst_amount + self.sgst_amount + self.igst_amount
-    
-    def __repr__(self):
-        return f"<SalesInvoiceItem(invoice_id={self.invoice_id}, item='{self.item_name}')>"
