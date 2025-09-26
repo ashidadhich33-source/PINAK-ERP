@@ -22,7 +22,7 @@ sys.path.append(str(Path(__file__).parent))
 from .config import settings
 from .database import create_tables, get_db, engine, Base, check_database_connection
 from .api.endpoints import (
-    auth, setup, items, sales, purchases, reports, 
+    auth, setup, items, sales, purchases, reports,
     customers, suppliers, backup, expenses, staff,
     settings as settings_api, payments
 )
