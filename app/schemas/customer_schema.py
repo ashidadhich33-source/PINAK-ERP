@@ -4,48 +4,81 @@ from decimal import Decimal
 from datetime import datetime, date
 
 class CustomerBase(BaseModel):
-    name: str = Field(..., min_length=1, max_length=255)
+    name: str = Field(..., min_length=1, max_length=200)
+    display_name: Optional[str] = Field(None, max_length=200)
+    customer_type: str = Field(default="retail", regex="^(retail|wholesale|corporate)$")
+    mobile: Optional[str] = Field(None, regex="^[0-9]{10,15}$")
+    phone: Optional[str] = Field(None, regex="^[0-9]{10,15}$")
     email: Optional[EmailStr] = None
-    address: Optional[str] = Field(None, max_length=500)
+    website: Optional[str] = Field(None, max_length=200)
+    address_line1: Optional[str] = Field(None, max_length=200)
+    address_line2: Optional[str] = Field(None, max_length=200)
     city: Optional[str] = Field(None, max_length=100)
-    kid1_name: Optional[str] = Field(None, max_length=100)
-    kid1_dob: Optional[date] = None
-    kid2_name: Optional[str] = Field(None, max_length=100)
-    kid2_dob: Optional[date] = None
-    kid3_name: Optional[str] = Field(None, max_length=100)
-    kid3_dob: Optional[date] = None
+    state: Optional[str] = Field(None, max_length=100)
+    country: str = Field(default="India")
+    postal_code: Optional[str] = Field(None, max_length=10)
+    gst_number: Optional[str] = Field(None, regex="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$")
+    pan_number: Optional[str] = Field(None, regex="^[A-Z]{5}[0-9]{4}[A-Z]{1}$")
+    business_name: Optional[str] = Field(None, max_length=200)
+    credit_limit: Decimal = Field(default=Decimal('0'))
+    payment_terms: Optional[str] = Field(None, max_length=100)
+    discount_percent: Decimal = Field(default=Decimal('0'), ge=0, le=100)
+    price_list: Optional[str] = Field(None, regex="^(retail|wholesale|special)$")
+    date_of_birth: Optional[date] = None
+    anniversary_date: Optional[date] = None
+    gender: Optional[str] = Field(None, regex="^(male|female|other)$")
 
 class CustomerCreate(CustomerBase):
-    mobile: str = Field(..., regex="^[0-9]{10}$")
+    pass
 
-class CustomerUpdate(CustomerBase):
+class CustomerUpdate(BaseModel):
     name: Optional[str] = None
+    display_name: Optional[str] = None
+    customer_type: Optional[str] = None
+    mobile: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+    website: Optional[str] = None
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    postal_code: Optional[str] = None
+    gst_number: Optional[str] = None
+    pan_number: Optional[str] = None
+    business_name: Optional[str] = None
+    credit_limit: Optional[Decimal] = None
+    payment_terms: Optional[str] = None
+    discount_percent: Optional[Decimal] = None
+    price_list: Optional[str] = None
+    date_of_birth: Optional[date] = None
+    anniversary_date: Optional[date] = None
+    gender: Optional[str] = None
+    status: Optional[str] = None
+    is_loyalty_member: Optional[bool] = None
 
-class CustomerResponse(BaseModel):
-    mobile: str
-    name: str
-    email: Optional[str]
-    address: Optional[str]
-    city: Optional[str]
-    lifetime_purchase: Decimal
-    points_balance: int
-    grade: str
+class CustomerResponse(CustomerBase):
+    id: int
+    customer_code: str
+    status: str = "active"
+    is_loyalty_member: bool = False
+    loyalty_card_number: Optional[str] = None
+    first_sale_date: Optional[datetime] = None
+    last_sale_date: Optional[datetime] = None
+    total_sales_amount: Decimal = Decimal('0')
+    total_transactions: int = 0
+    opening_balance: Decimal = Decimal('0')
+    current_balance: Decimal = Decimal('0')
     created_at: datetime
-    updated_at: Optional[datetime]
-    
+    updated_at: Optional[datetime] = None
+
     class Config:
         from_attributes = True
 
 class CustomerDetailResponse(CustomerResponse):
-    kids_info: List[Dict[str, Any]]
-    total_bills: int
-    total_purchase: Decimal
-    last_purchase_date: Optional[datetime]
-    total_returns: int
-    total_return_amount: Decimal
-    open_return_credits: List[Dict[str, Any]]
-    recent_point_transactions: List[Dict[str, Any]]
-    active_coupons: List[Dict[str, Any]]
+    # Additional computed fields can be added here if needed
+    pass
 
 class CustomerImportResponse(BaseModel):
     success: bool
@@ -54,18 +87,12 @@ class CustomerImportResponse(BaseModel):
     errors: List[str]
 
 class CustomerActivityResponse(BaseModel):
-    mobile: str
+    customer_code: str
     name: str
-    last_purchase_date: Optional[datetime]
-    days_inactive: int
-    lifetime_purchase: Decimal
-    grade: str
-
-class CustomerBirthdayResponse(BaseModel):
-    customer_mobile: str
-    customer_name: str
-    email: Optional[str]
-    birthday_kids: List[Dict[str, Any]]
+    mobile: Optional[str]
+    last_sale_date: Optional[datetime]
+    total_sales_amount: Decimal
+    total_transactions: int
 
 class LoyaltyGradeCreate(BaseModel):
     name: str
@@ -80,12 +107,16 @@ class LoyaltyGradeCreate(BaseModel):
         return v
 
 class LoyaltyGradeResponse(BaseModel):
-    id: str
+    id: int
     name: str
     amount_from: Decimal
     amount_to: Decimal
     earn_pct: Decimal
+    discount_percent: Decimal
+    badge_color: str
+    description: Optional[str]
     created_at: datetime
-    
+    updated_at: Optional[datetime] = None
+
     class Config:
         from_attributes = True

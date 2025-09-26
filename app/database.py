@@ -224,7 +224,7 @@ def init_db():
         
         # Initialize default data
         logger.info("Initializing default data...")
-        from .core.init_data import init_default_data
+        from .init_data import init_default_data
         with get_db_session() as db:
             init_default_data(db)
         

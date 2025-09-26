@@ -2,7 +2,7 @@ from functools import wraps
 from fastapi import HTTPException, status
 from typing import List
 
-def require_permission(menu_key: str, permission: str):
+def require_permission(permission: str):
     """Decorator to check permissions"""
     def decorator(func):
         @wraps(func)
@@ -14,14 +14,14 @@ def require_permission(menu_key: str, permission: str):
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Authentication required"
                 )
-            
-            from .security import check_permission
-            if not check_permission(current_user, menu_key, permission):
+
+            # Check if user has permission using the has_permission method
+            if not current_user.has_permission(permission):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail=f"Permission denied: {menu_key}.{permission}"
+                    detail=f"Permission denied: {permission}"
                 )
-            
+
             return await func(*args, **kwargs)
         return wrapper
     return decorator
@@ -37,13 +37,15 @@ def require_role(roles: List[str]):
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Authentication required"
                 )
-            
-            if current_user.role not in roles:
+
+            # Check if user has any of the required roles
+            user_roles = [role.name for role in current_user.roles] if hasattr(current_user, 'roles') else []
+            if not any(role in roles for role in user_roles):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail=f"Role required: {', '.join(roles)}"
                 )
-            
+
             return await func(*args, **kwargs)
         return wrapper
     return decorator

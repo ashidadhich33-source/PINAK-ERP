@@ -1,5 +1,5 @@
 """
-Backup and Restore Service for Windows ERP System
+Backup and Restore Service for ERP System
 Integrates with existing SQLAlchemy setup
 """
 
@@ -8,14 +8,13 @@ import shutil
 import json
 import logging
 import zipfile
-import configparser
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import subprocess
 
 from sqlalchemy import create_engine, text
-from ..database import get_db_url
+from ..database import engine, get_database_info
 from ..config import settings
 
 # Configure logging
@@ -23,37 +22,27 @@ logger = logging.getLogger(__name__)
 
 class ERPBackupService:
     """Manages backup and restore for the ERP system"""
-    
+
     def __init__(self):
-        """Initialize from config/settings.ini"""
-        # Read configuration
-        self.config = configparser.ConfigParser()
-        self.config.read('config/settings.ini')
-        
-        # Set paths from config
-        self.backup_dir = Path(self.config.get('paths', 'backup_dir', fallback='backups'))
-        self.upload_dir = Path(self.config.get('paths', 'upload_dir', fallback='uploads'))
-        self.log_dir = Path(self.config.get('paths', 'log_dir', fallback='logs'))
-        self.db_type = self.config.get('database', 'type', fallback='sqlite')
-        
-        # Database path/URL
+        """Initialize using application settings"""
+        # Set paths from settings
+        self.backup_dir = Path(settings.backup_location)
+        self.upload_dir = Path(settings.upload_dir)
+        self.log_dir = Path(settings.log_dir)
+        self.db_type = settings.database_type
+
+        # Database path/URL from settings
         if self.db_type == 'sqlite':
-            self.db_path = Path(self.config.get('database', 'path', fallback='database/erp_system.db'))
-            self.db_url = f"sqlite:///{self.db_path}"
+            self.db_path = Path(settings.sqlite_path)
         else:
-            # PostgreSQL
-            host = self.config.get('database', 'host')
-            port = self.config.get('database', 'port')
-            name = self.config.get('database', 'name')
-            user = self.config.get('database', 'user')
-            password = self.config.get('database', 'password')
-            self.db_url = f"postgresql://{user}:{password}@{host}:{port}/{name}"
-        
+            # Use the database URL from settings
+            self.db_url = settings.database_url
+
         # Create backup directory
         self.backup_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Backup settings
-        self.max_backups = 7  # Keep last 7 backups
+        self.max_backups = settings.backup_retention_days
         
     def create_backup(self, 
                      backup_name: Optional[str] = None,
@@ -97,7 +86,7 @@ class ERPBackupService:
                 'timestamp': datetime.now().isoformat(),
                 'version': '1.0',
                 'db_type': self.db_type,
-                'erp_version': self.config.get('DEFAULT', 'version', fallback='1.0.0'),
+                'erp_version': settings.app_version,
                 'includes_logs': include_logs,
                 'company': self._get_company_info()
             }
@@ -216,7 +205,7 @@ class ERPBackupService:
             if company:
                 return {
                     'name': company.name,
-                    'gstin': company.gstin
+                    'gstin': company.gst_number
                 }
             
             db.close()
