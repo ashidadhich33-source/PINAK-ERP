@@ -22,44 +22,44 @@ logger = logging.getLogger(__name__)
 async def initialize_default_data():
     """Initialize all default data"""
     from ..database import get_db_session
-    
+
     with get_db_session() as db:
         await init_default_data(db)
 
-async def init_default_data(db: Session):
+def init_default_data(db: Session):
     """Initialize default system data"""
     try:
         logger.info("Initializing default data...")
         
         # Create default permissions
-        await create_default_permissions(db)
-        
+        create_default_permissions(db)
+
         # Create default roles
-        await create_default_roles(db)
-        
+        create_default_roles(db)
+
         # Create default admin user
-        await create_default_users(db)
-        
+        create_default_users(db)
+
         # Create default company
-        await create_default_company(db)
-        
+        create_default_company(db)
+
         # Create system settings
-        await create_system_settings(db)
-        
+        create_system_settings(db)
+
         # Create bill series
-        await create_default_bill_series(db)
-        
+        create_default_bill_series(db)
+
         # Create payment modes
-        await create_default_payment_modes(db)
-        
+        create_default_payment_modes(db)
+
         # Create loyalty grades
-        await create_default_loyalty_grades(db)
-        
+        create_default_loyalty_grades(db)
+
         # Create stock locations
-        await create_default_stock_locations(db)
-        
+        create_default_stock_locations(db)
+
         # Create financial year
-        await create_default_financial_year(db)
+        create_default_financial_year(db)
         
         logger.info("✅ Default data initialization completed")
         
@@ -68,7 +68,7 @@ async def init_default_data(db: Session):
         db.rollback()
         raise
 
-async def create_default_permissions(db: Session):
+def create_default_permissions(db: Session):
     """Create default system permissions"""
     permissions_data = [
         # User Management
@@ -163,7 +163,7 @@ async def create_default_permissions(db: Session):
     db.commit()
     logger.info("✅ Default permissions created")
 
-async def create_default_roles(db: Session):
+def create_default_roles(db: Session):
     """Create default user roles"""
     roles_data = [
         {
@@ -251,7 +251,7 @@ async def create_default_roles(db: Session):
     db.commit()
     logger.info("✅ Default roles created")
 
-async def create_default_users(db: Session):
+def create_default_users(db: Session):
     """Create default admin user"""
     # Check if admin user exists
     if not db.query(User).filter(User.username == "admin").first():
@@ -293,7 +293,7 @@ async def create_default_users(db: Session):
         db.commit()
         logger.info("✅ Default cashier user created (cashier/cashier123)")
 
-async def create_default_company(db: Session):
+def create_default_company(db: Session):
     """Create default company record"""
     if not db.query(Company).first():
         company = Company(
@@ -315,7 +315,7 @@ async def create_default_company(db: Session):
         db.commit()
         logger.info("✅ Default company created")
 
-async def create_system_settings(db: Session):
+def create_system_settings(db: Session):
     """Create default system settings"""
     settings_data = [
         # GST Settings
@@ -368,7 +368,7 @@ async def create_system_settings(db: Session):
     db.commit()
     logger.info("✅ System settings created")
 
-async def create_default_bill_series(db: Session):
+def create_default_bill_series(db: Session):
     """Create default bill numbering series"""
     series_data = [
         {
@@ -431,7 +431,7 @@ async def create_default_bill_series(db: Session):
     db.commit()
     logger.info("✅ Default bill series created")
 
-async def create_default_payment_modes(db: Session):
+def create_default_payment_modes(db: Session):
     """Create default payment methods"""
     payment_modes = [
         {"name": "Cash", "settlement_type": "cash", "active": True},
@@ -452,7 +452,7 @@ async def create_default_payment_modes(db: Session):
     db.commit() 
     logger.info("✅ Default payment modes created")
 
-async def create_default_loyalty_grades(db: Session):
+def create_default_loyalty_grades(db: Session):
     """Create default customer loyalty grades"""
     grades_data = [
         {
@@ -492,7 +492,7 @@ async def create_default_loyalty_grades(db: Session):
     db.commit()
     logger.info("✅ Default loyalty grades created")
 
-async def create_default_stock_locations(db: Session):
+def create_default_stock_locations(db: Session):
     """Create default stock locations"""
     if not db.query(StockLocation).filter(StockLocation.code == "MAIN").first():
         main_location = StockLocation(
@@ -519,7 +519,7 @@ async def create_default_stock_locations(db: Session):
     db.commit()
     logger.info("✅ Default stock locations created")
 
-async def create_default_financial_year(db: Session):
+def create_default_financial_year(db: Session):
     """Create current financial year"""
     current_year = datetime.now().year
     fy_name = f"{current_year}-{str(current_year + 1)[-2:]}"
@@ -564,7 +564,4 @@ async def create_sample_data(db: Session):
         logger.error(f"Error creating sample data: {e}")
         db.rollback()
 
-def init_default_data(db: Session):
-    """Synchronous wrapper for async init function"""
-    import asyncio
-    asyncio.run(init_default_data(db))
+# No longer needed since we made all functions synchronous

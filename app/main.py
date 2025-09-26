@@ -22,7 +22,7 @@ sys.path.append(str(Path(__file__).parent))
 from .config import settings
 from .database import create_tables, get_db, engine, Base, check_database_connection
 from .api.endpoints import (
-    auth, setup, items, sales, purchases, reports, 
+    auth, setup, items, sales, purchases, reports,
     customers, suppliers, backup, expenses, staff,
     settings as settings_api, payments
 )
@@ -154,7 +154,9 @@ async def lifespan(app: FastAPI):
     
     # Initialize default data
     try:
-        await initialize_default_data()
+        from .init_data import init_default_data
+        with get_db_session() as db:
+            init_default_data(db)
         logger.info("✅ Default data initialized")
     except Exception as e:
         logger.warning(f"⚠️  Could not initialize default data: {e}")
@@ -439,10 +441,12 @@ if settings.debug:
     async def reset_database():
         """Reset database (DEBUG ONLY)"""
         try:
-            from .database import drop_tables
+            from .database import drop_tables, get_db_session
+            from .init_data import init_default_data
             drop_tables()
             create_tables()
-            await initialize_default_data()
+            with get_db_session() as db:
+                init_default_data(db)
             return {"message": "Database reset successfully"}
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

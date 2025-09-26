@@ -3,27 +3,34 @@ from typing import Optional, List
 from datetime import datetime
 
 class UserBase(BaseModel):
-    username: str = Field(..., min_length=3, max_length=100)
-    display_name: Optional[str] = None
-    mobile: Optional[str] = Field(None, regex="^[0-9]{10}$")
-    email: Optional[EmailStr] = None
-    role: Optional[str] = None
+    username: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr
+    full_name: str = Field(..., min_length=1, max_length=100)
+    phone: Optional[str] = Field(None, regex="^[0-9]{10,15}$")
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
     company_id: Optional[str] = None
 
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
     username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
     password: Optional[str] = None
-    active: Optional[bool] = None
+    is_active: Optional[bool] = None
 
 class UserResponse(UserBase):
-    id: str
-    company_id: Optional[str]
-    active: bool
+    id: int
+    is_superuser: bool
+    is_active: bool
+    last_login: Optional[datetime] = None
+    failed_login_attempts: int = 0
+    locked_until: Optional[datetime] = None
     created_at: datetime
-    
+    updated_at: Optional[datetime] = None
+    roles: List[str] = []
+
     class Config:
         from_attributes = True
 
