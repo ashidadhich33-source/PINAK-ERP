@@ -3,673 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise ERP - Reports</title>
+    <title>Reports & Analytics - ERP System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
-        
-        .header {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-        
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-        
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            margin-right: 20px;
-            color: #666;
-        }
-        
-        .logo {
-            font-size: 20px;
-            font-weight: 500;
-            color: #1976d2;
-        }
-        
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-        
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: #1976d2;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-        }
-        
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 60px;
-            width: 250px;
-            height: calc(100vh - 60px);
-            background: white;
-            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-            transform: translateX(-100%);
-            transition: transform 0.3s;
-            z-index: 999;
-        }
-        
-        .sidebar.open {
-            transform: translateX(0);
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-            padding: 20px 0;
-        }
-        
-        .sidebar-menu li {
-            margin-bottom: 5px;
-        }
-        
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #666;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-        
-        .sidebar-menu i {
-            margin-right: 12px;
-            width: 20px;
-        }
-        
-        .main-content {
-            margin-left: 0;
-            margin-top: 60px;
-            padding: 20px;
-            transition: margin-left 0.3s;
-        }
-        
-        .main-content.sidebar-open {
-            margin-left: 250px;
-        }
-        
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        
-        .page-title {
-            font-size: 28px;
-            font-weight: 300;
-            color: #333;
-        }
-        
-        .btn-primary {
-            background: #1976d2;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .btn-primary:hover {
-            background: #1565c0;
-        }
-        
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #666;
-            border: 1px solid #ddd;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-        
-        .reports-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .report-category {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .category-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .category-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: #1976d2;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 18px;
-        }
-        
-        .category-title {
-            font-size: 18px;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .report-list {
-            list-style: none;
-        }
-        
-        .report-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .report-item:last-child {
-            border-bottom: none;
-        }
-        
-        .report-item:hover {
-            background: #f8f9fa;
-            padding-left: 8px;
-        }
-        
-        .report-name {
-            font-size: 14px;
-            color: #333;
-        }
-        
-        .report-desc {
-            font-size: 12px;
-            color: #666;
-            margin-top: 2px;
-        }
-        
-        .report-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .btn-generate {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        
-        .btn-schedule {
-            background: #ff9800;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .stat-card h3 {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-        
-        .stat-card .value {
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        
-        .stat-card .change {
-            font-size: 12px;
-            color: #4caf50;
-        }
-        
-        .recent-reports {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-top: 30px;
-        }
-        
-        .card-header {
-            background: #f8f9fa;
-            padding: 16px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .report-history-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .report-history-item:last-child {
-            border-bottom: none;
-        }
-        
-        .report-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #e3f2fd;
-            color: #1976d2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 14px;
-        }
-        
-        .report-content {
-            flex: 1;
-        }
-        
-        .report-text {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 4px;
-        }
-        
-        .report-time {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .report-status {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        
-        .status-completed {
-            background: #e8f5e8;
-            color: #2e7d32;
-        }
-        
-        .status-pending {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-        
-        .status-failed {
-            background: #ffebee;
-            color: #c62828;
-        }
-        
-        @media (max-width: 768px) {
-            .reports-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+        .header { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .logo { font-size: 24px; font-weight: 600; color: #1976d2; }
+        .nav-menu { display: flex; gap: 30px; }
+        .nav-item { text-decoration: none; color: #666; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.3s; }
+        .nav-item:hover, .nav-item.active { background: #1976d2; color: white; }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        .logout-btn { background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .page-title { font-size: 32px; font-weight: 300; color: #333; }
+        .page-actions { display: flex; gap: 15px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .btn-primary { background: #1976d2; color: white; }
+        .btn-success { background: #4caf50; color: white; }
+        .btn-warning { background: #ff9800; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .reports-tabs { display: flex; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; overflow: hidden; }
+        .tab { flex: 1; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; }
+        .tab.active { background: #f8f9fa; border-bottom-color: #1976d2; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .stat-title { font-size: 14px; color: #666; font-weight: 500; }
+        .stat-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; }
+        .stat-value { font-size: 28px; font-weight: 600; color: #333; margin-bottom: 5px; }
+        .stat-change { font-size: 12px; display: flex; align-items: center; gap: 5px; }
+        .stat-change.positive { color: #4caf50; }
+        .stat-change.negative { color: #f44336; }
+        .charts-section { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .chart-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .chart-container { position: relative; height: 300px; }
+        .reports-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .report-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; }
+        .report-card:hover { transform: translateY(-2px); }
+        .report-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; margin-bottom: 15px; }
+        .report-name { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+        .report-description { color: #666; font-size: 14px; margin-bottom: 15px; }
+        .report-actions { display: flex; gap: 10px; }
+        .btn-small { padding: 8px 16px; font-size: 14px; border-radius: 6px; }
+        @media (max-width: 768px) { .nav-menu { display: none; } .container { padding: 15px; } .charts-section { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-left">
-            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <div class="logo">Enterprise ERP</div>
+            <div class="logo">ERP System</div>
+            <nav class="nav-menu">
+                <a href="03-dashboard.html" class="nav-item">Dashboard</a>
+                <a href="04-companies.html" class="nav-item">Companies</a>
+                <a href="05-gst-management.html" class="nav-item">GST</a>
+                <a href="06-inventory.html" class="nav-item">Inventory</a>
+                <a href="07-purchase.html" class="nav-item">Purchase</a>
+                <a href="08-sales.html" class="nav-item">Sales</a>
+                <a href="09-accounting.html" class="nav-item">Accounting</a>
+                <a href="10-reports.html" class="nav-item active">Reports</a>
+            </nav>
         </div>
         <div class="header-right">
             <div class="user-info">
-                <div class="user-avatar">JD</div>
+                <div class="user-avatar">A</div>
                 <div>
-                    <div style="font-weight: 500;">John Doe</div>
-                    <div style="font-size: 12px; color: #666;">ABC Corporation</div>
+                    <div style="font-weight: 500;">Admin User</div>
+                    <div style="font-size: 12px; color: #666;">Demo Company</div>
                 </div>
             </div>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </div>
     
-    <div class="sidebar" id="sidebar">
-        <ul class="sidebar-menu">
-            <li><a href="03-dashboard.html"><i>🏠</i> Dashboard</a></li>
-            <li><a href="04-companies.html"><i>🏢</i> Companies</a></li>
-            <li><a href="05-gst-management.html"><i>🏛️</i> GST Management</a></li>
-            <li><a href="06-inventory.html"><i>📦</i> Inventory</a></li>
-            <li><a href="07-purchase.html"><i>🛒</i> Purchase</a></li>
-            <li><a href="08-sales.html"><i>💰</i> Sales</a></li>
-            <li><a href="09-accounting.html"><i>📊</i> Accounting</a></li>
-            <li><a href="10-reports.html" class="active"><i>📈</i> Reports</a></li>
-            <li><a href="11-loyalty.html"><i>🎁</i> Loyalty</a></li>
-            <li><a href="12-system.html"><i>🔧</i> System</a></li>
-        </ul>
-    </div>
-    
-    <div class="main-content" id="mainContent">
+    <div class="container">
         <div class="page-header">
-            <h1 class="page-title">Reports & Analytics</h1>
-            <button class="btn-primary">Create Custom Report</button>
-        </div>
-        
-        <div class="quick-stats">
-            <div class="stat-card">
-                <h3>Reports Generated</h3>
-                <div class="value">125</div>
-                <div class="change">+15 this month</div>
-            </div>
-            <div class="stat-card">
-                <h3>Scheduled Reports</h3>
-                <div class="value">8</div>
-                <div class="change">+2 this week</div>
-            </div>
-            <div class="stat-card">
-                <h3>Export Downloads</h3>
-                <div class="value">45</div>
-                <div class="change">+8 this month</div>
-            </div>
-            <div class="stat-card">
-                <h3>Custom Reports</h3>
-                <div class="value">12</div>
-                <div class="change">+3 this month</div>
+            <div class="page-title">Reports & Analytics</div>
+            <div class="page-actions">
+                <button class="btn btn-primary" onclick="generateReport()"><i class="fas fa-file-alt"></i> Generate Report</button>
+                <button class="btn btn-success" onclick="scheduleReport()"><i class="fas fa-clock"></i> Schedule Report</button>
+                <button class="btn btn-warning" onclick="exportData()"><i class="fas fa-download"></i> Export Data</button>
             </div>
         </div>
         
-        <div class="reports-grid">
-            <div class="report-category">
-                <div class="category-header">
-                    <div class="category-icon">💰</div>
-                    <div class="category-title">Sales Reports</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Reports</div>
+                    <div class="stat-icon" style="background: #1976d2;"><i class="fas fa-file-alt"></i></div>
                 </div>
-                <ul class="report-list">
-                    <li class="report-item" onclick="generateReport('daily-sales')">
-                        <div>
-                            <div class="report-name">Daily Sales Report</div>
-                            <div class="report-desc">Daily sales summary with trends</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('daily-sales')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('daily-sales')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('monthly-sales')">
-                        <div>
-                            <div class="report-name">Monthly Sales Report</div>
-                            <div class="report-desc">Monthly sales analysis and comparison</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('monthly-sales')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('monthly-sales')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('customer-sales')">
-                        <div>
-                            <div class="report-name">Customer Sales Report</div>
-                            <div class="report-desc">Sales by customer analysis</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('customer-sales')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('customer-sales')">Schedule</button>
-                        </div>
-                    </li>
-                </ul>
+                <div class="stat-value">45</div>
+                <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +5 new reports</div>
             </div>
-            
-            <div class="report-category">
-                <div class="category-header">
-                    <div class="category-icon">🛒</div>
-                    <div class="category-title">Purchase Reports</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Scheduled Reports</div>
+                    <div class="stat-icon" style="background: #4caf50;"><i class="fas fa-clock"></i></div>
                 </div>
-                <ul class="report-list">
-                    <li class="report-item" onclick="generateReport('purchase-summary')">
-                        <div>
-                            <div class="report-name">Purchase Summary</div>
-                            <div class="report-desc">Purchase transactions summary</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('purchase-summary')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('purchase-summary')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('supplier-analysis')">
-                        <div>
-                            <div class="report-name">Supplier Analysis</div>
-                            <div class="report-desc">Supplier performance and spending</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('supplier-analysis')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('supplier-analysis')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('gst-report')">
-                        <div>
-                            <div class="report-name">GST Report</div>
-                            <div class="report-desc">GST compliance and tax reports</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('gst-report')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('gst-report')">Schedule</button>
-                        </div>
-                    </li>
-                </ul>
+                <div class="stat-value">12</div>
+                <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +2 scheduled</div>
             </div>
-            
-            <div class="report-category">
-                <div class="category-header">
-                    <div class="category-icon">📦</div>
-                    <div class="category-title">Inventory Reports</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Exports Today</div>
+                    <div class="stat-icon" style="background: #ff9800;"><i class="fas fa-download"></i></div>
                 </div>
-                <ul class="report-list">
-                    <li class="report-item" onclick="generateReport('stock-report')">
-                        <div>
-                            <div class="report-name">Stock Report</div>
-                            <div class="report-desc">Current stock levels and valuation</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('stock-report')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('stock-report')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('low-stock')">
-                        <div>
-                            <div class="report-name">Low Stock Alert</div>
-                            <div class="report-desc">Items with low stock levels</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('low-stock')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('low-stock')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('stock-movement')">
-                        <div>
-                            <div class="report-name">Stock Movement</div>
-                            <div class="report-desc">Stock in/out movements</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('stock-movement')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('stock-movement')">Schedule</button>
-                        </div>
-                    </li>
-                </ul>
+                <div class="stat-value">8</div>
+                <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +3 from yesterday</div>
             </div>
-            
-            <div class="report-category">
-                <div class="category-header">
-                    <div class="category-icon">📊</div>
-                    <div class="category-title">Financial Reports</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Data Points</div>
+                    <div class="stat-icon" style="background: #9c27b0;"><i class="fas fa-chart-line"></i></div>
                 </div>
-                <ul class="report-list">
-                    <li class="report-item" onclick="generateReport('trial-balance')">
-                        <div>
-                            <div class="report-name">Trial Balance</div>
-                            <div class="report-desc">Account balances and totals</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('trial-balance')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('trial-balance')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('balance-sheet')">
-                        <div>
-                            <div class="report-name">Balance Sheet</div>
-                            <div class="report-desc">Assets, liabilities, and equity</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('balance-sheet')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('balance-sheet')">Schedule</button>
-                        </div>
-                    </li>
-                    <li class="report-item" onclick="generateReport('profit-loss')">
-                        <div>
-                            <div class="report-name">Profit & Loss</div>
-                            <div class="report-desc">Income and expense statement</div>
-                        </div>
-                        <div class="report-actions">
-                            <button class="btn-generate" onclick="generateReport('profit-loss')">Generate</button>
-                            <button class="btn-schedule" onclick="scheduleReport('profit-loss')">Schedule</button>
-                        </div>
-                    </li>
-                </ul>
+                <div class="stat-value">1,234</div>
+                <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +15.2% from last month</div>
             </div>
         </div>
         
-        <div class="recent-reports">
-            <div class="card-header">
-                Recent Report Activities
-            </div>
-            <div class="report-history-item">
-                <div class="report-icon">📊</div>
-                <div class="report-content">
-                    <div class="report-text">Daily Sales Report generated</div>
-                    <div class="report-time">2 hours ago</div>
+        <div class="reports-tabs">
+            <div class="tab active" onclick="switchTab('overview')"><i class="fas fa-tachometer-alt"></i> Overview</div>
+            <div class="tab" onclick="switchTab('sales')"><i class="fas fa-chart-line"></i> Sales Reports</div>
+            <div class="tab" onclick="switchTab('financial')"><i class="fas fa-calculator"></i> Financial Reports</div>
+            <div class="tab" onclick="switchTab('inventory')"><i class="fas fa-boxes"></i> Inventory Reports</div>
+        </div>
+        
+        <div id="overview-tab" class="tab-content active">
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-title">Revenue Trend</div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
                 </div>
-                <div class="report-status status-completed">Completed</div>
-            </div>
-            <div class="report-history-item">
-                <div class="report-icon">📦</div>
-                <div class="report-content">
-                    <div class="report-text">Stock Report scheduled</div>
-                    <div class="report-time">4 hours ago</div>
+                <div class="chart-card">
+                    <div class="chart-title">Top Products</div>
+                    <div class="chart-container">
+                        <canvas id="productsChart"></canvas>
+                    </div>
                 </div>
-                <div class="report-status status-pending">Pending</div>
             </div>
-            <div class="report-history-item">
-                <div class="report-icon">💰</div>
-                <div class="report-content">
-                    <div class="report-text">Monthly Sales Report exported</div>
-                    <div class="report-time">6 hours ago</div>
+            
+            <div class="reports-grid">
+                <div class="report-card" onclick="openReport('sales-summary')">
+                    <div class="report-icon" style="background: #4caf50;"><i class="fas fa-chart-line"></i></div>
+                    <div class="report-name">Sales Summary</div>
+                    <div class="report-description">Complete sales overview with revenue, orders, and customer metrics</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('sales-summary')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('sales-summary')">Export</button>
+                    </div>
                 </div>
-                <div class="report-status status-completed">Completed</div>
+                
+                <div class="report-card" onclick="openReport('profit-loss')">
+                    <div class="report-icon" style="background: #1976d2;"><i class="fas fa-calculator"></i></div>
+                    <div class="report-name">Profit & Loss</div>
+                    <div class="report-description">Detailed profit and loss statement with income and expenses</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('profit-loss')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('profit-loss')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('inventory-status')">
+                    <div class="report-icon" style="background: #ff9800;"><i class="fas fa-boxes"></i></div>
+                    <div class="report-name">Inventory Status</div>
+                    <div class="report-description">Current inventory levels, stock movements, and low stock alerts</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('inventory-status')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('inventory-status')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('customer-analysis')">
+                    <div class="report-icon" style="background: #9c27b0;"><i class="fas fa-users"></i></div>
+                    <div class="report-name">Customer Analysis</div>
+                    <div class="report-description">Customer behavior, purchase patterns, and loyalty metrics</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('customer-analysis')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('customer-analysis')">Export</button>
+                    </div>
+                </div>
             </div>
-            <div class="report-history-item">
-                <div class="report-icon">📊</div>
-                <div class="report-content">
-                    <div class="report-text">Balance Sheet generation failed</div>
-                    <div class="report-time">1 day ago</div>
+        </div>
+        
+        <div id="sales-tab" class="tab-content">
+            <div class="reports-grid">
+                <div class="report-card" onclick="openReport('daily-sales')">
+                    <div class="report-icon" style="background: #4caf50;"><i class="fas fa-calendar-day"></i></div>
+                    <div class="report-name">Daily Sales Report</div>
+                    <div class="report-description">Daily sales performance with revenue and order details</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('daily-sales')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('daily-sales')">Export</button>
+                    </div>
                 </div>
-                <div class="report-status status-failed">Failed</div>
+                
+                <div class="report-card" onclick="openReport('monthly-sales')">
+                    <div class="report-icon" style="background: #1976d2;"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="report-name">Monthly Sales Report</div>
+                    <div class="report-description">Monthly sales summary with trends and comparisons</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('monthly-sales')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('monthly-sales')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('product-performance')">
+                    <div class="report-icon" style="background: #ff9800;"><i class="fas fa-chart-bar"></i></div>
+                    <div class="report-name">Product Performance</div>
+                    <div class="report-description">Best and worst performing products with sales metrics</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('product-performance')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('product-performance')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('sales-by-customer')">
+                    <div class="report-icon" style="background: #9c27b0;"><i class="fas fa-user-chart"></i></div>
+                    <div class="report-name">Sales by Customer</div>
+                    <div class="report-description">Customer-wise sales analysis and purchase patterns</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('sales-by-customer')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('sales-by-customer')">Export</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="financial-tab" class="tab-content">
+            <div class="reports-grid">
+                <div class="report-card" onclick="openReport('balance-sheet')">
+                    <div class="report-icon" style="background: #4caf50;"><i class="fas fa-balance-scale"></i></div>
+                    <div class="report-name">Balance Sheet</div>
+                    <div class="report-description">Assets, liabilities, and equity statement</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('balance-sheet')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('balance-sheet')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('cash-flow')">
+                    <div class="report-icon" style="background: #1976d2;"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="report-name">Cash Flow Statement</div>
+                    <div class="report-description">Cash inflows and outflows analysis</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('cash-flow')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('cash-flow')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('trial-balance')">
+                    <div class="report-icon" style="background: #ff9800;"><i class="fas fa-calculator"></i></div>
+                    <div class="report-name">Trial Balance</div>
+                    <div class="report-description">Account balances and debit/credit summary</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('trial-balance')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('trial-balance')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('gst-report')">
+                    <div class="report-icon" style="background: #9c27b0;"><i class="fas fa-receipt"></i></div>
+                    <div class="report-name">GST Report</div>
+                    <div class="report-description">GST calculations and tax compliance report</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('gst-report')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('gst-report')">Export</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="inventory-tab" class="tab-content">
+            <div class="reports-grid">
+                <div class="report-card" onclick="openReport('stock-summary')">
+                    <div class="report-icon" style="background: #4caf50;"><i class="fas fa-boxes"></i></div>
+                    <div class="report-name">Stock Summary</div>
+                    <div class="report-description">Current stock levels and inventory valuation</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('stock-summary')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('stock-summary')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('low-stock-alert')">
+                    <div class="report-icon" style="background: #f44336;"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="report-name">Low Stock Alert</div>
+                    <div class="report-description">Items with low stock levels requiring attention</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('low-stock-alert')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('low-stock-alert')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('stock-movements')">
+                    <div class="report-icon" style="background: #1976d2;"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="report-name">Stock Movements</div>
+                    <div class="report-description">Inventory movements and transaction history</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('stock-movements')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('stock-movements')">Export</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" onclick="openReport('inventory-valuation')">
+                    <div class="report-icon" style="background: #ff9800;"><i class="fas fa-rupee-sign"></i></div>
+                    <div class="report-name">Inventory Valuation</div>
+                    <div class="report-description">Inventory value and cost analysis</div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewReport('inventory-valuation')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="exportReport('inventory-valuation')">Export</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
+    
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
+        if (localStorage.getItem('erp_logged_in') !== 'true') {
+            window.location.href = '01-login.html';
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+        
+        function generateReport() { alert('Generating custom report...'); }
+        function scheduleReport() { alert('Scheduling report...'); }
+        function exportData() { alert('Exporting data...'); }
+        
+        function openReport(reportId) { alert(`Opening report: ${reportId}`); }
+        function viewReport(reportId) { alert(`Viewing report: ${reportId}`); }
+        function exportReport(reportId) { alert(`Exporting report: ${reportId}`); }
+        
+        function logout() {
+            localStorage.removeItem('erp_logged_in');
+            localStorage.removeItem('erp_username');
+            localStorage.removeItem('erp_password');
+            localStorage.removeItem('erp_company');
+            window.location.href = '01-login.html';
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        borderColor: '#1976d2',
+                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
             
-            sidebar.classList.toggle('open');
-            mainContent.classList.toggle('sidebar-open');
+            // Products Chart
+            const productsCtx = document.getElementById('productsChart').getContext('2d');
+            new Chart(productsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Electronics', 'Clothing', 'Books', 'Home', 'Sports'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: ['#1976d2', '#4caf50', '#ff9800', '#f44336', '#9c27b0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
         }
         
-        function generateReport(reportType) {
-            alert(`Generating ${reportType} report...`);
-        }
-        
-        function scheduleReport(reportType) {
-            alert(`Scheduling ${reportType} report...`);
-        }
+        document.addEventListener('DOMContentLoaded', initCharts);
     </script>
 </body>
 </html>

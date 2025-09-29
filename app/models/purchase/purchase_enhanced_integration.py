@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Foreign
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class IntegrationStatus(PyEnum):
     """Integration Status"""
@@ -56,7 +56,7 @@ class PurchaseInventoryIntegration(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional inventory data
+    model_metadata = Column(JSON, nullable=True)  # Additional inventory data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -111,7 +111,7 @@ class PurchaseSupplierIntegration(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional supplier data
+    model_metadata = Column(JSON, nullable=True)  # Additional supplier data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -156,7 +156,7 @@ class PurchasePerformanceOptimization(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional performance data
+    model_metadata = Column(JSON, nullable=True)  # Additional performance data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -204,7 +204,7 @@ class PurchaseUserExperience(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional UX data
+    model_metadata = Column(JSON, nullable=True)  # Additional UX data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -239,7 +239,7 @@ class PurchaseRealTimeSync(BaseModel):
     
     # Sync Data
     sync_data = Column(JSON, nullable=True)  # Data to sync
-    sync_metadata = Column(JSON, nullable=True)  # Sync metadata
+    sync_model_metadata = Column(JSON, nullable=True)  # Sync metadata
     conflict_resolution = Column(String(50), default='auto')  # auto, manual, priority
     
     # Error Handling
@@ -250,7 +250,7 @@ class PurchaseRealTimeSync(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional sync data
+    model_metadata = Column(JSON, nullable=True)  # Additional sync data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -296,7 +296,7 @@ class PurchaseAnalyticsIntegration(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional analytics data
+    model_metadata = Column(JSON, nullable=True)  # Additional analytics data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")

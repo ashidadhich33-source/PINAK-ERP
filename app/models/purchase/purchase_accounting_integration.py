@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Foreign
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class JournalEntryStatus(PyEnum):
     """Journal Entry Status"""
@@ -48,7 +48,7 @@ class PurchaseJournalEntry(BaseModel):
     # Additional Information
     reference_number = Column(String(100), nullable=True)
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional integration data
+    model_metadata = Column(JSON, nullable=True)  # Additional integration data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -88,7 +88,7 @@ class PurchasePayment(BaseModel):
     discount_amount = Column(Numeric(15, 2), default=0)
     
     # Additional Information
-    metadata = Column(JSON, nullable=True)  # Additional payment data
+    model_metadata = Column(JSON, nullable=True)  # Additional payment data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -118,7 +118,7 @@ class PurchaseAnalytic(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional analytic data
+    model_metadata = Column(JSON, nullable=True)  # Additional analytic data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")
@@ -184,7 +184,7 @@ class PurchaseDocument(BaseModel):
     is_public = Column(Boolean, default=False)
     
     # Additional Information
-    metadata = Column(JSON, nullable=True)  # Additional document data
+    model_metadata = Column(JSON, nullable=True)  # Additional document data
     
     # Relationships
     purchase_invoice = relationship("PurchaseInvoice")

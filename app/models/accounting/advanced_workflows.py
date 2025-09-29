@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Foreign
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class WorkflowStatus(PyEnum):
     """Workflow status types"""
@@ -98,7 +98,7 @@ class ApprovalRecord(BaseModel):
     priority = Column(String(20), default='normal')  # low, normal, high, urgent
     due_date = Column(DateTime, nullable=True)
     comments = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional workflow data
+    workflow_model_metadata = Column(JSON, nullable=True)  # Additional workflow data
     
     # Relationships
     workflow = relationship("ApprovalWorkflow", back_populates="approval_records")
@@ -121,7 +121,7 @@ class ApprovalAction(BaseModel):
     comments = Column(Text, nullable=True)
     delegated_to = Column(Integer, ForeignKey('user.id'), nullable=True)
     escalation_reason = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional action data
+    action_model_metadata = Column(JSON, nullable=True)  # Additional action data
     
     # Relationships
     record = relationship("ApprovalRecord", back_populates="approval_actions")
@@ -207,7 +207,7 @@ class AuditTrail(BaseModel):
     ip_address = Column(String(45), nullable=True)
     user_agent = Column(String(500), nullable=True)
     reason = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional audit data
+    audit_model_metadata = Column(JSON, nullable=True)  # Additional audit data
     
     # Relationships
     changed_by_user = relationship("User", foreign_keys=[changed_by])

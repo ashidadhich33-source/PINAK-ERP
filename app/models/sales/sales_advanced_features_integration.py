@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Foreign
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class WorkflowStatus(PyEnum):
     """Workflow Status"""
@@ -67,7 +67,7 @@ class SaleAdvancedWorkflow(BaseModel):
     # Additional Information
     workflow_data = Column(JSON, nullable=True)  # Workflow-specific data
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional workflow data
+    model_metadata = Column(JSON, nullable=True)  # Additional workflow data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -117,7 +117,7 @@ class SaleDocumentManagement(BaseModel):
     # Additional Information
     tags = Column(JSON, nullable=True)  # Document tags
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional document data
+    model_metadata = Column(JSON, nullable=True)  # Additional document data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -171,7 +171,7 @@ class SaleAdvancedReporting(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional report data
+    model_metadata = Column(JSON, nullable=True)  # Additional report data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -223,7 +223,7 @@ class SaleAuditTrailAdvanced(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional audit data
+    model_metadata = Column(JSON, nullable=True)  # Additional audit data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -273,7 +273,7 @@ class SaleNotification(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional notification data
+    model_metadata = Column(JSON, nullable=True)  # Additional notification data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -318,7 +318,7 @@ class SaleDashboard(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional widget data
+    model_metadata = Column(JSON, nullable=True)  # Additional widget data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")

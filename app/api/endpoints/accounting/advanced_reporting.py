@@ -6,10 +6,10 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, date
 import json
 
-from ...database import get_db
+from ....database import get_db
 from ...core.security import get_current_user, require_permission
-from ...models.core import User, Company
-from ...models.accounting.advanced_reporting import (
+from ....models.core import User, Company
+from ....models.accounting.advanced_reporting import (
     ReportTemplate, ReportInstance, DashboardWidget, WidgetData,
     ScheduledReport, ReportRun, ReportCategory, ReportParameter,
     ReportFilter, ReportColumn, ReportAccess, ReportType, WidgetType, ExportFormat
