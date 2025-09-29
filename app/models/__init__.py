@@ -15,7 +15,7 @@ from .supplier import Supplier, SupplierGroup, Staff, StaffTarget, PaymentMode
 from .expense import Expense, ExpenseCategory, ExpenseHead
 from .payment import Payment, PaymentMethod
 from .loyalty import LoyaltyGrade, LoyaltyTransaction, PointTransaction, Coupon, LoyaltyProgram, LoyaltyPoint
-from .company import Company, SystemSettings, FinancialYear
+from .company import Company, UserCompany, FinancialYear, GSTSlab, ChartOfAccount
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -71,8 +71,10 @@ __all__ = [
     "LoyaltyProgram",
     "LoyaltyPoint",
     "Company",
-    "SystemSettings",
+    "UserCompany",
     "FinancialYear",
+    "GSTSlab",
+    "ChartOfAccount",
     "StockLocation",
     "StockItem",
     "StockMovement",

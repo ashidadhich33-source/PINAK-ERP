@@ -14,6 +14,7 @@ class BaseModel(Base, TimestampMixin):
     __abstract__ = True
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    company_id = Column(Integer, nullable=True)  # Company ID for multi-tenant support
     created_by = Column(Integer, nullable=True)  # User ID who created
     updated_by = Column(Integer, nullable=True)  # User ID who updated
     is_active = Column(Boolean, default=True)
