@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise ERP - GST Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 20px;
+            color: #666;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 500;
+            color: #1976d2;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #1976d2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background: white;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+            z-index: 999;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 12px;
+            width: 20px;
+        }
+        
+        .main-content {
+            margin-left: 0;
+            margin-top: 60px;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+        
+        .main-content.sidebar-open {
+            margin-left: 250px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 300;
+            color: #333;
+        }
+        
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #1565c0;
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .gst-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .gst-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .gst-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .gst-card .amount {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .gst-card .change {
+            font-size: 12px;
+            color: #4caf50;
+        }
+        
+        .gst-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #1976d2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+        }
+        
+        .action-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .action-desc {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .recent-transactions {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: #f8f9fa;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 500;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-paid {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .gst-calculator {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .calculator-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+        
+        .calculator-result {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .result-row.total {
+            border-top: 1px solid #ddd;
+            padding-top: 8px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .gst-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .gst-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .calculator-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="logo">Enterprise ERP</div>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div>
+                    <div style="font-weight: 500;">John Doe</div>
+                    <div style="font-size: 12px; color: #666;">ABC Corporation</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="03-dashboard.html"><i>🏠</i> Dashboard</a></li>
+            <li><a href="04-companies.html"><i>🏢</i> Companies</a></li>
+            <li><a href="05-gst-management.html" class="active"><i>🏛️</i> GST Management</a></li>
+            <li><a href="06-inventory.html"><i>📦</i> Inventory</a></li>
+            <li><a href="07-purchase.html"><i>🛒</i> Purchase</a></li>
+            <li><a href="08-sales.html"><i>💰</i> Sales</a></li>
+            <li><a href="09-accounting.html"><i>📊</i> Accounting</a></li>
+            <li><a href="10-reports.html"><i>📈</i> Reports</a></li>
+            <li><a href="11-loyalty.html"><i>🎁</i> Loyalty</a></li>
+            <li><a href="12-system.html"><i>🔧</i> System</a></li>
+        </ul>
+    </div>
+    
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">GST Management</h1>
+            <button class="btn-primary">Generate GST Return</button>
+        </div>
+        
+        <div class="gst-overview">
+            <div class="gst-card">
+                <h3>CGST</h3>
+                <div class="amount">₹5,000</div>
+                <div class="change">+10% from last month</div>
+            </div>
+            <div class="gst-card">
+                <h3>SGST</h3>
+                <div class="amount">₹5,000</div>
+                <div class="change">+10% from last month</div>
+            </div>
+            <div class="gst-card">
+                <h3>IGST</h3>
+                <div class="amount">₹2,000</div>
+                <div class="change">+5% from last month</div>
+            </div>
+            <div class="gst-card">
+                <h3>Total GST</h3>
+                <div class="amount">₹12,000</div>
+                <div class="change">+8% from last month</div>
+            </div>
+        </div>
+        
+        <div class="gst-actions">
+            <div class="action-card" onclick="openGSTSlabs()">
+                <div class="action-icon">📊</div>
+                <div class="action-title">GST Slabs</div>
+                <div class="action-desc">Manage GST rates and slabs</div>
+            </div>
+            <div class="action-card" onclick="openStateCodes()">
+                <div class="action-icon">🗺️</div>
+                <div class="action-title">State Codes</div>
+                <div class="action-desc">View GST state codes</div>
+            </div>
+            <div class="action-card" onclick="openCalculator()">
+                <div class="action-icon">🧮</div>
+                <div class="action-title">GST Calculator</div>
+                <div class="action-desc">Calculate GST amounts</div>
+            </div>
+            <div class="action-card" onclick="openReturns()">
+                <div class="action-icon">📋</div>
+                <div class="action-title">GST Returns</div>
+                <div class="action-desc">Generate GST returns</div>
+            </div>
+        </div>
+        
+        <div class="gst-calculator" id="gstCalculator" style="display: none;">
+            <h3 style="margin-bottom: 20px;">GST Calculator</h3>
+            <div class="calculator-form">
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="calcAmount" placeholder="Enter amount" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>GST Type</label>
+                    <select id="calcGSTType">
+                        <option value="cgst_sgst">CGST + SGST</option>
+                        <option value="igst">IGST</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>GST Rate (%)</label>
+                    <select id="calcGSTRate">
+                        <option value="0">0%</option>
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18%</option>
+                        <option value="28">28%</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>State Code</label>
+                    <select id="calcStateCode">
+                        <option value="07">Delhi (07)</option>
+                        <option value="09">Haryana (09)</option>
+                        <option value="10">Himachal Pradesh (10)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="calculateGST()">Calculate GST</button>
+            
+            <div class="calculator-result" id="calculatorResult" style="display: none;">
+                <div class="result-row">
+                    <span>Base Amount:</span>
+                    <span id="baseAmount">₹0.00</span>
+                </div>
+                <div class="result-row" id="cgstRow" style="display: none;">
+                    <span>CGST (9%):</span>
+                    <span id="cgstAmount">₹0.00</span>
+                </div>
+                <div class="result-row" id="sgstRow" style="display: none;">
+                    <span>SGST (9%):</span>
+                    <span id="sgstAmount">₹0.00</span>
+                </div>
+                <div class="result-row" id="igstRow" style="display: none;">
+                    <span>IGST (18%):</span>
+                    <span id="igstAmount">₹0.00</span>
+                </div>
+                <div class="result-row total">
+                    <span>Total Amount:</span>
+                    <span id="totalAmount">₹0.00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recent-transactions">
+            <div class="card-header">
+                Recent GST Transactions
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Invoice</th>
+                        <th>CGST</th>
+                        <th>SGST</th>
+                        <th>IGST</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01/01/2024</td>
+                        <td>INV-001</td>
+                        <td>₹500</td>
+                        <td>₹500</td>
+                        <td>₹0</td>
+                        <td>₹1,000</td>
+                        <td><span class="status-badge status-paid">Paid</span></td>
+                    </tr>
+                    <tr>
+                        <td>02/01/2024</td>
+                        <td>INV-002</td>
+                        <td>₹0</td>
+                        <td>₹0</td>
+                        <td>₹900</td>
+                        <td>₹1,000</td>
+                        <td><span class="status-badge status-paid">Paid</span></td>
+                    </tr>
+                    <tr>
+                        <td>03/01/2024</td>
+                        <td>INV-003</td>
+                        <td>₹360</td>
+                        <td>₹360</td>
+                        <td>₹0</td>
+                        <td>₹800</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = sessionStorage.getItem('user');
+            if (!user) {
+                window.location.href = '01-login.html';
+                return;
+            }
+            
+            loadGSTData();
+            setupEventListeners();
+        });
+        
+        // Simulate GST data
+        let gstData = {
+            cgst: 5000,
+            sgst: 5000,
+            igst: 2000,
+            total: 12000
+        };
+        
+        function loadGSTData() {
+            // Update GST overview cards with real-time data
+            document.querySelector('.gst-card:nth-child(1) .amount').textContent = `₹${gstData.cgst.toLocaleString()}`;
+            document.querySelector('.gst-card:nth-child(2) .amount').textContent = `₹${gstData.sgst.toLocaleString()}`;
+            document.querySelector('.gst-card:nth-child(3) .amount').textContent = `₹${gstData.igst.toLocaleString()}`;
+            document.querySelector('.gst-card:nth-child(4) .amount').textContent = `₹${gstData.total.toLocaleString()}`;
+        }
+        
+        function setupEventListeners() {
+            // GST Calculator
+            document.getElementById('calcAmount').addEventListener('input', function() {
+                if (this.value) {
+                    calculateGST();
+                }
+            });
+            
+            document.getElementById('calcGSTType').addEventListener('change', calculateGST);
+            document.getElementById('calcGSTRate').addEventListener('change', calculateGST);
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('sidebar-open');
+        }
+        
+        function openGSTSlabs() {
+            // Show GST slabs section
+            const slabsSection = document.querySelector('.gst-slabs');
+            if (slabsSection) {
+                slabsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        function openStateCodes() {
+            showNotification('State Codes feature coming soon!', 'info');
+        }
+        
+        function openCalculator() {
+            const calculator = document.getElementById('gstCalculator');
+            calculator.style.display = calculator.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function openReturns() {
+            showNotification('GST Returns feature coming soon!', 'info');
+        }
+        
+        function calculateGST() {
+            const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
+            const gstType = document.getElementById('calcGSTType').value;
+            const gstRate = parseFloat(document.getElementById('calcGSTRate').value) || 0;
+            
+            if (amount <= 0) {
+                return;
+            }
+            
+            const gstAmount = (amount * gstRate) / 100;
+            const totalAmount = amount + gstAmount;
+            
+            document.getElementById('baseAmount').textContent = `₹${amount.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `₹${totalAmount.toFixed(2)}`;
+            
+            if (gstType === 'cgst_sgst') {
+                const cgstAmount = gstAmount / 2;
+                const sgstAmount = gstAmount / 2;
+                
+                document.getElementById('cgstAmount').textContent = `₹${cgstAmount.toFixed(2)}`;
+                document.getElementById('sgstAmount').textContent = `₹${sgstAmount.toFixed(2)}`;
+                
+                document.getElementById('cgstRow').style.display = 'flex';
+                document.getElementById('sgstRow').style.display = 'flex';
+                document.getElementById('igstRow').style.display = 'none';
+            } else {
+                document.getElementById('igstAmount').textContent = `₹${gstAmount.toFixed(2)}`;
+                
+                document.getElementById('cgstRow').style.display = 'none';
+                document.getElementById('sgstRow').style.display = 'none';
+                document.getElementById('igstRow').style.display = 'flex';
+            }
+            
+            document.getElementById('calculatorResult').style.display = 'block';
+            
+            // Add to calculation history
+            addToCalculationHistory(amount, gstRate, gstType, gstAmount, totalAmount);
+        }
+        
+        function addToCalculationHistory(amount, rate, type, gstAmount, totalAmount) {
+            const historyList = document.getElementById('calculationHistory');
+            if (!historyList) return;
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `
+                <div class="history-header">
+                    <span class="history-amount">₹${amount.toFixed(2)} @ ${rate}%</span>
+                    <span class="history-type">${type === 'cgst_sgst' ? 'CGST/SGST' : 'IGST'}</span>
+                </div>
+                <div class="history-breakdown">
+                    <span>GST: ₹${gstAmount.toFixed(2)}</span>
+                    <span>Total: ₹${totalAmount.toFixed(2)}</span>
+                </div>
+                <div class="history-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            
+            // Add to top of history
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            // Keep only last 5 calculations
+            const items = historyList.querySelectorAll('.history-item');
+            if (items.length > 5) {
+                items[items.length - 1].remove();
+            }
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+                background: ${type === 'success' ? '#4caf50' : type === 'info' ? '#2196f3' : '#f44336'};
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Simulate real-time GST updates
+        setInterval(() => {
+            // Randomly update GST amounts
+            const change = (Math.random() - 0.5) * 100;
+            gstData.cgst = Math.max(0, gstData.cgst + change);
+            gstData.sgst = Math.max(0, gstData.sgst + change);
+            gstData.igst = Math.max(0, gstData.igst + change * 0.5);
+            gstData.total = gstData.cgst + gstData.sgst + gstData.igst;
+            
+            loadGSTData();
+        }, 30000); // Update every 30 seconds
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .history-item {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 12px;
+                margin-bottom: 8px;
+                animation: fadeIn 0.3s ease-out;
+            }
+            .history-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .history-amount {
+                font-weight: 600;
+                color: #2c3e50;
+            }
+            .history-type {
+                background: #e3f2fd;
+                color: #1976d2;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+            }
+            .history-breakdown {
+                display: flex;
+                gap: 16px;
+                font-size: 14px;
+                color: #666;
+            }
+            .history-time {
+                font-size: 12px;
+                color: #999;
+                margin-top: 4px;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
