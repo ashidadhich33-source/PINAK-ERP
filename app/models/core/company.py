@@ -76,6 +76,19 @@ class Company(BaseModel):
     customers = relationship("Customer", back_populates="company")
     suppliers = relationship("Supplier", back_populates="company")
     
+    # Automation relationships
+    automation_settings = relationship("AutomationSetting", back_populates="company")
+    automation_workflows = relationship("AutomationWorkflow", back_populates="company")
+    automation_rules = relationship("AutomationRule", back_populates="company")
+    automation_triggers = relationship("AutomationTrigger", back_populates="company")
+    automation_actions = relationship("AutomationAction", back_populates="company")
+    automation_conditions = relationship("AutomationCondition", back_populates="company")
+    automation_approvals = relationship("AutomationApproval", back_populates="company")
+    automation_logs = relationship("AutomationLog", back_populates="company")
+    automation_exceptions = relationship("AutomationException", back_populates="company")
+    automation_rollbacks = relationship("AutomationRollback", back_populates="company")
+    automation_audits = relationship("AutomationAudit", back_populates="company")
+    
     # Geographic Relationships
     country_ref = relationship("Country", foreign_keys=[country_id])
     state_ref = relationship("IndianState", foreign_keys=[state_id])
