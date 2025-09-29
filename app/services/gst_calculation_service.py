@@ -7,7 +7,7 @@ from datetime import datetime, date
 import logging
 
 from ..models.company import Company, GSTSlab
-from ..models.sales import SalesInvoice, SalesInvoiceItem
+from ..models.enhanced_sales import SalesInvoice, SalesInvoiceItem
 from ..models.purchase import PurchaseBill, PurchaseBillItem
 
 logger = logging.getLogger(__name__)

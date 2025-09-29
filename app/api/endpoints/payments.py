@@ -9,8 +9,8 @@ from datetime import datetime, date
 
 from ...database import get_db
 from ...models.payment import Payment, PaymentMethod
-from ...models.sales import SalesInvoice
-from ...models.sales import PurchaseInvoice
+from ...models.enhanced_sales import SalesInvoice
+from ...models.enhanced_purchase import PurchaseInvoice
 from ...models.customer import Customer, Supplier
 from ...models.user import User
 from ...core.security import get_current_user, require_permission

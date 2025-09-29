@@ -11,7 +11,7 @@ from decimal import Decimal
 
 from ..models.user import User, Role, Permission
 from ..models.company import Company, SystemSettings, FinancialYear
-from ..models.sales import BillSeries
+from ..models.enhanced_sales import BillSeries
 from ..models.supplier import PaymentMode, Staff
 from ..models.loyalty import LoyaltyGrade
 from ..models.stock import StockLocation

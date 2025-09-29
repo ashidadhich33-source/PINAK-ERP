@@ -9,7 +9,7 @@ import io
 import logging
 
 from ..models.company import Company
-from ..models.sales import SalesInvoice, SalesInvoiceItem
+from ..models.enhanced_sales import SalesInvoice, SalesInvoiceItem
 from ..models.purchase import PurchaseBill, PurchaseBillItem
 from ..services.gst_calculation_service import gst_calculation_service
 

@@ -416,7 +416,7 @@ async def get_user_profile(current_user=Depends(get_current_user)):
 @app.get(f"{settings.api_prefix}/dashboard")
 async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_db)):
     """Get dashboard summary data"""
-    from .models.sales import SalesInvoice
+    from .models.enhanced_sales import SalesInvoice
     from .models.customer import Customer
     from .models.item import Item
     from sqlalchemy import func

@@ -8,7 +8,7 @@ from decimal import Decimal
 from datetime import datetime, date
 
 from ...database import get_db
-from ...models.sales import PurchaseOrder, PurchaseOrderItem, PurchaseInvoice, PurchaseInvoiceItem
+from ...models.enhanced_purchase import PurchaseOrder, PurchaseOrderItem, PurchaseInvoice, PurchaseInvoiceItem
 from ...models.customer import Supplier
 from ...models.item import Item
 from ...models.user import User

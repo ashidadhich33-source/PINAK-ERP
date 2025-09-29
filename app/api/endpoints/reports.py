@@ -9,8 +9,8 @@ import io
 import pandas as pd
 
 from ...database import get_db
-from ...models.sales import SalesInvoice, SalesInvoiceItem
-from ...models.sales import PurchaseInvoice, PurchaseInvoiceItem
+from ...models.enhanced_sales import SalesInvoice, SalesInvoiceItem
+from ...models.enhanced_purchase import PurchaseInvoice, PurchaseInvoiceItem
 from ...models.item import Item
 from ...models.stock import StockItem, StockMovement
 from ...models.customer import Customer, Supplier

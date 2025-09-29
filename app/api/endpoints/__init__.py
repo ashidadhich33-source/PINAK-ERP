@@ -5,7 +5,7 @@ from .items import router as items_router
 from .customers import router as customers_router
 from .suppliers import router as suppliers_router
 from .staff import router as staff_router
-from .sales import router as sales_router
+# Removed basic sales router - using enhanced_sales instead
 from .purchases import router as purchases_router
 from .payments import router as payments_router
 from .expenses import router as expenses_router
@@ -23,7 +23,7 @@ __all__ = [
     "customers_router",
     "suppliers_router",
     "staff_router",
-    "sales_router",
+    # "sales_router", # Removed - using enhanced_sales instead
     "purchases_router",
     "payments_router",
     "expenses_router",

@@ -8,7 +8,7 @@ import json
 import logging
 
 from ..models.company import Company, ChartOfAccount
-from ..models.sales import SalesInvoice, SalesInvoiceItem
+from ..models.enhanced_sales import SalesInvoice, SalesInvoiceItem
 from ..models.purchase import PurchaseBill, PurchaseBillItem
 from ..models.double_entry_accounting import JournalEntry, JournalEntryItem, AccountBalance
 
