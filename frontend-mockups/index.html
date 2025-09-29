@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise ERP - Frontend Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            font-weight: 300;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .header p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .page-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .page-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .page-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .page-description {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .page-link {
+            display: block;
+            background: #1976d2;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .page-link:hover {
+            background: #1565c0;
+        }
+        
+        .features-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 50px;
+        }
+        
+        .features-title {
+            font-size: 32px;
+            font-weight: 300;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-item {
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .feature-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .tech-stack {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .tech-title {
+            font-size: 32px;
+            font-weight: 300;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .tech-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .tech-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .tech-description {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .footer p {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .footer .version {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            
+            .header p {
+                font-size: 18px;
+            }
+            
+            .pages-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Enterprise ERP System</h1>
+            <p>Complete Business Management Solution</p>
+            <div class="subtitle">
+                Comprehensive frontend mockups for a modern ERP system with authentication, 
+                company management, GST compliance, inventory, sales, purchase, accounting, 
+                reports, loyalty programs, and system administration.
+            </div>
+        </div>
+        
+        <div class="pages-grid">
+            <div class="page-card" onclick="location.href='01-login.html'">
+                <div class="page-icon">🔐</div>
+                <div class="page-title">Authentication</div>
+                <div class="page-description">
+                    Login, register, and user management pages with modern design and security features.
+                </div>
+                <a href="01-login.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='03-dashboard.html'">
+                <div class="page-icon">🏠</div>
+                <div class="page-title">Dashboard</div>
+                <div class="page-description">
+                    Main dashboard with overview statistics, charts, and quick access to key features.
+                </div>
+                <a href="03-dashboard.html" class="page-link">View Dashboard</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='04-companies.html'">
+                <div class="page-icon">🏢</div>
+                <div class="page-title">Company Management</div>
+                <div class="page-description">
+                    Multi-company support with company creation, editing, and management capabilities.
+                </div>
+                <a href="04-companies.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='05-gst-management.html'">
+                <div class="page-icon">🏛️</div>
+                <div class="page-title">GST Management</div>
+                <div class="page-description">
+                    GST compliance, tax calculations, returns, and state code management.
+                </div>
+                <a href="05-gst-management.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='06-inventory.html'">
+                <div class="page-icon">📦</div>
+                <div class="page-title">Inventory Management</div>
+                <div class="page-description">
+                    Complete inventory control with items, groups, stock levels, and movements.
+                </div>
+                <a href="06-inventory.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='07-purchase.html'">
+                <div class="page-icon">🛒</div>
+                <div class="page-title">Purchase Management</div>
+                <div class="page-description">
+                    Purchase orders, invoices, supplier management, and purchase tracking.
+                </div>
+                <a href="07-purchase.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='08-sales.html'">
+                <div class="page-icon">💰</div>
+                <div class="page-title">Sales Management</div>
+                <div class="page-description">
+                    Point of Sale (POS), sales invoices, customer management, and sales tracking.
+                </div>
+                <a href="08-sales.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='09-accounting.html'">
+                <div class="page-icon">📊</div>
+                <div class="page-title">Accounting</div>
+                <div class="page-description">
+                    Chart of accounts, journal entries, trial balance, and financial statements.
+                </div>
+                <a href="09-accounting.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='10-reports.html'">
+                <div class="page-icon">📈</div>
+                <div class="page-title">Reports & Analytics</div>
+                <div class="page-description">
+                    Comprehensive reporting system with custom reports and analytics.
+                </div>
+                <a href="10-reports.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='11-loyalty.html'">
+                <div class="page-icon">🎁</div>
+                <div class="page-title">Loyalty Program</div>
+                <div class="page-description">
+                    Customer loyalty management with points, tiers, rewards, and campaigns.
+                </div>
+                <a href="11-loyalty.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='12-system.html'">
+                <div class="page-icon">🔧</div>
+                <div class="page-title">System Administration</div>
+                <div class="page-description">
+                    System health monitoring, user management, and administrative controls.
+                </div>
+                <a href="12-system.html" class="page-link">View Pages</a>
+            </div>
+            
+            <div class="page-card" onclick="location.href='13-mobile-dashboard.html'">
+                <div class="page-icon">📱</div>
+                <div class="page-title">Mobile Dashboard</div>
+                <div class="page-description">
+                    Mobile-responsive dashboard optimized for smartphones and tablets.
+                </div>
+                <a href="13-mobile-dashboard.html" class="page-link">View Mobile</a>
+            </div>
+        </div>
+        
+        <div class="features-section">
+            <h2 class="features-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-title">Secure Authentication</div>
+                    <div class="feature-description">
+                        JWT-based authentication with role-based access control and multi-company support.
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Real-time Dashboard</div>
+                    <div class="feature-description">
+                        Live business metrics, charts, and quick access to all system features.
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">🏛️</div>
+                    <div class="feature-title">GST Compliance</div>
+                    <div class="feature-description">
+                        Complete GST management with automatic calculations and return generation.
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">📦</div>
+                    <div class="feature-title">Advanced Inventory</div>
+                    <div class="feature-description">
+                        Multi-location inventory with barcode support and automated stock alerts.
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-title">Point of Sale</div>
+                    <div class="feature-description">
+                        Modern POS system with multiple payment modes and receipt printing.
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-title">Advanced Reporting</div>
+                    <div class="feature-description">
+                        Customizable reports with export capabilities and scheduled generation.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tech-stack">
+            <h2 class="tech-title">Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-name">React.js</div>
+                    <div class="tech-description">Frontend Framework</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">TypeScript</div>
+                    <div class="tech-description">Type Safety</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Material-UI</div>
+                    <div class="tech-description">UI Components</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Redux</div>
+                    <div class="tech-description">State Management</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">FastAPI</div>
+                    <div class="tech-description">Backend API</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">PostgreSQL</div>
+                    <div class="tech-description">Database</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Enterprise ERP System - Frontend Mockups</p>
+            <p>Complete business management solution with modern UI/UX design</p>
+            <div class="version">Version 1.0.0 | Created with ❤️ for modern businesses</div>
+        </div>
+    </div>
+</body>
+</html>
