@@ -35,6 +35,7 @@ class User(BaseModel):
     
     # Relationships
     roles = relationship("Role", secondary=user_roles, back_populates="users")
+    companies = relationship("UserCompany", back_populates="user")
     created_items = relationship("Item", foreign_keys="Item.created_by", back_populates="creator")
     
     def has_permission(self, permission_name: str) -> bool:
