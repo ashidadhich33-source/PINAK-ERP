@@ -17,7 +17,6 @@ from .user import (
 
 from .payment import (
     Payment,
-    PaymentMethod,
     PaymentGateway
 )
 
@@ -41,7 +40,6 @@ from .discount_management import (
 
 from .report_studio import (
     Report,
-    ReportTemplate,
     ReportParameter
 )
 
@@ -66,7 +64,6 @@ __all__ = [
     
     # Payment Models
     "Payment",
-    "PaymentMethod",
     "PaymentGateway",
     
     # Staff Models
@@ -86,7 +83,6 @@ __all__ = [
     
     # Report Models
     "Report",
-    "ReportTemplate",
     "ReportParameter",
     
     # GST Models

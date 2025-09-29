@@ -45,7 +45,7 @@ from .api.endpoints import (
 )
 from .core.security import get_current_user
 from .services.core.backup_service import backup_service
-from .core.init_data import initialize_default_data
+from .init_data import initialize_default_data
 from .core.exceptions import setup_exception_handlers
 from .core.middleware import setup_middlewares
 
@@ -504,7 +504,7 @@ async def get_user_profile(current_user=Depends(get_current_user)):
 @app.get(f"{settings.api_prefix}/dashboard")
 async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_db)):
     """Get dashboard summary data"""
-    from .models.sales import SalesInvoice
+    from .models.sales import SaleInvoice
     from .models.customers import Customer
     from .models.inventory import Item
     from sqlalchemy import func
@@ -517,8 +517,8 @@ async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_d
     total_items = db.query(Item).filter(Item.status == 'active').count()
     
     # Today's sales
-    today_sales = db.query(func.sum(SalesInvoice.total_amount)).filter(
-        func.date(SalesInvoice.invoice_date) == today
+    today_sales = db.query(func.sum(SaleInvoice.total_amount)).filter(
+        func.date(SaleInvoice.invoice_date) == today
     ).scalar() or 0
     
     return {

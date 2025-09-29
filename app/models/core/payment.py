@@ -4,21 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from .base import BaseModel
 
-class PaymentMethod(BaseModel):
-    __tablename__ = "payment_method"
-    
-    name = Column(String(50), unique=True, nullable=False)
-    display_name = Column(String(100), nullable=False)
-    method_type = Column(String(20), nullable=False)  # cash, card, upi, bank_transfer, cheque
-    is_active = Column(Boolean, default=True)
-    requires_reference = Column(Boolean, default=False)  # For cheques, bank transfers
-    
-    # For card payments
-    charge_percent = Column(Numeric(5, 4), default=0)  # Processing fee percentage
-    charge_amount = Column(Numeric(10, 2), default=0)  # Fixed processing fee
-    
-    def __repr__(self):
-        return f"<PaymentMethod(name='{self.name}', type='{self.method_type}')>"
+# PaymentMethod moved to accounting/banking.py for enhanced functionality
 
 class Payment(BaseModel):
     __tablename__ = "payment"
