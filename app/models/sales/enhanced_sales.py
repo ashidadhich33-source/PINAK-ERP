@@ -386,6 +386,14 @@ class SaleInvoice(BaseModel):
     sale_notifications = relationship("SaleNotification", foreign_keys="SaleNotification.sale_invoice_id")
     sale_dashboards = relationship("SaleDashboard", foreign_keys="SaleDashboard.sale_invoice_id")
     
+    # Enhanced Integration Relationships
+    sale_inventory_integration = relationship("SaleInventoryIntegration", foreign_keys="SaleInventoryIntegration.sale_invoice_id")
+    sale_customer_integration = relationship("SaleCustomerIntegration", foreign_keys="SaleCustomerIntegration.sale_invoice_id")
+    sale_performance_optimization = relationship("SalePerformanceOptimization", foreign_keys="SalePerformanceOptimization.sale_invoice_id")
+    sale_user_experience = relationship("SaleUserExperience", foreign_keys="SaleUserExperience.sale_invoice_id")
+    sale_real_time_sync = relationship("SaleRealTimeSync", foreign_keys="SaleRealTimeSync.sale_invoice_id")
+    sale_analytics_integration = relationship("SaleAnalyticsIntegration", foreign_keys="SaleAnalyticsIntegration.sale_invoice_id")
+    
     def __repr__(self):
         return f"<SaleInvoice(number='{self.invoice_number}', customer_id={self.customer_id})>"
 

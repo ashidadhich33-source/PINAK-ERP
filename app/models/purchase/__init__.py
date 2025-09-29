@@ -51,6 +51,17 @@ from .purchase_advanced_features_integration import (
     ReportType
 )
 
+from .purchase_enhanced_integration import (
+    PurchaseInventoryIntegration,
+    PurchaseSupplierIntegration,
+    PurchasePerformanceOptimization,
+    PurchaseUserExperience,
+    PurchaseRealTimeSync,
+    PurchaseAnalyticsIntegration,
+    IntegrationStatus,
+    SyncStatus
+)
+
 __all__ = [
     # Enhanced Purchase
     "PurchaseOrder",
@@ -93,5 +104,13 @@ __all__ = [
     "PurchaseDashboard",
     "WorkflowStatus",
     "DocumentType",
-    "ReportType"
+    "ReportType",
+    "PurchaseInventoryIntegration",
+    "PurchaseSupplierIntegration",
+    "PurchasePerformanceOptimization",
+    "PurchaseUserExperience",
+    "PurchaseRealTimeSync",
+    "PurchaseAnalyticsIntegration",
+    "IntegrationStatus",
+    "SyncStatus"
 ]

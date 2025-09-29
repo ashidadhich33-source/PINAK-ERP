@@ -50,6 +50,17 @@ from .sales_advanced_features_integration import (
     ReportType
 )
 
+from .sales_enhanced_integration import (
+    SaleInventoryIntegration,
+    SaleCustomerIntegration,
+    SalePerformanceOptimization,
+    SaleUserExperience,
+    SaleRealTimeSync,
+    SaleAnalyticsIntegration,
+    IntegrationStatus,
+    SyncStatus
+)
+
 __all__ = [
     "SaleChallan",
     "SaleChallanItem",
@@ -89,5 +100,13 @@ __all__ = [
     "SaleDashboard",
     "WorkflowStatus",
     "DocumentType",
-    "ReportType"
+    "ReportType",
+    "SaleInventoryIntegration",
+    "SaleCustomerIntegration",
+    "SalePerformanceOptimization",
+    "SaleUserExperience",
+    "SaleRealTimeSync",
+    "SaleAnalyticsIntegration",
+    "IntegrationStatus",
+    "SyncStatus"
 ]

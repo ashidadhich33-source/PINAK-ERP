@@ -342,6 +342,14 @@ class PurchaseInvoice(BaseModel):
     purchase_notifications = relationship("PurchaseNotification", foreign_keys="PurchaseNotification.purchase_invoice_id")
     purchase_dashboards = relationship("PurchaseDashboard", foreign_keys="PurchaseDashboard.purchase_invoice_id")
     
+    # Enhanced Integration Relationships
+    purchase_inventory_integration = relationship("PurchaseInventoryIntegration", foreign_keys="PurchaseInventoryIntegration.purchase_invoice_id")
+    purchase_supplier_integration = relationship("PurchaseSupplierIntegration", foreign_keys="PurchaseSupplierIntegration.purchase_invoice_id")
+    purchase_performance_optimization = relationship("PurchasePerformanceOptimization", foreign_keys="PurchasePerformanceOptimization.purchase_invoice_id")
+    purchase_user_experience = relationship("PurchaseUserExperience", foreign_keys="PurchaseUserExperience.purchase_invoice_id")
+    purchase_real_time_sync = relationship("PurchaseRealTimeSync", foreign_keys="PurchaseRealTimeSync.purchase_invoice_id")
+    purchase_analytics_integration = relationship("PurchaseAnalyticsIntegration", foreign_keys="PurchaseAnalyticsIntegration.purchase_invoice_id")
+    
     def __repr__(self):
         return f"<PurchaseInvoice(number='{self.invoice_number}', supplier_id={self.supplier_id})>"
 
