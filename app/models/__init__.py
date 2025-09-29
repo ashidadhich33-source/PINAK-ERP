@@ -35,6 +35,12 @@ from .enhanced_sales import (
     SaleChallan, SaleChallanItem, BillSeries, PaymentMode, Staff, StaffTarget,
     SaleReturn, SaleReturnItem, SaleOrder, SaleOrderItem, SaleInvoice, SaleInvoiceItem, POSSession
 )
+from .double_entry_accounting import (
+    JournalEntry, JournalEntryItem, AccountBalance, TrialBalance, TrialBalanceItem,
+    BalanceSheet, BalanceSheetItem, ProfitLossStatement, ProfitLossItem,
+    CashFlowStatement, CashFlowItem, AccountReconciliation, ReconciliationItem,
+    AccountingPeriod, JournalEntryTemplate, AccountGroup
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -137,6 +143,22 @@ __all__ = [
     "SaleInvoice",
     "SaleInvoiceItem",
     "POSSession",
+    "JournalEntry",
+    "JournalEntryItem",
+    "AccountBalance",
+    "TrialBalance",
+    "TrialBalanceItem",
+    "BalanceSheet",
+    "BalanceSheetItem",
+    "ProfitLossStatement",
+    "ProfitLossItem",
+    "CashFlowStatement",
+    "CashFlowItem",
+    "AccountReconciliation",
+    "ReconciliationItem",
+    "AccountingPeriod",
+    "JournalEntryTemplate",
+    "AccountGroup",
     "StockLocation",
     "StockItem",
     "StockMovement",
