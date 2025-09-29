@@ -41,6 +41,11 @@ from .double_entry_accounting import (
     CashFlowStatement, CashFlowItem, AccountReconciliation, ReconciliationItem,
     AccountingPeriod, JournalEntryTemplate, AccountGroup
 )
+from .discount_management import (
+    DiscountType, DiscountRule, DiscountApplication, DiscountCoupon, CouponUsage,
+    DiscountTier, TierApplication, CustomerDiscount, DiscountAnalytics,
+    DiscountReport, DiscountConfiguration, DiscountValidation, DiscountAudit
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -159,6 +164,19 @@ __all__ = [
     "AccountingPeriod",
     "JournalEntryTemplate",
     "AccountGroup",
+    "DiscountType",
+    "DiscountRule",
+    "DiscountApplication",
+    "DiscountCoupon",
+    "CouponUsage",
+    "DiscountTier",
+    "TierApplication",
+    "CustomerDiscount",
+    "DiscountAnalytics",
+    "DiscountReport",
+    "DiscountConfiguration",
+    "DiscountValidation",
+    "DiscountAudit",
     "StockLocation",
     "StockItem",
     "StockMovement",
