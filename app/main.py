@@ -29,9 +29,9 @@ from .api.endpoints import (
     # Advanced Accounting endpoints
     advanced_workflows, advanced_reporting, banking, analytic,
     # Sales endpoints
-    enhanced_sales, sale_returns,
+    enhanced_sales, sale_returns, sales_accounting_integration,
     # Purchase endpoints
-    enhanced_purchase, purchases,
+    enhanced_purchase, purchases, purchase_accounting_integration,
     # Inventory endpoints
     items, enhanced_item_master, advanced_inventory,
     # Customer endpoints
@@ -420,10 +420,12 @@ api_routers = [
     # Sales endpoints
     (enhanced_sales.router, "/enhanced-sales", ["💰 Enhanced Sales Management"]),
     (sale_returns.router, "/sale-returns", ["🔄 Sales Returns"]),
+    (sales_accounting_integration.router, "/sales-accounting", ["📊 Sales Accounting Integration"]),
     
     # Purchase endpoints
     (enhanced_purchase.router, "/enhanced-purchase", ["🛒 Enhanced Purchase Management"]),
     (purchases.router, "/purchases", ["🛒 Purchase Management"]),
+    (purchase_accounting_integration.router, "/purchase-accounting", ["📊 Purchase Accounting Integration"]),
     
     # Inventory endpoints
     (items.router, "/items", ["📦 Items & Inventory"]),

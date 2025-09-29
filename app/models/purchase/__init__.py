@@ -16,6 +16,17 @@ from .purchase import (
     PurchaseBillItem
 )
 
+from .purchase_accounting_integration import (
+    PurchaseJournalEntry,
+    PurchasePayment as PurchasePaymentIntegration,
+    PurchaseAnalytic,
+    PurchaseWorkflow,
+    PurchaseDocument,
+    PurchaseAuditTrail,
+    JournalEntryStatus,
+    PaymentStatus
+)
+
 __all__ = [
     # Enhanced Purchase
     "PurchaseOrder",
@@ -30,5 +41,15 @@ __all__ = [
     
     # Basic Purchase
     "PurchaseBill",
-    "PurchaseBillItem"
+    "PurchaseBillItem",
+    
+    # Purchase Accounting Integration
+    "PurchaseJournalEntry",
+    "PurchasePaymentIntegration",
+    "PurchaseAnalytic",
+    "PurchaseWorkflow",
+    "PurchaseDocument",
+    "PurchaseAuditTrail",
+    "JournalEntryStatus",
+    "PaymentStatus"
 ]

@@ -31,10 +31,27 @@ class SaleChallan(BaseModel):
     status = Column(String(20), default='draft')  # draft, confirmed, delivered, cancelled
     notes = Column(Text, nullable=True)
     
+    # Accounting Integration Fields
+    journal_entry_created = Column(Boolean, default=False)
+    journal_entry_id = Column(Integer, ForeignKey('journal_entry.id'), nullable=True)
+    payment_terms_id = Column(Integer, ForeignKey('payment_term.id'), nullable=True)
+    analytic_account_id = Column(Integer, ForeignKey('analytic_account.id'), nullable=True)
+    
     # Relationships
     customer = relationship("Customer")
     staff = relationship("Staff")
     challan_items = relationship("SaleChallanItem", back_populates="challan_record")
+    
+    # Accounting Integration Relationships
+    journal_entry = relationship("JournalEntry")
+    payment_terms = relationship("PaymentTerm")
+    analytic_account = relationship("AnalyticAccount")
+    sale_journal_entries = relationship("SaleJournalEntry", foreign_keys="SaleJournalEntry.sale_challan_id")
+    sale_payments = relationship("SalePayment", foreign_keys="SalePayment.sale_invoice_id")
+    sale_analytics = relationship("SaleAnalytic", foreign_keys="SaleAnalytic.sale_challan_id")
+    sale_workflows = relationship("SaleWorkflow", foreign_keys="SaleWorkflow.sale_challan_id")
+    sale_documents = relationship("SaleDocument", foreign_keys="SaleDocument.sale_challan_id")
+    sale_audit_trails = relationship("SaleAuditTrail", foreign_keys="SaleAuditTrail.sale_challan_id")
     
     def __repr__(self):
         return f"<SaleChallan(number='{self.challan_number}', customer_id={self.customer_id})>"
@@ -326,10 +343,31 @@ class SaleInvoice(BaseModel):
     status = Column(String(20), default='draft')  # draft, confirmed, paid, cancelled
     notes = Column(Text, nullable=True)
     
+    # Accounting Integration Fields
+    journal_entry_created = Column(Boolean, default=False)
+    journal_entry_id = Column(Integer, ForeignKey('journal_entry.id'), nullable=True)
+    payment_terms_id = Column(Integer, ForeignKey('payment_term.id'), nullable=True)
+    analytic_account_id = Column(Integer, ForeignKey('analytic_account.id'), nullable=True)
+    bank_account_id = Column(Integer, ForeignKey('bank_account.id'), nullable=True)
+    payment_method_id = Column(Integer, ForeignKey('payment_method.id'), nullable=True)
+    
     # Relationships
     customer = relationship("Customer")
     bill = relationship("SaleBill")
     invoice_items = relationship("SaleInvoiceItem", back_populates="invoice_record")
+    
+    # Accounting Integration Relationships
+    journal_entry = relationship("JournalEntry")
+    payment_terms = relationship("PaymentTerm")
+    analytic_account = relationship("AnalyticAccount")
+    bank_account = relationship("BankAccount")
+    payment_method = relationship("PaymentMethod")
+    sale_journal_entries = relationship("SaleJournalEntry", foreign_keys="SaleJournalEntry.sale_invoice_id")
+    sale_payments = relationship("SalePayment", foreign_keys="SalePayment.sale_invoice_id")
+    sale_analytics = relationship("SaleAnalytic", foreign_keys="SaleAnalytic.sale_invoice_id")
+    sale_workflows = relationship("SaleWorkflow", foreign_keys="SaleWorkflow.sale_invoice_id")
+    sale_documents = relationship("SaleDocument", foreign_keys="SaleDocument.sale_invoice_id")
+    sale_audit_trails = relationship("SaleAuditTrail", foreign_keys="SaleAuditTrail.sale_invoice_id")
     
     def __repr__(self):
         return f"<SaleInvoice(number='{self.invoice_number}', customer_id={self.customer_id})>"

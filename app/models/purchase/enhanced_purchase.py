@@ -299,10 +299,31 @@ class PurchaseInvoice(BaseModel):
     status = Column(String(20), default='draft')  # draft, confirmed, paid, cancelled
     notes = Column(Text, nullable=True)
     
+    # Accounting Integration Fields
+    journal_entry_created = Column(Boolean, default=False)
+    journal_entry_id = Column(Integer, ForeignKey('journal_entry.id'), nullable=True)
+    payment_terms_id = Column(Integer, ForeignKey('payment_term.id'), nullable=True)
+    analytic_account_id = Column(Integer, ForeignKey('analytic_account.id'), nullable=True)
+    bank_account_id = Column(Integer, ForeignKey('bank_account.id'), nullable=True)
+    payment_method_id = Column(Integer, ForeignKey('payment_method.id'), nullable=True)
+    
     # Relationships
     supplier = relationship("Supplier")
     bill = relationship("PurchaseBill")
     invoice_items = relationship("PurchaseInvoiceItem", back_populates="invoice_record")
+    
+    # Accounting Integration Relationships
+    journal_entry = relationship("JournalEntry")
+    payment_terms = relationship("PaymentTerm")
+    analytic_account = relationship("AnalyticAccount")
+    bank_account = relationship("BankAccount")
+    payment_method = relationship("PaymentMethod")
+    purchase_journal_entries = relationship("PurchaseJournalEntry", foreign_keys="PurchaseJournalEntry.purchase_invoice_id")
+    purchase_payments = relationship("PurchasePayment", foreign_keys="PurchasePayment.purchase_invoice_id")
+    purchase_analytics = relationship("PurchaseAnalytic", foreign_keys="PurchaseAnalytic.purchase_invoice_id")
+    purchase_workflows = relationship("PurchaseWorkflow", foreign_keys="PurchaseWorkflow.purchase_invoice_id")
+    purchase_documents = relationship("PurchaseDocument", foreign_keys="PurchaseDocument.purchase_invoice_id")
+    purchase_audit_trails = relationship("PurchaseAuditTrail", foreign_keys="PurchaseAuditTrail.purchase_invoice_id")
     
     def __repr__(self):
         return f"<PurchaseInvoice(number='{self.invoice_number}', supplier_id={self.supplier_id})>"

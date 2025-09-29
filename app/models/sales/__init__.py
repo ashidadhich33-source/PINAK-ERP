@@ -15,6 +15,17 @@ from .enhanced_sales import (
     POSSession
 )
 
+from .sales_accounting_integration import (
+    SaleJournalEntry,
+    SalePayment,
+    SaleAnalytic,
+    SaleWorkflow,
+    SaleDocument,
+    SaleAuditTrail,
+    JournalEntryStatus,
+    PaymentStatus
+)
+
 __all__ = [
     "SaleChallan",
     "SaleChallanItem",
@@ -28,5 +39,13 @@ __all__ = [
     "SaleOrderItem",
     "SaleInvoice",
     "SaleInvoiceItem",
-    "POSSession"
+    "POSSession",
+    "SaleJournalEntry",
+    "SalePayment",
+    "SaleAnalytic",
+    "SaleWorkflow",
+    "SaleDocument",
+    "SaleAuditTrail",
+    "JournalEntryStatus",
+    "PaymentStatus"
 ]
