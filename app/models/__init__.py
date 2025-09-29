@@ -46,6 +46,11 @@ from .discount_management import (
     DiscountTier, TierApplication, CustomerDiscount, DiscountAnalytics,
     DiscountReport, DiscountConfiguration, DiscountValidation, DiscountAudit
 )
+from .report_studio import (
+    ReportCategory, ReportTemplate, ReportInstance, ReportView, ReportSchedule,
+    ReportScheduleLog, ReportBuilder, ReportDashboard, ReportWidget, ReportExport,
+    ReportAnalytics, ReportPermission, ReportCache
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -177,6 +182,19 @@ __all__ = [
     "DiscountConfiguration",
     "DiscountValidation",
     "DiscountAudit",
+    "ReportCategory",
+    "ReportTemplate",
+    "ReportInstance",
+    "ReportView",
+    "ReportSchedule",
+    "ReportScheduleLog",
+    "ReportBuilder",
+    "ReportDashboard",
+    "ReportWidget",
+    "ReportExport",
+    "ReportAnalytics",
+    "ReportPermission",
+    "ReportCache",
     "StockLocation",
     "StockItem",
     "StockMovement",
