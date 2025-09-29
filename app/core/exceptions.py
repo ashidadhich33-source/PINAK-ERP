@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +77,26 @@ def setup_exception_handlers(app: FastAPI):
             content={
                 "error": "HTTP Exception",
                 "message": exc.detail
+            }
+        )
+
+    @app.exception_handler(404)
+    async def not_found_handler(request, exc):
+        """Custom 404 Not Found handler"""
+        logger.warning(f"404 Not Found: {request.method} {request.url.path} - {request.client.host}")
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": "Not Found",
+                "message": "The requested resource was not found",
+                "path": str(request.url.path),
+                "method": request.method,
+                "timestamp": datetime.now().isoformat(),
+                "suggestions": [
+                    "Check the API documentation at /docs",
+                    "Verify the endpoint URL is correct",
+                    "Ensure you're using the correct HTTP method"
+                ]
             }
         )
 
