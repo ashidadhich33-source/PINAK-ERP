@@ -31,6 +31,10 @@ from .enhanced_purchase import (
     PurchaseReturn, PurchaseReturnItem, PurchaseOrder, PurchaseOrderItem,
     PurchaseInvoice, PurchaseInvoiceItem
 )
+from .enhanced_sales import (
+    SaleChallan, SaleChallanItem, BillSeries, PaymentMode, Staff, StaffTarget,
+    SaleReturn, SaleReturnItem, SaleOrder, SaleOrderItem, SaleInvoice, SaleInvoiceItem, POSSession
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -120,6 +124,19 @@ __all__ = [
     "PurchaseOrderItem",
     "PurchaseInvoice",
     "PurchaseInvoiceItem",
+    "SaleChallan",
+    "SaleChallanItem",
+    "BillSeries",
+    "PaymentMode",
+    "Staff",
+    "StaffTarget",
+    "SaleReturn",
+    "SaleReturnItem",
+    "SaleOrder",
+    "SaleOrderItem",
+    "SaleInvoice",
+    "SaleInvoiceItem",
+    "POSSession",
     "StockLocation",
     "StockItem",
     "StockMovement",
