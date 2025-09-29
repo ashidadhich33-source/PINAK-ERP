@@ -56,6 +56,12 @@ from .financial_year_management import (
     YearAnalytics, YearComparison, YearBackup, YearRestore, YearAudit, YearReport,
     YearConfiguration, YearPermission
 )
+from .loyalty_program import (
+    LoyaltyProgram, LoyaltyTier, CustomerLoyaltyTier, LoyaltyPoint, LoyaltyPointTransaction,
+    LoyaltyReward, LoyaltyRewardRedemption, LoyaltyTransaction, LoyaltyAnalytics,
+    LoyaltyCampaign, LoyaltyCampaignParticipant, LoyaltyReferral, LoyaltyNotification,
+    LoyaltyConfiguration
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -213,6 +219,20 @@ __all__ = [
     "YearReport",
     "YearConfiguration",
     "YearPermission",
+    "LoyaltyProgram",
+    "LoyaltyTier",
+    "CustomerLoyaltyTier",
+    "LoyaltyPoint",
+    "LoyaltyPointTransaction",
+    "LoyaltyReward",
+    "LoyaltyRewardRedemption",
+    "LoyaltyTransaction",
+    "LoyaltyAnalytics",
+    "LoyaltyCampaign",
+    "LoyaltyCampaignParticipant",
+    "LoyaltyReferral",
+    "LoyaltyNotification",
+    "LoyaltyConfiguration",
     "StockLocation",
     "StockItem",
     "StockMovement",
