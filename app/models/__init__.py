@@ -25,6 +25,12 @@ from .enhanced_item_master import (
     ItemSupplier, ItemCategory, ItemBrand, ItemTag, ItemTagMapping,
     ItemReview, ItemWishlist
 )
+from .enhanced_purchase import (
+    PurchaseExcelImport, PurchaseExcelImportItem, PurchaseBillMatching,
+    PurchaseBillMatchingItem, DirectStockInward, DirectStockInwardItem,
+    PurchaseReturn, PurchaseReturnItem, PurchaseOrder, PurchaseOrderItem,
+    PurchaseInvoice, PurchaseInvoiceItem
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -102,6 +108,18 @@ __all__ = [
     "ItemTagMapping",
     "ItemReview",
     "ItemWishlist",
+    "PurchaseExcelImport",
+    "PurchaseExcelImportItem",
+    "PurchaseBillMatching",
+    "PurchaseBillMatchingItem",
+    "DirectStockInward",
+    "DirectStockInwardItem",
+    "PurchaseReturn",
+    "PurchaseReturnItem",
+    "PurchaseOrder",
+    "PurchaseOrderItem",
+    "PurchaseInvoice",
+    "PurchaseInvoiceItem",
     "StockLocation",
     "StockItem",
     "StockMovement",

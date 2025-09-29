@@ -24,7 +24,7 @@ from .database import create_tables, get_db, engine, Base, check_database_connec
 from .api.endpoints import (
     auth, setup, items, sales, purchases, reports,
     customers, suppliers, backup, expenses, staff,
-    settings as settings_api, payments, companies, gst, financial_year, chart_of_accounts, advanced_inventory, enhanced_item_master
+    settings as settings_api, payments, companies, gst, financial_year, chart_of_accounts, advanced_inventory, enhanced_item_master, enhanced_purchase
 )
 from .core.security import get_current_user
 from .services.backup_service import backup_service
@@ -356,6 +356,7 @@ api_routers = [
     (chart_of_accounts.router, "/chart-of-accounts", ["📊 Chart of Accounts"]),
     (advanced_inventory.router, "/advanced-inventory", ["📦 Advanced Inventory Management"]),
     (enhanced_item_master.router, "/enhanced-item-master", ["📦 Enhanced Item Master"]),
+    (enhanced_purchase.router, "/enhanced-purchase", ["🛒 Enhanced Purchase Management"]),
     (setup.router, "/setup", ["⚙️ Setup"]),
     (items.router, "/items", ["📦 Items & Inventory"]),
     (customers.router, "/customers", ["👥 Customer Management"]),
