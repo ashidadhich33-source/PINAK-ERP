@@ -241,6 +241,29 @@
     </div>
 
     <script>
+        // Simulate existing users for validation
+        const existingUsers = ['admin', 'manager', 'user', 'test'];
+        const existingEmails = ['admin@example.com', 'manager@example.com', 'user@example.com'];
+        
+        // Real-time validation
+        document.getElementById('username').addEventListener('blur', function() {
+            const username = this.value.toLowerCase();
+            if (existingUsers.includes(username)) {
+                showFieldError('username', 'Username already exists');
+            } else {
+                clearFieldError('username');
+            }
+        });
+        
+        document.getElementById('email').addEventListener('blur', function() {
+            const email = this.value;
+            if (existingEmails.includes(email)) {
+                showFieldError('email', 'Email already registered');
+            } else {
+                clearFieldError('email');
+            }
+        });
+        
         document.getElementById('password').addEventListener('input', function() {
             const password = this.value;
             const strengthDiv = document.getElementById('passwordStrength');
@@ -269,16 +292,49 @@
             }
         });
         
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                showFieldError('confirmPassword', 'Passwords do not match');
+            } else {
+                clearFieldError('confirmPassword');
+            }
+        });
+        
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
+            const firstName = formData.get('firstName');
+            const lastName = formData.get('lastName');
+            const username = formData.get('username');
+            const email = formData.get('email');
             const password = formData.get('password');
             const confirmPassword = formData.get('confirmPassword');
+            const company = formData.get('company');
+            const agreeTerms = formData.get('agreeTerms');
             
             // Hide previous messages
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('successMessage').style.display = 'none';
+            
+            // Validation
+            if (!firstName || !lastName || !username || !email || !password || !confirmPassword || !company) {
+                showError('Please fill in all required fields');
+                return;
+            }
+            
+            if (existingUsers.includes(username.toLowerCase())) {
+                showError('Username already exists');
+                return;
+            }
+            
+            if (existingEmails.includes(email)) {
+                showError('Email already registered');
+                return;
+            }
             
             if (password !== confirmPassword) {
                 showError('Passwords do not match');
@@ -290,22 +346,66 @@
                 return;
             }
             
-            if (!formData.get('agreeTerms')) {
+            if (!agreeTerms) {
                 showError('Please agree to the Terms & Conditions');
                 return;
             }
             
             // Simulate registration process
-            showSuccess('Registration successful! Redirecting to login...');
+            const registerBtn = document.querySelector('.register-btn');
+            registerBtn.innerHTML = 'Creating Account...';
+            registerBtn.disabled = true;
+            
+            showSuccess(`Welcome ${firstName}! Your account has been created successfully. Redirecting to login...`);
+            
+            // Store user data (simulate)
+            const userData = {
+                firstName,
+                lastName,
+                username,
+                email,
+                company,
+                registeredAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('newUser', JSON.stringify(userData));
+            
             setTimeout(() => {
                 window.location.href = '01-login.html';
-            }, 2000);
+            }, 3000);
         });
+        
+        function showFieldError(fieldName, message) {
+            const field = document.querySelector(`[name="${fieldName}"]`);
+            field.style.borderColor = '#f44336';
+            
+            let errorDiv = document.getElementById(`${fieldName}Error`);
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = `${fieldName}Error`;
+                errorDiv.style.color = '#f44336';
+                errorDiv.style.fontSize = '12px';
+                errorDiv.style.marginTop = '4px';
+                field.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = message;
+        }
+        
+        function clearFieldError(fieldName) {
+            const field = document.querySelector(`[name="${fieldName}"]`);
+            field.style.borderColor = '#e0e0e0';
+            
+            const errorDiv = document.getElementById(`${fieldName}Error`);
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
         
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
+            errorDiv.style.animation = 'shake 0.5s ease-in-out';
         }
         
         function showSuccess(message) {
@@ -313,6 +413,17 @@
             successDiv.textContent = message;
             successDiv.style.display = 'block';
         }
+        
+        // Add shake animation for errors
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

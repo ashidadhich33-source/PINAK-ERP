@@ -547,6 +547,109 @@
     </div>
 
     <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = sessionStorage.getItem('user');
+            if (!user) {
+                window.location.href = '01-login.html';
+                return;
+            }
+            
+            const userData = JSON.parse(user);
+            updateUserInfo(userData);
+            loadDashboardData();
+            startRealTimeUpdates();
+        });
+        
+        function updateUserInfo(userData) {
+            const userAvatar = document.querySelector('.user-avatar');
+            const userName = document.querySelector('.user-info div:first-child');
+            const companyName = document.querySelector('.user-info div:last-child');
+            
+            if (userAvatar) userAvatar.textContent = userData.name.split(' ').map(n => n[0]).join('');
+            if (userName) userName.textContent = userData.name;
+            if (companyName) companyName.textContent = userData.company;
+        }
+        
+        function loadDashboardData() {
+            // Simulate loading dashboard data
+            const stats = [
+                { id: 'sales', value: 50000, change: 12, trend: 'up' },
+                { id: 'purchase', value: 30000, change: -5, trend: 'down' },
+                { id: 'inventory', value: 1250, change: 8, trend: 'up' },
+                { id: 'revenue', value: 45000, change: 15, trend: 'up' }
+            ];
+            
+            stats.forEach(stat => {
+                const valueElement = document.querySelector(`[data-stat="${stat.id}"] .stat-value`);
+                const changeElement = document.querySelector(`[data-stat="${stat.id}"] .stat-change`);
+                
+                if (valueElement) {
+                    valueElement.textContent = stat.id === 'inventory' ? stat.value.toLocaleString() : `₹${stat.value.toLocaleString()}`;
+                }
+                
+                if (changeElement) {
+                    const trend = stat.trend === 'up' ? '↗' : '↘';
+                    const color = stat.trend === 'up' ? 'positive' : 'negative';
+                    changeElement.innerHTML = `${trend} ${stat.change}% from last month`;
+                    changeElement.className = `stat-change ${color}`;
+                }
+            });
+        }
+        
+        function startRealTimeUpdates() {
+            // Simulate real-time updates every 30 seconds
+            setInterval(() => {
+                updateNotifications();
+                updateRecentActivities();
+            }, 30000);
+        }
+        
+        function updateNotifications() {
+            const notificationBadge = document.querySelector('.notification-badge');
+            if (notificationBadge) {
+                const currentCount = parseInt(notificationBadge.textContent) || 0;
+                const newCount = Math.max(0, currentCount + Math.floor(Math.random() * 3) - 1);
+                notificationBadge.textContent = newCount;
+                notificationBadge.style.display = newCount > 0 ? 'flex' : 'none';
+            }
+        }
+        
+        function updateRecentActivities() {
+            const activities = [
+                'New sale invoice #INV-001 created',
+                'Purchase order #PO-002 received',
+                'Stock alert: Low inventory for Product A',
+                'Payment received for invoice #INV-003',
+                'Customer John Doe registered',
+                'Inventory updated for Electronics category',
+                'GST return generated for current month',
+                'Loyalty points awarded to customer'
+            ];
+            
+            const activityList = document.querySelector('.activity-list');
+            if (activityList) {
+                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                const newActivity = document.createElement('li');
+                newActivity.className = 'activity-item';
+                newActivity.innerHTML = `
+                    <div class="activity-icon">💰</div>
+                    <div class="activity-content">
+                        <div class="activity-text">${randomActivity}</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                `;
+                
+                // Remove oldest activity if more than 4
+                const existingActivities = activityList.querySelectorAll('.activity-item');
+                if (existingActivities.length >= 4) {
+                    existingActivities[existingActivities.length - 1].remove();
+                }
+                
+                activityList.insertBefore(newActivity, activityList.firstChild);
+            }
+        }
+        
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
@@ -564,6 +667,40 @@
                 sidebar.classList.remove('open');
                 document.getElementById('mainContent').classList.remove('sidebar-open');
             }
+        });
+        
+        // Add click handlers for quick actions
+        document.querySelectorAll('.action-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.action-title').textContent;
+                switch(title) {
+                    case 'New Sale':
+                        window.location.href = '08-sales.html';
+                        break;
+                    case 'Purchase Order':
+                        window.location.href = '07-purchase.html';
+                        break;
+                    case 'Stock Check':
+                        window.location.href = '06-inventory.html';
+                        break;
+                    case 'Reports':
+                        window.location.href = '10-reports.html';
+                        break;
+                }
+            });
+        });
+        
+        // Add logout functionality
+        document.querySelector('.user-info').addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('user');
+                window.location.href = '01-login.html';
+            }
+        });
+        
+        // Add notification click handler
+        document.querySelector('.notification-icon').addEventListener('click', function() {
+            alert('You have 3 new notifications:\n• New sale invoice created\n• Low stock alert\n• Payment received');
         });
     </script>
 </body>

@@ -197,12 +197,37 @@
     </div>
 
     <script>
+        // Simulate user data
+        const users = {
+            'admin': { password: 'password123', name: 'John Doe', company: 'ABC Corporation' },
+            'manager': { password: 'manager123', name: 'Jane Smith', company: 'XYZ Limited' },
+            'user': { password: 'user123', name: 'Mike Johnson', company: 'DEF Industries' }
+        };
+        
+        const companies = [
+            { id: '1', name: 'ABC Corporation', code: 'ABC' },
+            { id: '2', name: 'XYZ Limited', code: 'XYZ' },
+            { id: '3', name: 'DEF Industries', code: 'DEF' }
+        ];
+        
+        // Populate company dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            const companySelect = document.getElementById('company');
+            companies.forEach(company => {
+                const option = document.createElement('option');
+                option.value = company.id;
+                option.textContent = company.name;
+                companySelect.appendChild(option);
+            });
+        });
+        
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const company = document.getElementById('company').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
             
             // Hide previous messages
             document.getElementById('errorMessage').style.display = 'none';
@@ -214,13 +239,44 @@
             }
             
             // Simulate login process
-            if (username === 'admin' && password === 'password123') {
-                showSuccess('Login successful! Redirecting...');
+            if (users[username] && users[username].password === password) {
+                const user = users[username];
+                const selectedCompany = companies.find(c => c.id === company);
+                
+                // Store user session
+                sessionStorage.setItem('user', JSON.stringify({
+                    username: username,
+                    name: user.name,
+                    company: selectedCompany.name,
+                    companyId: company,
+                    loginTime: new Date().toISOString()
+                }));
+                
+                if (rememberMe) {
+                    localStorage.setItem('rememberedUser', username);
+                }
+                
+                showSuccess(`Welcome back, ${user.name}! Redirecting to dashboard...`);
+                
+                // Add loading animation
+                const loginBtn = document.querySelector('.login-btn');
+                loginBtn.innerHTML = 'Logging in...';
+                loginBtn.disabled = true;
+                
                 setTimeout(() => {
                     window.location.href = '03-dashboard.html';
-                }, 1500);
+                }, 2000);
             } else {
                 showError('Invalid username or password');
+            }
+        });
+        
+        // Auto-fill remembered user
+        document.addEventListener('DOMContentLoaded', function() {
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            if (rememberedUser) {
+                document.getElementById('username').value = rememberedUser;
+                document.getElementById('rememberMe').checked = true;
             }
         });
         
@@ -228,6 +284,7 @@
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
+            errorDiv.style.animation = 'shake 0.5s ease-in-out';
         }
         
         function showSuccess(message) {
@@ -235,6 +292,17 @@
             successDiv.textContent = message;
             successDiv.style.display = 'block';
         }
+        
+        // Add shake animation for errors
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

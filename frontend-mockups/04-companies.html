@@ -558,6 +558,133 @@
     </div>
 
     <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = sessionStorage.getItem('user');
+            if (!user) {
+                window.location.href = '01-login.html';
+                return;
+            }
+            
+            loadCompanies();
+            setupEventListeners();
+        });
+        
+        // Simulate companies data
+        let companies = [
+            {
+                id: 1,
+                name: 'ABC Corporation',
+                code: 'ABC',
+                email: 'contact@abccorp.com',
+                phone: '+1 (555) 123-4567',
+                address: '123 Main St, New York',
+                gstNumber: '12ABCDE1234F1Z5',
+                panNumber: 'ABCDE1234F',
+                status: 'active'
+            },
+            {
+                id: 2,
+                name: 'XYZ Limited',
+                code: 'XYZ',
+                email: 'info@xyzltd.com',
+                phone: '+1 (555) 987-6543',
+                address: '456 Oak Ave, Los Angeles',
+                gstNumber: '22FGHIJ5678K9L1',
+                panNumber: 'FGHIJ5678K',
+                status: 'active'
+            },
+            {
+                id: 3,
+                name: 'DEF Industries',
+                code: 'DEF',
+                email: 'support@defind.com',
+                phone: '+1 (555) 456-7890',
+                address: '789 Pine St, Chicago',
+                gstNumber: '32KLMNO9012P3Q4',
+                panNumber: 'KLMNO9012P',
+                status: 'inactive'
+            }
+        ];
+        
+        function loadCompanies() {
+            const tbody = document.querySelector('.table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            companies.forEach(company => {
+                const row = createCompanyRow(company);
+                tbody.appendChild(row);
+            });
+            
+            updateCompanyCount();
+        }
+        
+        function createCompanyRow(company) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <div style="font-weight: 500;">${company.name}</div>
+                    <div style="font-size: 12px; color: #666;">${company.address}</div>
+                </td>
+                <td>${company.code}</td>
+                <td>${company.email}</td>
+                <td>${company.phone}</td>
+                <td>${company.gstNumber}</td>
+                <td><span class="status-badge status-${company.status}">${company.status.charAt(0).toUpperCase() + company.status.slice(1)}</span></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-edit" onclick="editCompany(${company.id})">Edit</button>
+                        <button class="btn-delete" onclick="deleteCompany(${company.id})">Delete</button>
+                    </div>
+                </td>
+            `;
+            return row;
+        }
+        
+        function updateCompanyCount() {
+            const count = companies.length;
+            const header = document.querySelector('.table-header');
+            if (header) {
+                header.textContent = `Companies (${count} total)`;
+            }
+        }
+        
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('.table tbody tr');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+            
+            // Filter functionality
+            document.getElementById('statusFilter').addEventListener('change', function() {
+                const filterValue = this.value.toLowerCase();
+                const rows = document.querySelectorAll('.table tbody tr');
+                
+                rows.forEach(row => {
+                    if (filterValue === '') {
+                        row.style.display = '';
+                    } else {
+                        const statusBadge = row.querySelector('.status-badge');
+                        const status = statusBadge.textContent.toLowerCase();
+                        row.style.display = status.includes(filterValue) ? '' : 'none';
+                    }
+                });
+            });
+            
+            // Company form submission
+            document.getElementById('companyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveCompany();
+            });
+        }
+        
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
@@ -567,7 +694,13 @@
         }
         
         function openAddCompanyModal() {
-            document.getElementById('companyModal').style.display = 'block';
+            const modal = document.getElementById('companyModal');
+            const form = document.getElementById('companyForm');
+            const title = modal.querySelector('h2');
+            
+            title.textContent = 'Add New Company';
+            form.reset();
+            modal.style.display = 'block';
         }
         
         function closeCompanyModal() {
@@ -575,15 +708,93 @@
         }
         
         function editCompany(id) {
-            // In a real application, this would load company data
-            openAddCompanyModal();
+            const company = companies.find(c => c.id === id);
+            if (!company) return;
+            
+            const modal = document.getElementById('companyModal');
+            const form = document.getElementById('companyForm');
+            const title = modal.querySelector('h2');
+            
+            title.textContent = 'Edit Company';
+            
+            // Populate form with company data
+            form.companyName.value = company.name;
+            form.companyCode.value = company.code;
+            form.email.value = company.email;
+            form.phone.value = company.phone;
+            form.address.value = company.address;
+            form.gstNumber.value = company.gstNumber;
+            form.panNumber.value = company.panNumber;
+            
+            // Store the company ID for updating
+            form.dataset.companyId = id;
+            
+            modal.style.display = 'block';
+        }
+        
+        function saveCompany() {
+            const form = document.getElementById('companyForm');
+            const formData = new FormData(form);
+            const companyId = form.dataset.companyId;
+            
+            const companyData = {
+                name: formData.get('companyName'),
+                code: formData.get('companyCode'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                gstNumber: formData.get('gstNumber'),
+                panNumber: formData.get('panNumber'),
+                status: 'active'
+            };
+            
+            if (companyId) {
+                // Update existing company
+                const index = companies.findIndex(c => c.id == companyId);
+                if (index !== -1) {
+                    companies[index] = { ...companies[index], ...companyData };
+                    showNotification('Company updated successfully!', 'success');
+                }
+            } else {
+                // Add new company
+                const newId = Math.max(...companies.map(c => c.id)) + 1;
+                companies.push({ id: newId, ...companyData });
+                showNotification('Company added successfully!', 'success');
+            }
+            
+            loadCompanies();
+            closeCompanyModal();
         }
         
         function deleteCompany(id) {
-            if (confirm('Are you sure you want to delete this company?')) {
-                // In a real application, this would delete the company
-                alert('Company deleted successfully');
+            if (confirm('Are you sure you want to delete this company? This action cannot be undone.')) {
+                companies = companies.filter(c => c.id !== id);
+                loadCompanies();
+                showNotification('Company deleted successfully!', 'success');
             }
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+                background: ${type === 'success' ? '#4caf50' : '#f44336'};
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
         
         // Close modal when clicking outside
@@ -593,32 +804,19 @@
             }
         });
         
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.table tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-        
-        // Filter functionality
-        document.getElementById('statusFilter').addEventListener('change', function() {
-            const filterValue = this.value;
-            const rows = document.querySelectorAll('.table tbody tr');
-            
-            rows.forEach(row => {
-                if (filterValue === '') {
-                    row.style.display = '';
-                } else {
-                    const statusBadge = row.querySelector('.status-badge');
-                    const status = statusBadge.textContent.toLowerCase();
-                    row.style.display = status.includes(filterValue) ? '' : 'none';
-                }
-            });
-        });
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

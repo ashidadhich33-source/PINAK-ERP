@@ -579,6 +579,46 @@
     </div>
 
     <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = sessionStorage.getItem('user');
+            if (!user) {
+                window.location.href = '01-login.html';
+                return;
+            }
+            
+            loadGSTData();
+            setupEventListeners();
+        });
+        
+        // Simulate GST data
+        let gstData = {
+            cgst: 5000,
+            sgst: 5000,
+            igst: 2000,
+            total: 12000
+        };
+        
+        function loadGSTData() {
+            // Update GST overview cards with real-time data
+            document.querySelector('.gst-card:nth-child(1) .amount').textContent = `₹${gstData.cgst.toLocaleString()}`;
+            document.querySelector('.gst-card:nth-child(2) .amount').textContent = `₹${gstData.sgst.toLocaleString()}`;
+            document.querySelector('.gst-card:nth-child(3) .amount').textContent = `₹${gstData.igst.toLocaleString()}`;
+            document.querySelector('.gst-card:nth-child(4) .amount').textContent = `₹${gstData.total.toLocaleString()}`;
+        }
+        
+        function setupEventListeners() {
+            // GST Calculator
+            document.getElementById('calcAmount').addEventListener('input', function() {
+                if (this.value) {
+                    calculateGST();
+                }
+            });
+            
+            document.getElementById('calcGSTType').addEventListener('change', calculateGST);
+            document.getElementById('calcGSTRate').addEventListener('change', calculateGST);
+        }
+        
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
@@ -588,11 +628,15 @@
         }
         
         function openGSTSlabs() {
-            alert('Opening GST Slabs management...');
+            // Show GST slabs section
+            const slabsSection = document.querySelector('.gst-slabs');
+            if (slabsSection) {
+                slabsSection.scrollIntoView({ behavior: 'smooth' });
+            }
         }
         
         function openStateCodes() {
-            alert('Opening State Codes...');
+            showNotification('State Codes feature coming soon!', 'info');
         }
         
         function openCalculator() {
@@ -601,7 +645,7 @@
         }
         
         function openReturns() {
-            alert('Opening GST Returns...');
+            showNotification('GST Returns feature coming soon!', 'info');
         }
         
         function calculateGST() {
@@ -610,7 +654,6 @@
             const gstRate = parseFloat(document.getElementById('calcGSTRate').value) || 0;
             
             if (amount <= 0) {
-                alert('Please enter a valid amount');
                 return;
             }
             
@@ -639,7 +682,127 @@
             }
             
             document.getElementById('calculatorResult').style.display = 'block';
+            
+            // Add to calculation history
+            addToCalculationHistory(amount, gstRate, gstType, gstAmount, totalAmount);
         }
+        
+        function addToCalculationHistory(amount, rate, type, gstAmount, totalAmount) {
+            const historyList = document.getElementById('calculationHistory');
+            if (!historyList) return;
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `
+                <div class="history-header">
+                    <span class="history-amount">₹${amount.toFixed(2)} @ ${rate}%</span>
+                    <span class="history-type">${type === 'cgst_sgst' ? 'CGST/SGST' : 'IGST'}</span>
+                </div>
+                <div class="history-breakdown">
+                    <span>GST: ₹${gstAmount.toFixed(2)}</span>
+                    <span>Total: ₹${totalAmount.toFixed(2)}</span>
+                </div>
+                <div class="history-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            
+            // Add to top of history
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            // Keep only last 5 calculations
+            const items = historyList.querySelectorAll('.history-item');
+            if (items.length > 5) {
+                items[items.length - 1].remove();
+            }
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+                background: ${type === 'success' ? '#4caf50' : type === 'info' ? '#2196f3' : '#f44336'};
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Simulate real-time GST updates
+        setInterval(() => {
+            // Randomly update GST amounts
+            const change = (Math.random() - 0.5) * 100;
+            gstData.cgst = Math.max(0, gstData.cgst + change);
+            gstData.sgst = Math.max(0, gstData.sgst + change);
+            gstData.igst = Math.max(0, gstData.igst + change * 0.5);
+            gstData.total = gstData.cgst + gstData.sgst + gstData.igst;
+            
+            loadGSTData();
+        }, 30000); // Update every 30 seconds
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .history-item {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 12px;
+                margin-bottom: 8px;
+                animation: fadeIn 0.3s ease-out;
+            }
+            .history-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .history-amount {
+                font-weight: 600;
+                color: #2c3e50;
+            }
+            .history-type {
+                background: #e3f2fd;
+                color: #1976d2;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+            }
+            .history-breakdown {
+                display: flex;
+                gap: 16px;
+                font-size: 14px;
+                color: #666;
+            }
+            .history-time {
+                font-size: 12px;
+                color: #999;
+                margin-top: 4px;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
