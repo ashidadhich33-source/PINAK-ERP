@@ -29,9 +29,9 @@ from .api.endpoints import (
     # Advanced Accounting endpoints
     advanced_workflows, advanced_reporting, banking, analytic,
     # Sales endpoints
-    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization,
+    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features,
     # Purchase endpoints
-    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization,
+    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features,
     # Inventory endpoints
     items, enhanced_item_master, advanced_inventory,
     # Customer endpoints
@@ -422,12 +422,14 @@ api_routers = [
     (sale_returns.router, "/sale-returns", ["🔄 Sales Returns"]),
     (sales_accounting_integration.router, "/sales-accounting", ["📊 Sales Accounting Integration"]),
     (sales_indian_localization.router, "/sales-indian-localization", ["🇮🇳 Sales Indian Localization"]),
+    (sales_advanced_features.router, "/sales-advanced-features", ["🚀 Sales Advanced Features"]),
     
     # Purchase endpoints
     (enhanced_purchase.router, "/enhanced-purchase", ["🛒 Enhanced Purchase Management"]),
     (purchases.router, "/purchases", ["🛒 Purchase Management"]),
     (purchase_accounting_integration.router, "/purchase-accounting", ["📊 Purchase Accounting Integration"]),
     (purchase_indian_localization.router, "/purchase-indian-localization", ["🇮🇳 Purchase Indian Localization"]),
+    (purchase_advanced_features.router, "/purchase-advanced-features", ["🚀 Purchase Advanced Features"]),
     
     # Inventory endpoints
     (items.router, "/items", ["📦 Items & Inventory"]),

@@ -39,6 +39,18 @@ from .purchase_gst_integration import (
     PlaceOfSupplyType
 )
 
+from .purchase_advanced_features_integration import (
+    PurchaseAdvancedWorkflow,
+    PurchaseDocumentManagement,
+    PurchaseAdvancedReporting,
+    PurchaseAuditTrailAdvanced,
+    PurchaseNotification,
+    PurchaseDashboard,
+    WorkflowStatus,
+    DocumentType,
+    ReportType
+)
+
 __all__ = [
     # Enhanced Purchase
     "PurchaseOrder",
@@ -72,5 +84,14 @@ __all__ = [
     "PurchaseIndianBanking",
     "PurchaseIndianGeography",
     "GSTTaxType",
-    "PlaceOfSupplyType"
+    "PlaceOfSupplyType",
+    "PurchaseAdvancedWorkflow",
+    "PurchaseDocumentManagement",
+    "PurchaseAdvancedReporting",
+    "PurchaseAuditTrailAdvanced",
+    "PurchaseNotification",
+    "PurchaseDashboard",
+    "WorkflowStatus",
+    "DocumentType",
+    "ReportType"
 ]

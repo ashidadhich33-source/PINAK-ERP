@@ -38,6 +38,18 @@ from .sales_gst_integration import (
     PlaceOfSupplyType
 )
 
+from .sales_advanced_features_integration import (
+    SaleAdvancedWorkflow,
+    SaleDocumentManagement,
+    SaleAdvancedReporting,
+    SaleAuditTrailAdvanced,
+    SaleNotification,
+    SaleDashboard,
+    WorkflowStatus,
+    DocumentType,
+    ReportType
+)
+
 __all__ = [
     "SaleChallan",
     "SaleChallanItem",
@@ -68,5 +80,14 @@ __all__ = [
     "SaleIndianBanking",
     "SaleIndianGeography",
     "GSTTaxType",
-    "PlaceOfSupplyType"
+    "PlaceOfSupplyType",
+    "SaleAdvancedWorkflow",
+    "SaleDocumentManagement",
+    "SaleAdvancedReporting",
+    "SaleAuditTrailAdvanced",
+    "SaleNotification",
+    "SaleDashboard",
+    "WorkflowStatus",
+    "DocumentType",
+    "ReportType"
 ]

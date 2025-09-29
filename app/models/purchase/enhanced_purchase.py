@@ -334,6 +334,14 @@ class PurchaseInvoice(BaseModel):
     purchase_indian_banking = relationship("PurchaseIndianBanking", foreign_keys="PurchaseIndianBanking.purchase_invoice_id")
     purchase_indian_geography = relationship("PurchaseIndianGeography", foreign_keys="PurchaseIndianGeography.purchase_invoice_id")
     
+    # Advanced Features Integration Relationships
+    purchase_advanced_workflows = relationship("PurchaseAdvancedWorkflow", foreign_keys="PurchaseAdvancedWorkflow.purchase_invoice_id")
+    purchase_document_management = relationship("PurchaseDocumentManagement", foreign_keys="PurchaseDocumentManagement.purchase_invoice_id")
+    purchase_advanced_reporting = relationship("PurchaseAdvancedReporting", foreign_keys="PurchaseAdvancedReporting.purchase_invoice_id")
+    purchase_audit_trail_advanced = relationship("PurchaseAuditTrailAdvanced", foreign_keys="PurchaseAuditTrailAdvanced.purchase_invoice_id")
+    purchase_notifications = relationship("PurchaseNotification", foreign_keys="PurchaseNotification.purchase_invoice_id")
+    purchase_dashboards = relationship("PurchaseDashboard", foreign_keys="PurchaseDashboard.purchase_invoice_id")
+    
     def __repr__(self):
         return f"<PurchaseInvoice(number='{self.invoice_number}', supplier_id={self.supplier_id})>"
 

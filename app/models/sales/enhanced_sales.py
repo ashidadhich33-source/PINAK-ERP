@@ -378,6 +378,14 @@ class SaleInvoice(BaseModel):
     sale_indian_banking = relationship("SaleIndianBanking", foreign_keys="SaleIndianBanking.sale_invoice_id")
     sale_indian_geography = relationship("SaleIndianGeography", foreign_keys="SaleIndianGeography.sale_invoice_id")
     
+    # Advanced Features Integration Relationships
+    sale_advanced_workflows = relationship("SaleAdvancedWorkflow", foreign_keys="SaleAdvancedWorkflow.sale_invoice_id")
+    sale_document_management = relationship("SaleDocumentManagement", foreign_keys="SaleDocumentManagement.sale_invoice_id")
+    sale_advanced_reporting = relationship("SaleAdvancedReporting", foreign_keys="SaleAdvancedReporting.sale_invoice_id")
+    sale_audit_trail_advanced = relationship("SaleAuditTrailAdvanced", foreign_keys="SaleAuditTrailAdvanced.sale_invoice_id")
+    sale_notifications = relationship("SaleNotification", foreign_keys="SaleNotification.sale_invoice_id")
+    sale_dashboards = relationship("SaleDashboard", foreign_keys="SaleDashboard.sale_invoice_id")
+    
     def __repr__(self):
         return f"<SaleInvoice(number='{self.invoice_number}', customer_id={self.customer_id})>"
 
