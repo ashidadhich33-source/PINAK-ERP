@@ -16,6 +16,10 @@ from .expense import Expense, ExpenseCategory, ExpenseHead
 from .payment import Payment, PaymentMethod
 from .loyalty import LoyaltyGrade, LoyaltyTransaction, PointTransaction, Coupon, LoyaltyProgram, LoyaltyPoint
 from .company import Company, UserCompany, FinancialYear, GSTSlab, ChartOfAccount
+from .inventory_groups import (
+    InventoryGroup, InventoryAttribute, InventoryVariant, 
+    ItemVariantAttribute, SeasonalPlan, SeasonalItem
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -75,6 +79,12 @@ __all__ = [
     "FinancialYear",
     "GSTSlab",
     "ChartOfAccount",
+    "InventoryGroup",
+    "InventoryAttribute",
+    "InventoryVariant",
+    "ItemVariantAttribute",
+    "SeasonalPlan",
+    "SeasonalItem",
     "StockLocation",
     "StockItem",
     "StockMovement",
