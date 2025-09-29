@@ -67,6 +67,19 @@ Our ERP system has a comprehensive **4-Phase Purchase Workflow** that integrates
 └── ✅ Invoice Validation
 ```
 
+#### **2.3 Purchase Returns**
+```
+🔄 Purchase Return Process:
+├── 📋 Return Request Creation
+├── 🏪 Supplier Notification
+├── 📦 Goods Return Processing
+├── 📄 Return Documentation
+├── 💰 Credit Note Generation
+├── 🏛️ GST Reversal
+├── 📦 Inventory Adjustment
+└── ✅ Return Completion
+```
+
 ### **🔄 PHASE 3: ACCOUNTING INTEGRATION**
 
 #### **3.1 Journal Entry Auto-Creation**
@@ -254,10 +267,11 @@ Our ERP system has a comprehensive **4-Phase Purchase Workflow** that integrates
 
 ## 🏗️ **TECHNICAL ARCHITECTURE**
 
-### **📊 Database Models (72+ Models)**
+### **📊 Database Models (90+ Models)**
 ```
 🗄️ Database Architecture:
 ├── 📋 Core Purchase Models (12 models)
+├── 🔄 Purchase Return Models (18 models)
 ├── 📊 Accounting Integration (18 models)
 ├── 🇮🇳 Indian Localization (14 models)
 ├── 🚀 Advanced Features (12 models)
@@ -265,10 +279,11 @@ Our ERP system has a comprehensive **4-Phase Purchase Workflow** that integrates
 └── 🔗 Integration Models (4 models)
 ```
 
-### **🌐 API Endpoints (200+ Endpoints)**
+### **🌐 API Endpoints (250+ Endpoints)**
 ```
 🔌 API Architecture:
 ├── 📋 Purchase Management (25+ endpoints)
+├── 🔄 Purchase Returns (30+ endpoints)
 ├── 📊 Accounting Integration (30+ endpoints)
 ├── 🇮🇳 Indian Localization (40+ endpoints)
 ├── 🚀 Advanced Features (35+ endpoints)
@@ -342,12 +357,13 @@ Our ERP system has a comprehensive **4-Phase Purchase Workflow** that integrates
 ## 📊 **WORKFLOW STATISTICS**
 
 ### **✅ IMPLEMENTATION METRICS**
-- **Total Models**: 72+ models
-- **Total APIs**: 200+ endpoints
+- **Total Models**: 90+ models
+- **Total APIs**: 250+ endpoints
 - **Integration Points**: 15+ systems
-- **Workflow Steps**: 25+ steps
+- **Workflow Steps**: 30+ steps
 - **Approval Levels**: 5+ levels
 - **Compliance Features**: 10+ features
+- **Return Management**: Complete return lifecycle
 
 ### **✅ PERFORMANCE METRICS**
 - **Response Time**: < 200ms

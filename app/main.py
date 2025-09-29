@@ -31,7 +31,7 @@ from .api.endpoints import (
     # Sales endpoints
     enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features, sales_enhanced_integration,
     # Purchase endpoints
-    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features, purchase_enhanced_integration,
+    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features, purchase_enhanced_integration, purchase_return_comprehensive,
     # Inventory endpoints
     items, enhanced_item_master, advanced_inventory,
     # Customer endpoints
@@ -432,6 +432,7 @@ api_routers = [
     (purchase_indian_localization.router, "/purchase-indian-localization", ["🇮🇳 Purchase Indian Localization"]),
     (purchase_advanced_features.router, "/purchase-advanced-features", ["🚀 Purchase Advanced Features"]),
     (purchase_enhanced_integration.router, "/purchase-enhanced-integration", ["⚡ Purchase Enhanced Integration"]),
+    (purchase_return_comprehensive.router, "/purchase-returns", ["🔄 Purchase Returns Management"]),
     
     # Inventory endpoints
     (items.router, "/items", ["📦 Items & Inventory"]),
