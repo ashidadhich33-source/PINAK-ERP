@@ -9,13 +9,12 @@ from sqlalchemy.orm import Session
 from datetime import datetime, date
 from decimal import Decimal
 
-from ..models.user import User, Role, Permission
-from ..models.company import Company, SystemSettings, FinancialYear
+from ..models.core import User, Role, Permission, Company, SystemSettings, FinancialYear, PaymentMode, Staff
 from ..models.sales import BillSeries
-from ..models.supplier import PaymentMode, Staff
 from ..models.loyalty import LoyaltyGrade
-from ..models.stock import StockLocation
+from ..models.inventory import StockLocation
 from ..core.security import SecurityService
+from .init_indian_geography import init_indian_geography_data
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +41,9 @@ def init_default_data(db: Session):
 
         # Create default company
         create_default_company(db)
+
+        # Initialize Indian Geography Data
+        init_indian_geography_data(db)
 
         # Create system settings
         create_system_settings(db)

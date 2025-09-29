@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP System Setup Wizard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .setup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            margin: 20px;
+        }
+        
+        .setup-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .setup-header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .setup-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .database-type-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .database-type-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .database-type-card.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .database-type-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .database-type-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e1e5e9;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-header">
+            <h1>🚀 ERP System Setup</h1>
+            <p>Welcome! Let's get your ERP system up and running in just a few steps.</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        
+        <div id="statusMessage" class="hidden"></div>
+        
+        <!-- Step 1: Database Selection -->
+        <div class="step active" id="step1">
+            <h2 class="step-title">🗄️ Choose Your Database</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                Select the database type that best fits your needs
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="database-type-card" onclick="selectDatabase('sqlite')" data-type="sqlite">
+                    <h3>📁 SQLite</h3>
+                    <p>Perfect for development and small businesses. No server setup required.</p>
+                </div>
+                
+                <div class="database-type-card" onclick="selectDatabase('postgresql')" data-type="postgresql">
+                    <h3>🐘 PostgreSQL</h3>
+                    <p>Powerful and reliable. Recommended for production environments.</p>
+                </div>
+                
+                <div class="database-type-card" onclick="selectDatabase('mysql')" data-type="mysql">
+                    <h3>🐬 MySQL</h3>
+                    <p>Popular and widely supported. Good for web applications.</p>
+                </div>
+            </div>
+            
+            <div id="databaseConfig" class="hidden">
+                <div class="form-group">
+                    <label for="databaseName">Database Name</label>
+                    <input type="text" id="databaseName" placeholder="erp_system" value="erp_system">
+                </div>
+                
+                <div id="sqliteConfig" class="hidden">
+                    <p style="color: #666; text-align: center;">SQLite will create a local database file. No additional configuration needed.</p>
+                </div>
+                
+                <div id="serverConfig" class="hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dbHost">Host</label>
+                            <input type="text" id="dbHost" placeholder="localhost" value="localhost">
+                        </div>
+                        <div class="form-group">
+                            <label for="dbPort">Port</label>
+                            <input type="number" id="dbPort" placeholder="5432">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dbUsername">Username</label>
+                            <input type="text" id="dbUsername" placeholder="postgres">
+                        </div>
+                        <div class="form-group">
+                            <label for="dbPassword">Password</label>
+                            <input type="password" id="dbPassword" placeholder="Enter password">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="testDatabase()">
+                    <span id="testBtnText">Test Connection</span>
+                </button>
+            </div>
+            
+            <div class="step-navigation">
+                <button class="btn btn-secondary" onclick="nextStep()" id="nextBtn1" disabled>Next: Company Setup</button>
+            </div>
+        </div>
+        
+        <!-- Step 2: Company Setup -->
+        <div class="step" id="step2">
+            <h2 class="step-title">🏢 Company Information</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                Tell us about your company
+            </p>
+            
+            <div class="form-group">
+                <label for="companyName">Company Name *</label>
+                <input type="text" id="companyName" placeholder="Your Company Name" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyEmail">Email *</label>
+                    <input type="email" id="companyEmail" placeholder="company@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="companyPhone">Phone</label>
+                    <input type="tel" id="companyPhone" placeholder="+91 9876543210">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="companyAddress">Address</label>
+                <input type="text" id="companyAddress" placeholder="123 Business Street">
+            </div>
+            
+            <!-- Geographic Selection -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyCountry">Country *</label>
+                    <select id="companyCountry" required onchange="loadStates()">
+                        <option value="">Select Country</option>
+                        <option value="1" selected>India</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="companyState">State *</label>
+                    <select id="companyState" required onchange="loadCities()">
+                        <option value="">Select State</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyCity">City *</label>
+                    <select id="companyCity" required onchange="loadPincodes()">
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="companyPincode">Pincode *</label>
+                    <select id="companyPincode" required>
+                        <option value="">Select Pincode</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Manual Address Fields (as backup) -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyCityManual">City (Manual)</label>
+                    <input type="text" id="companyCityManual" placeholder="Mumbai">
+                </div>
+                <div class="form-group">
+                    <label for="companyStateManual">State (Manual)</label>
+                    <input type="text" id="companyStateManual" placeholder="Maharashtra">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyPincodeManual">Pincode (Manual)</label>
+                    <input type="text" id="companyPincodeManual" placeholder="400001">
+                </div>
+                <div class="form-group">
+                    <label for="companyDistrict">District</label>
+                    <input type="text" id="companyDistrict" placeholder="Mumbai">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyGSTIN">GSTIN</label>
+                    <input type="text" id="companyGSTIN" placeholder="22ABCDE1234F1Z5">
+                </div>
+                <div class="form-group">
+                    <label for="companyWebsite">Website</label>
+                    <input type="url" id="companyWebsite" placeholder="https://yourcompany.com">
+                </div>
+            </div>
+            
+            <div class="step-navigation">
+                <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
+                <button class="btn" onclick="nextStep()" id="nextBtn2">Next: Admin User</button>
+            </div>
+        </div>
+        
+        <!-- Step 3: Admin User -->
+        <div class="step" id="step3">
+            <h2 class="step-title">👤 Create Admin User</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                Create your administrator account
+            </p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="adminFirstName">First Name *</label>
+                    <input type="text" id="adminFirstName" placeholder="John" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminLastName">Last Name *</label>
+                    <input type="text" id="adminLastName" placeholder="Doe" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="adminUsername">Username *</label>
+                <input type="text" id="adminUsername" placeholder="admin" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="adminEmail">Email *</label>
+                <input type="email" id="adminEmail" placeholder="admin@yourcompany.com" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="adminPassword">Password *</label>
+                    <input type="password" id="adminPassword" placeholder="Enter strong password" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPhone">Phone</label>
+                    <input type="tel" id="adminPhone" placeholder="+91 9876543210">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="createSampleData" checked> 
+                    Create sample data (recommended for first-time setup)
+                </label>
+            </div>
+            
+            <div class="step-navigation">
+                <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
+                <button class="btn" onclick="completeSetup()" id="completeBtn">
+                    <span id="completeBtnText">Complete Setup</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Step 4: Success -->
+        <div class="step" id="step4">
+            <h2 class="step-title">🎉 Setup Complete!</h2>
+            <div style="text-align: center;">
+                <div style="font-size: 4em; margin-bottom: 20px;">✅</div>
+                <p style="color: #666; margin-bottom: 30px; font-size: 1.1em;">
+                    Your ERP system is ready to use! You can now login with your admin credentials.
+                </p>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px;">Next Steps:</h3>
+                    <ul style="text-align: left; color: #666;">
+                        <li>Login to your admin panel</li>
+                        <li>Configure your business settings</li>
+                        <li>Add your first customers and suppliers</li>
+                        <li>Set up your inventory items</li>
+                        <li>Create your first sales and purchase transactions</li>
+                    </ul>
+                </div>
+                
+                <button class="btn" onclick="window.location.href='/admin'">
+                    Go to Admin Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedDatabase = null;
+        let setupData = {};
+        
+        function updateProgress() {
+            const progress = (currentStep / 4) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            updateProgress();
+        }
+        
+        function nextStep() {
+            if (currentStep < 4) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+        
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+        
+        function selectDatabase(type) {
+            selectedDatabase = type;
+            
+            // Update UI
+            document.querySelectorAll('.database-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+            
+            // Show configuration
+            document.getElementById('databaseConfig').classList.remove('hidden');
+            
+            // Show appropriate config
+            document.getElementById('sqliteConfig').classList.add('hidden');
+            document.getElementById('serverConfig').classList.add('hidden');
+            
+            if (type === 'sqlite') {
+                document.getElementById('sqliteConfig').classList.remove('hidden');
+            } else {
+                document.getElementById('serverConfig').classList.remove('hidden');
+                // Set default ports
+                if (type === 'postgresql') {
+                    document.getElementById('dbPort').value = '5432';
+                } else if (type === 'mysql') {
+                    document.getElementById('dbPort').value = '3306';
+                }
+            }
+            
+            document.getElementById('nextBtn1').disabled = false;
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.classList.remove('hidden');
+        }
+        
+        function hideStatus() {
+            document.getElementById('statusMessage').classList.add('hidden');
+        }
+        
+        async function testDatabase() {
+            const btn = document.getElementById('testBtnText');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="loading"></span>Testing...';
+            
+            try {
+                const config = {
+                    database_type: selectedDatabase,
+                    database_name: document.getElementById('databaseName').value,
+                    host: document.getElementById('dbHost')?.value || 'localhost',
+                    port: parseInt(document.getElementById('dbPort')?.value) || null,
+                    username: document.getElementById('dbUsername')?.value || null,
+                    password: document.getElementById('dbPassword')?.value || null
+                };
+                
+                const response = await fetch('/api/v1/database-setup/test-database', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(config)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('✅ Database connection successful!', 'success');
+                    setupData.database_config = config;
+                } else {
+                    showStatus(`❌ Database connection failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Error testing database: ${error.message}`, 'error');
+            } finally {
+                btn.textContent = originalText;
+            }
+        }
+        
+        async function completeSetup() {
+            const btn = document.getElementById('completeBtn');
+            const btnText = document.getElementById('completeBtnText');
+            const originalText = btnText.textContent;
+            btnText.innerHTML = '<span class="loading"></span>Setting up...';
+            btn.disabled = true;
+            
+            try {
+                // Collect all form data
+                const setupRequest = {
+                    database_config: setupData.database_config,
+                    company_setup: {
+                        company_name: document.getElementById('companyName').value,
+                        company_email: document.getElementById('companyEmail').value,
+                        company_phone: document.getElementById('companyPhone').value,
+                        company_address: document.getElementById('companyAddress').value,
+                        company_city: document.getElementById('companyCityManual').value || document.getElementById('companyCity').options[document.getElementById('companyCity').selectedIndex]?.text,
+                        company_state: document.getElementById('companyStateManual').value || document.getElementById('companyState').options[document.getElementById('companyState').selectedIndex]?.text,
+                        company_country: document.getElementById('companyCountry').options[document.getElementById('companyCountry').selectedIndex]?.text,
+                        company_pincode: document.getElementById('companyPincodeManual').value || document.getElementById('companyPincode').options[document.getElementById('companyPincode').selectedIndex]?.text,
+                        company_gstin: document.getElementById('companyGSTIN').value,
+                        company_website: document.getElementById('companyWebsite').value,
+                        // Geographic References
+                        country_id: document.getElementById('companyCountry').value,
+                        state_id: document.getElementById('companyState').value,
+                        city_id: document.getElementById('companyCity').value,
+                        pincode_id: document.getElementById('companyPincode').value,
+                        currency: 'INR',
+                        timezone: 'Asia/Kolkata'
+                    },
+                    admin_user: {
+                        username: document.getElementById('adminUsername').value,
+                        email: document.getElementById('adminEmail').value,
+                        password: document.getElementById('adminPassword').value,
+                        first_name: document.getElementById('adminFirstName').value,
+                        last_name: document.getElementById('adminLastName').value,
+                        phone: document.getElementById('adminPhone').value
+                    },
+                    create_sample_data: document.getElementById('createSampleData').checked
+                };
+                
+                const response = await fetch('/api/v1/database-setup/complete-setup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(setupRequest)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('🎉 Setup completed successfully!', 'success');
+                    setTimeout(() => {
+                        nextStep(); // Go to success step
+                    }, 2000);
+                } else {
+                    showStatus(`❌ Setup failed: ${result.detail || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Setup failed: ${error.message}`, 'error');
+            } finally {
+                btnText.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+        
+        // Geography Loading Functions
+        async function loadStates() {
+            const countrySelect = document.getElementById('companyCountry');
+            const stateSelect = document.getElementById('companyState');
+            const citySelect = document.getElementById('companyCity');
+            const pincodeSelect = document.getElementById('companyPincode');
+            
+            // Clear dependent dropdowns
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+            
+            if (!countrySelect.value) return;
+            
+            try {
+                const response = await fetch(`/api/v1/indian-geography/states`);
+                const states = await response.json();
+                
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.textContent = `${state.state_name} (${state.state_code})`;
+                    stateSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading states:', error);
+                showStatus('Error loading states. Please try again.', 'error');
+            }
+        }
+        
+        async function loadCities() {
+            const stateSelect = document.getElementById('companyState');
+            const citySelect = document.getElementById('companyCity');
+            const pincodeSelect = document.getElementById('companyPincode');
+            
+            // Clear dependent dropdowns
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+            
+            if (!stateSelect.value) return;
+            
+            try {
+                const response = await fetch(`/api/v1/indian-geography/cities?state_id=${stateSelect.value}`);
+                const cities = await response.json();
+                
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.city_name;
+                    citySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading cities:', error);
+                showStatus('Error loading cities. Please try again.', 'error');
+            }
+        }
+        
+        async function loadPincodes() {
+            const citySelect = document.getElementById('companyCity');
+            const pincodeSelect = document.getElementById('companyPincode');
+            
+            // Clear dependent dropdowns
+            pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+            
+            if (!citySelect.value) return;
+            
+            try {
+                // Get city name from selected option
+                const cityName = citySelect.options[citySelect.selectedIndex].text;
+                
+                // Use pincode lookup API
+                const response = await fetch(`/api/v1/pincode-lookup/pincodes/city/${encodeURIComponent(cityName)}`);
+                const cityData = await response.json();
+                
+                if (cityData.pincodes && cityData.pincodes.length > 0) {
+                    cityData.pincodes.forEach(pincode => {
+                        const option = document.createElement('option');
+                        option.value = pincode;
+                        option.textContent = pincode;
+                        pincodeSelect.appendChild(option);
+                    });
+                } else {
+                    // Fallback to manual entry
+                    pincodeSelect.innerHTML = '<option value="">No pincodes found - use manual entry</option>';
+                }
+            } catch (error) {
+                console.error('Error loading pincodes:', error);
+                showStatus('Error loading pincodes. Please use manual entry.', 'error');
+                // Fallback to manual entry
+                pincodeSelect.innerHTML = '<option value="">Use manual entry below</option>';
+            }
+        }
+        
+        // Enhanced pincode search function
+        async function searchPincodes(query) {
+            if (!query || query.length < 3) return [];
+            
+            try {
+                const response = await fetch(`/api/v1/pincode-lookup/pincodes/search?q=${encodeURIComponent(query)}&limit=10`);
+                const searchResults = await response.json();
+                return searchResults.results || [];
+            } catch (error) {
+                console.error('Error searching pincodes:', error);
+                return [];
+            }
+        }
+        
+        // Auto-complete for pincode search
+        function setupPincodeAutocomplete() {
+            const pincodeInput = document.getElementById('companyPincodeManual');
+            if (!pincodeInput) return;
+            
+            let searchTimeout;
+            pincodeInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value;
+                
+                if (query.length >= 3) {
+                    searchTimeout = setTimeout(async () => {
+                        const results = await searchPincodes(query);
+                        // You can implement dropdown suggestions here
+                        console.log('Pincode search results:', results);
+                    }, 300);
+                }
+            });
+        }
+        
+        // Initialize
+        updateProgress();
+        loadStates(); // Load states on page load
+    </script>
+</body>
+</html>

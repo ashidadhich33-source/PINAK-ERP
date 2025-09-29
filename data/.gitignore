@@ -1,0 +1,11 @@
+# Data files that should not be committed
+*.xlsx
+*.xls
+*.csv
+*.json
+
+# But keep the template and processing scripts
+!geography_template.xlsx
+!process_geography_data.py
+!import_to_database.py
+!README.md

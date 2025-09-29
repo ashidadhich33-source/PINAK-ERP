@@ -22,12 +22,29 @@ sys.path.append(str(Path(__file__).parent))
 from .config import settings
 from .database import create_tables, get_db, engine, Base, check_database_connection
 from .api.endpoints import (
-    auth, setup, items, sales, purchases, reports,
-    customers, suppliers, backup, expenses, staff,
-    settings as settings_api, payments, companies, gst, financial_year, chart_of_accounts, advanced_inventory, enhanced_item_master, enhanced_purchase, enhanced_sales, double_entry_accounting, discount_management, report_studio, financial_year_management, loyalty_program, system_integration
+    # Core endpoints
+    auth, setup, companies, settings as settings_api, payments, expenses, reports, backup, gst, discount_management, report_studio, system_integration, whatsapp, database_setup,
+    # Accounting endpoints  
+    double_entry_accounting, chart_of_accounts, financial_year, financial_year_management,
+    # Advanced Accounting endpoints
+    advanced_workflows, advanced_reporting, banking, analytic,
+    # Sales endpoints
+    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features, sales_enhanced_integration, sales_return_comprehensive, sales_exchange_comprehensive,
+    # POS endpoints
+    pos_comprehensive,
+    # Purchase endpoints
+    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features, purchase_enhanced_integration, purchase_return_comprehensive,
+    # Inventory endpoints
+    items, enhanced_item_master, advanced_inventory,
+    # Customer endpoints
+    customers, suppliers,
+    # Loyalty endpoints
+    loyalty_program,
+    # Indian Localization endpoints
+    indian_gst, indian_geography, pincode_lookup
 )
 from .core.security import get_current_user
-from .services.backup_service import backup_service
+from .services.core.backup_service import backup_service
 from .core.init_data import initialize_default_data
 from .core.exceptions import setup_exception_handlers
 from .core.middleware import setup_middlewares
@@ -286,15 +303,40 @@ async def log_requests(request: Request, call_next):
 # Root endpoints
 @app.get("/")
 async def root():
-    """Root endpoint with system information"""
-    return {
-        "message": f"Welcome to {settings.app_name}",
-        "version": settings.app_version,
-        "status": "running",
-        "timestamp": datetime.now().isoformat(),
-        "docs": "/docs",
-        "admin": "/admin"
-    }
+    """Root endpoint with system information and setup check"""
+    try:
+        # Check if system is set up
+        from .api.endpoints.core.database_setup import get_setup_status
+        setup_status = await get_setup_status()
+        
+        if not setup_status.is_setup_complete:
+            return {
+                "message": f"{settings.app_name} - Setup Required",
+                "version": settings.app_version,
+                "setup_url": "/setup",
+                "status": "setup_required",
+                "setup_stage": setup_status.setup_stage,
+                "docs": "/docs"
+            }
+        else:
+            return {
+                "message": f"Welcome to {settings.app_name}",
+                "version": settings.app_version,
+                "status": "running",
+                "timestamp": datetime.now().isoformat(),
+                "docs": "/docs",
+                "admin": "/admin"
+            }
+    except Exception as e:
+        # If setup check fails, assume setup is needed
+        return {
+            "message": f"{settings.app_name} - Setup Required",
+            "version": settings.app_version,
+            "setup_url": "/setup",
+            "status": "setup_required",
+            "error": str(e),
+            "docs": "/docs"
+        }
 
 @app.get("/health")
 async def health_check():
@@ -349,37 +391,83 @@ async def version_info():
 
 # Include API routers with proper prefixes and tags
 api_routers = [
+    # Core endpoints
     (auth.router, "/auth", ["🔐 Authentication"]),
-    (companies.router, "/companies", ["🏢 Company Management"]),
-    (gst.router, "/gst", ["🏛️ GST Management"]),
-    (financial_year.router, "/financial-years", ["📅 Financial Year Management"]),
-    (chart_of_accounts.router, "/chart-of-accounts", ["📊 Chart of Accounts"]),
-    (advanced_inventory.router, "/advanced-inventory", ["📦 Advanced Inventory Management"]),
-    (enhanced_item_master.router, "/enhanced-item-master", ["📦 Enhanced Item Master"]),
-    (enhanced_purchase.router, "/enhanced-purchase", ["🛒 Enhanced Purchase Management"]),
-    (enhanced_sales.router, "/enhanced-sales", ["💰 Enhanced Sales Management"]),
-    (double_entry_accounting.router, "/double-entry-accounting", ["📊 Double Entry Accounting"]),
-    (discount_management.router, "/discount-management", ["💰 Discount Management"]),
-    (report_studio.router, "/report-studio", ["📊 Report Studio"]),
-    (financial_year_management.router, "/financial-year-management", ["📅 Financial Year Management"]),
-    (loyalty_program.router, "/loyalty-program", ["🎁 Loyalty Program"]),
-    (system_integration.router, "/system-integration", ["🔧 System Integration"]),
     (setup.router, "/setup", ["⚙️ Setup"]),
-    (items.router, "/items", ["📦 Items & Inventory"]),
-    (customers.router, "/customers", ["👥 Customer Management"]),
-    (suppliers.router, "/suppliers", ["🏪 Supplier Management"]),
-    (staff.router, "/staff", ["👤 Staff Management"]),
-    (sales.router, "/sales", ["💰 Sales & POS"]),
-    (purchases.router, "/purchases", ["🛒 Purchase Management"]),
+    (companies.router, "/companies", ["🏢 Company Management"]),
+    (settings_api.router, "/settings", ["🔧 System Settings"]),
     (payments.router, "/payments", ["💳 Payment Processing"]),
     (expenses.router, "/expenses", ["💸 Expense Management"]),
     (reports.router, "/reports", ["📊 Reports & Analytics"]),
     (backup.router, "/backup", ["💾 Backup & Restore"]),
-    (settings_api.router, "/settings", ["🔧 System Settings"])
+    (gst.router, "/gst", ["🏛️ GST Management"]),
+    (discount_management.router, "/discount-management", ["💰 Discount Management"]),
+    (report_studio.router, "/report-studio", ["📊 Report Studio"]),
+    (system_integration.router, "/system-integration", ["🔧 System Integration"]),
+    (whatsapp.router, "/whatsapp", ["📱 WhatsApp Integration"]),
+    (database_setup.router, "/database-setup", ["🗄️ Database Setup Wizard"]),
+    
+    # Accounting endpoints
+    (double_entry_accounting.router, "/double-entry-accounting", ["📊 Double Entry Accounting"]),
+    (chart_of_accounts.router, "/chart-of-accounts", ["📊 Chart of Accounts"]),
+    (financial_year.router, "/financial-years", ["📅 Financial Year Management"]),
+    (financial_year_management.router, "/financial-year-management", ["📅 Financial Year Management"]),
+    
+    # Advanced Accounting endpoints
+    (advanced_workflows.router, "/advanced-workflows", ["🔄 Advanced Workflows"]),
+    (advanced_reporting.router, "/advanced-reporting", ["📊 Advanced Reporting"]),
+    (banking.router, "/banking", ["🏦 Banking & Reconciliation"]),
+    (analytic.router, "/analytic", ["📈 Analytic Accounting"]),
+    
+    # Sales endpoints
+    (enhanced_sales.router, "/enhanced-sales", ["💰 Enhanced Sales Management"]),
+    (sale_returns.router, "/sale-returns", ["🔄 Sales Returns"]),
+    (sales_accounting_integration.router, "/sales-accounting", ["📊 Sales Accounting Integration"]),
+    (sales_indian_localization.router, "/sales-indian-localization", ["🇮🇳 Sales Indian Localization"]),
+    (sales_advanced_features.router, "/sales-advanced-features", ["🚀 Sales Advanced Features"]),
+    (sales_enhanced_integration.router, "/sales-enhanced-integration", ["⚡ Sales Enhanced Integration"]),
+    (sales_return_comprehensive.router, "/sales-returns", ["🔄 Sales Returns Management"]),
+    (sales_exchange_comprehensive.router, "/sales-exchanges", ["🔄 B2C Sales Exchanges"]),
+    
+    # POS endpoints
+    (pos_comprehensive.router, "/pos", ["🖥️ Point of Sale (POS)"]),
+    
+    # Purchase endpoints
+    (enhanced_purchase.router, "/enhanced-purchase", ["🛒 Enhanced Purchase Management"]),
+    (purchases.router, "/purchases", ["🛒 Purchase Management"]),
+    (purchase_accounting_integration.router, "/purchase-accounting", ["📊 Purchase Accounting Integration"]),
+    (purchase_indian_localization.router, "/purchase-indian-localization", ["🇮🇳 Purchase Indian Localization"]),
+    (purchase_advanced_features.router, "/purchase-advanced-features", ["🚀 Purchase Advanced Features"]),
+    (purchase_enhanced_integration.router, "/purchase-enhanced-integration", ["⚡ Purchase Enhanced Integration"]),
+    (purchase_return_comprehensive.router, "/purchase-returns", ["🔄 Purchase Returns Management"]),
+    
+    # Inventory endpoints
+    (items.router, "/items", ["📦 Items & Inventory"]),
+    (enhanced_item_master.router, "/enhanced-item-master", ["📦 Enhanced Item Master"]),
+    (advanced_inventory.router, "/advanced-inventory", ["📦 Advanced Inventory Management"]),
+    
+    # Customer endpoints
+    (customers.router, "/customers", ["👥 Customer Management"]),
+    (suppliers.router, "/suppliers", ["🏪 Supplier Management"]),
+    
+    # Loyalty endpoints
+    (loyalty_program.router, "/loyalty-program", ["🎁 Loyalty Program"]),
+    
+            # Indian Localization endpoints
+            (indian_gst.router, "/indian-gst", ["🏛️ Indian GST Compliance"]),
+            (indian_geography.router, "/indian-geography", ["🌍 Indian Geography"]),
+            (pincode_lookup.router, "/pincode-lookup", ["📍 Pincode Lookup"])
 ]
 
 for router, prefix, tags in api_routers:
     app.include_router(router, prefix=f"{settings.api_prefix}{prefix}", tags=tags)
+
+# Setup wizard redirect
+@app.get("/setup")
+async def setup_wizard():
+    """Serve the setup wizard"""
+    from fastapi.responses import FileResponse
+    return FileResponse("setup_wizard.html")
 
 # Admin panel redirect
 @app.get("/admin")
@@ -417,8 +505,8 @@ async def get_user_profile(current_user=Depends(get_current_user)):
 async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_db)):
     """Get dashboard summary data"""
     from .models.sales import SalesInvoice
-    from .models.customer import Customer
-    from .models.item import Item
+    from .models.customers import Customer
+    from .models.inventory import Item
     from sqlalchemy import func
     from datetime import date
     
