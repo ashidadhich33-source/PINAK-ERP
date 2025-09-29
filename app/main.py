@@ -29,7 +29,7 @@ from .api.endpoints import (
     # Advanced Accounting endpoints
     advanced_workflows, advanced_reporting, banking, analytic,
     # Sales endpoints
-    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features, sales_enhanced_integration,
+    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features, sales_enhanced_integration, sales_return_comprehensive,
     # Purchase endpoints
     enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features, purchase_enhanced_integration, purchase_return_comprehensive,
     # Inventory endpoints
@@ -424,6 +424,7 @@ api_routers = [
     (sales_indian_localization.router, "/sales-indian-localization", ["🇮🇳 Sales Indian Localization"]),
     (sales_advanced_features.router, "/sales-advanced-features", ["🚀 Sales Advanced Features"]),
     (sales_enhanced_integration.router, "/sales-enhanced-integration", ["⚡ Sales Enhanced Integration"]),
+    (sales_return_comprehensive.router, "/sales-returns", ["🔄 Sales Returns Management"]),
     
     # Purchase endpoints
     (enhanced_purchase.router, "/enhanced-purchase", ["🛒 Enhanced Purchase Management"]),
