@@ -110,6 +110,14 @@ class POSTransaction(BaseModel):
     items = relationship("POSTransactionItem", back_populates="transaction")
     payments = relationship("POSPayment", back_populates="transaction")
     
+    # Discount and CRM relationships
+    discounts = relationship("POSTransactionDiscount", back_populates="transaction")
+    customer_discounts = relationship("POSCustomerDiscount", back_populates="transaction")
+    loyalty_transactions = relationship("POSLoyaltyTransaction", back_populates="transaction")
+    discount_calculations = relationship("POSDiscountCalculation", back_populates="transaction")
+    promotion_usage = relationship("POSPromotionUsage")
+    discount_audit = relationship("POSDiscountAudit", back_populates="transaction")
+    
     def __repr__(self):
         return f"<POSTransaction(number='{self.transaction_number}', amount={self.total_amount})>"
 
