@@ -20,6 +20,11 @@ from .inventory_groups import (
     InventoryGroup, InventoryAttribute, InventoryVariant, 
     ItemVariantAttribute, SeasonalPlan, SeasonalItem
 )
+from .enhanced_item_master import (
+    HSNCode, Barcode, ItemSpecification, ItemImage, ItemPricing,
+    ItemSupplier, ItemCategory, ItemBrand, ItemTag, ItemTagMapping,
+    ItemReview, ItemWishlist
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -85,6 +90,18 @@ __all__ = [
     "ItemVariantAttribute",
     "SeasonalPlan",
     "SeasonalItem",
+    "HSNCode",
+    "Barcode",
+    "ItemSpecification",
+    "ItemImage",
+    "ItemPricing",
+    "ItemSupplier",
+    "ItemCategory",
+    "ItemBrand",
+    "ItemTag",
+    "ItemTagMapping",
+    "ItemReview",
+    "ItemWishlist",
     "StockLocation",
     "StockItem",
     "StockMovement",
