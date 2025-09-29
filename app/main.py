@@ -48,6 +48,11 @@ from .services.core.backup_service import backup_service
 from .init_data import initialize_default_data
 from .core.exceptions import setup_exception_handlers
 from .core.middleware import setup_middlewares
+from .core.enhanced_error_handling import (
+    validation_exception_handler,
+    http_exception_handler,
+    generic_exception_handler
+)
 
 # Configure logging
 def setup_logging():
@@ -246,6 +251,11 @@ setup_middlewares(app)
 
 # Setup exception handlers
 setup_exception_handlers(app)
+
+# Add enhanced error handlers
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 # Add CORS middleware
 app.add_middleware(
