@@ -51,6 +51,11 @@ from .report_studio import (
     ReportScheduleLog, ReportBuilder, ReportDashboard, ReportWidget, ReportExport,
     ReportAnalytics, ReportPermission, ReportCache
 )
+from .financial_year_management import (
+    FinancialYear, OpeningBalance, YearClosing, YearClosingItem, DataCarryForward,
+    YearAnalytics, YearComparison, YearBackup, YearRestore, YearAudit, YearReport,
+    YearConfiguration, YearPermission
+)
 from .stock import (
     StockLocation, StockItem, StockMovement, StockAdjustment,
     StockAdjustmentItem, StockTransfer, StockTransferItem
@@ -195,6 +200,19 @@ __all__ = [
     "ReportAnalytics",
     "ReportPermission",
     "ReportCache",
+    "FinancialYear",
+    "OpeningBalance",
+    "YearClosing",
+    "YearClosingItem",
+    "DataCarryForward",
+    "YearAnalytics",
+    "YearComparison",
+    "YearBackup",
+    "YearRestore",
+    "YearAudit",
+    "YearReport",
+    "YearConfiguration",
+    "YearPermission",
     "StockLocation",
     "StockItem",
     "StockMovement",
