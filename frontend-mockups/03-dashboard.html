@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise ERP - Dashboard</title>
+    <title>ERP Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,7 +14,7 @@
         }
         
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
             color: #333;
         }
@@ -20,36 +22,44 @@
         .header {
             background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 0 20px;
+            padding: 15px 30px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            height: 60px;
-            position: fixed;
+            align-items: center;
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
             z-index: 1000;
         }
         
         .header-left {
             display: flex;
             align-items: center;
-        }
-        
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            margin-right: 20px;
-            color: #666;
+            gap: 20px;
         }
         
         .logo {
-            font-size: 20px;
-            font-weight: 500;
+            font-size: 24px;
+            font-weight: 600;
             color: #1976d2;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-item {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #1976d2;
+            color: white;
         }
         
         .header-right {
@@ -58,126 +68,61 @@
             gap: 20px;
         }
         
-        .notification-icon, .user-menu {
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .notification-icon {
-            background: #f0f0f0;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #f44336;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
         .user-info {
             display: flex;
             align-items: center;
             gap: 10px;
-            cursor: pointer;
         }
         
         .user-avatar {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: #1976d2;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 500;
+            font-weight: 600;
         }
         
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 60px;
-            width: 250px;
-            height: calc(100vh - 60px);
-            background: white;
-            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-            transform: translateX(-100%);
-            transition: transform 0.3s;
-            z-index: 999;
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
         }
         
-        .sidebar.open {
-            transform: translateX(0);
+        .logout-btn:hover {
+            background: #d32f2f;
         }
         
-        .sidebar-menu {
-            list-style: none;
-            padding: 20px 0;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
         }
         
-        .sidebar-menu li {
-            margin-bottom: 5px;
-        }
-        
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #666;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-        
-        .sidebar-menu i {
-            margin-right: 12px;
-            width: 20px;
-        }
-        
-        .main-content {
-            margin-left: 0;
-            margin-top: 60px;
-            padding: 20px;
-            transition: margin-left 0.3s;
-        }
-        
-        .main-content.sidebar-open {
-            margin-left: 250px;
-        }
-        
-        .dashboard-header {
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
             margin-bottom: 30px;
         }
         
-        .dashboard-header h1 {
-            font-size: 28px;
+        .welcome-title {
+            font-size: 32px;
             font-weight: 300;
-            color: #333;
             margin-bottom: 10px;
         }
         
-        .dashboard-header p {
-            color: #666;
+        .welcome-subtitle {
             font-size: 16px;
+            opacity: 0.9;
         }
         
         .stats-grid {
@@ -189,9 +134,9 @@
         
         .stat-card {
             background: white;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.3s;
         }
         
@@ -201,9 +146,9 @@
         
         .stat-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            align-items: center;
+            margin-bottom: 15px;
         }
         
         .stat-title {
@@ -219,26 +164,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             color: white;
         }
         
-        .stat-icon.sales { background: #4caf50; }
-        .stat-icon.purchase { background: #ff9800; }
-        .stat-icon.inventory { background: #2196f3; }
-        .stat-icon.revenue { background: #9c27b0; }
-        
         .stat-value {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         
         .stat-change {
             font-size: 12px;
             display: flex;
             align-items: center;
+            gap: 5px;
         }
         
         .stat-change.positive {
@@ -249,53 +190,99 @@
             color: #f44336;
         }
         
-        .content-grid {
+        .charts-section {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 20px;
+            gap: 30px;
             margin-bottom: 30px;
         }
         
-        .chart-card, .activity-card {
+        .chart-card {
             background: white;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        
-        .card-title {
+        .chart-title {
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 20px;
             color: #333;
         }
         
-        .chart-placeholder {
+        .chart-container {
+            position: relative;
             height: 300px;
-            background: #f8f9fa;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            font-size: 16px;
         }
         
-        .activity-list {
-            list-style: none;
+        .quick-actions {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .quick-actions-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .action-btn {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .action-btn:hover {
+            background: #1976d2;
+            color: white;
+            border-color: #1976d2;
+        }
+        
+        .action-icon {
+            font-size: 24px;
+        }
+        
+        .action-text {
+            font-weight: 500;
+        }
+        
+        .recent-activities {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .activities-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
         }
         
         .activity-item {
             display: flex;
             align-items: center;
-            padding: 12px 0;
+            gap: 15px;
+            padding: 15px 0;
             border-bottom: 1px solid #f0f0f0;
         }
         
@@ -304,26 +291,23 @@
         }
         
         .activity-icon {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: #e3f2fd;
-            color: #1976d2;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
-            font-size: 14px;
+            font-size: 16px;
+            color: white;
         }
         
         .activity-content {
             flex: 1;
         }
         
-        .activity-text {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 4px;
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 5px;
         }
         
         .activity-time {
@@ -331,377 +315,414 @@
             color: #666;
         }
         
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+        .activity-amount {
+            font-weight: 600;
+            color: #4caf50;
         }
         
-        .action-card {
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
             background: white;
-            border-radius: 8px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s;
+            z-index: 1001;
             padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
         }
         
-        .action-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        .sidebar.open {
+            left: 0;
         }
         
-        .action-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #1976d2;
-            color: white;
+        .sidebar-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px;
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-title {
             font-size: 20px;
-        }
-        
-        .action-title {
-            font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             color: #333;
-            margin-bottom: 8px;
         }
         
-        .action-desc {
-            font-size: 14px;
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
             color: #666;
         }
         
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background: #f0f0f0;
+            color: #1976d2;
+        }
+        
+        .sidebar-menu a.active {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
-            .content-grid {
+            .charts-section {
                 grid-template-columns: 1fr;
             }
             
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .nav-menu {
+                display: none;
             }
             
-            .main-content.sidebar-open {
-                margin-left: 0;
+            .container {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-left">
-            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <div class="logo">Enterprise ERP</div>
-        </div>
-        <div class="header-right">
-            <div class="notification-icon">
-                🔔
-                <span class="notification-badge">3</span>
-            </div>
-            <div class="user-info">
-                <div class="user-avatar">JD</div>
-                <div>
-                    <div style="font-weight: 500;">John Doe</div>
-                    <div style="font-size: 12px; color: #666;">ABC Corporation</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="overlay" id="overlay"></div>
     
     <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">ERP Menu</div>
+            <button class="close-sidebar" onclick="toggleSidebar()">&times;</button>
+        </div>
         <ul class="sidebar-menu">
-            <li><a href="03-dashboard.html" class="active"><i>🏠</i> Dashboard</a></li>
-            <li><a href="04-companies.html"><i>🏢</i> Companies</a></li>
-            <li><a href="05-gst-management.html"><i>🏛️</i> GST Management</a></li>
-            <li><a href="06-inventory.html"><i>📦</i> Inventory</a></li>
-            <li><a href="07-purchase.html"><i>🛒</i> Purchase</a></li>
-            <li><a href="08-sales.html"><i>💰</i> Sales</a></li>
-            <li><a href="09-accounting.html"><i>📊</i> Accounting</a></li>
-            <li><a href="10-reports.html"><i>📈</i> Reports</a></li>
-            <li><a href="11-loyalty.html"><i>🎁</i> Loyalty</a></li>
-            <li><a href="12-system.html"><i>🔧</i> System</a></li>
+            <li><a href="03-dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="04-companies.html"><i class="fas fa-building"></i> Companies</a></li>
+            <li><a href="05-gst-management.html"><i class="fas fa-receipt"></i> GST Management</a></li>
+            <li><a href="06-inventory.html"><i class="fas fa-boxes"></i> Inventory</a></li>
+            <li><a href="07-purchase.html"><i class="fas fa-shopping-cart"></i> Purchase</a></li>
+            <li><a href="08-sales.html"><i class="fas fa-cash-register"></i> Sales</a></li>
+            <li><a href="09-accounting.html"><i class="fas fa-calculator"></i> Accounting</a></li>
+            <li><a href="10-reports.html"><i class="fas fa-chart-line"></i> Reports</a></li>
+            <li><a href="11-loyalty.html"><i class="fas fa-gift"></i> Loyalty</a></li>
+            <li><a href="12-system.html"><i class="fas fa-cog"></i> System</a></li>
         </ul>
     </div>
     
-    <div class="main-content" id="mainContent">
-        <div class="dashboard-header">
-            <h1>Dashboard</h1>
-            <p>Welcome back! Here's what's happening with your business today.</p>
+    <div class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">ERP System</div>
+            <nav class="nav-menu">
+                <a href="03-dashboard.html" class="nav-item active">Dashboard</a>
+                <a href="04-companies.html" class="nav-item">Companies</a>
+                <a href="05-gst-management.html" class="nav-item">GST</a>
+                <a href="06-inventory.html" class="nav-item">Inventory</a>
+                <a href="07-purchase.html" class="nav-item">Purchase</a>
+                <a href="08-sales.html" class="nav-item">Sales</a>
+                <a href="09-accounting.html" class="nav-item">Accounting</a>
+                <a href="10-reports.html" class="nav-item">Reports</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div>
+                    <div style="font-weight: 500;">Admin User</div>
+                    <div style="font-size: 12px; color: #666;">Demo Company</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="welcome-section">
+            <div class="welcome-title">Welcome back, Admin!</div>
+            <div class="welcome-subtitle">Here's what's happening with your business today.</div>
         </div>
         
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-header">
-                    <div class="stat-title">Sales</div>
-                    <div class="stat-icon sales">💰</div>
+                    <div class="stat-title">Total Sales</div>
+                    <div class="stat-icon" style="background: #4caf50;">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
                 </div>
-                <div class="stat-value">₹50,000</div>
-                <div class="stat-change positive">↗ +12% from last month</div>
+                <div class="stat-value">₹1,25,450</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> +12.5% from last month
+                </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-header">
-                    <div class="stat-title">Purchase</div>
-                    <div class="stat-icon purchase">🛒</div>
+                    <div class="stat-title">Total Orders</div>
+                    <div class="stat-icon" style="background: #2196f3;">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
                 </div>
-                <div class="stat-value">₹30,000</div>
-                <div class="stat-change negative">↘ -5% from last month</div>
+                <div class="stat-value">1,234</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> +8.2% from last month
+                </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-header">
-                    <div class="stat-title">Inventory</div>
-                    <div class="stat-icon inventory">📦</div>
+                    <div class="stat-title">Active Customers</div>
+                    <div class="stat-icon" style="background: #ff9800;">
+                        <i class="fas fa-users"></i>
+                    </div>
                 </div>
-                <div class="stat-value">1,250</div>
-                <div class="stat-change positive">↗ +8% items</div>
+                <div class="stat-value">2,456</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> +15.3% from last month
+                </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-header">
-                    <div class="stat-title">Revenue</div>
-                    <div class="stat-icon revenue">📈</div>
+                    <div class="stat-title">Inventory Items</div>
+                    <div class="stat-icon" style="background: #9c27b0;">
+                        <i class="fas fa-boxes"></i>
+                    </div>
                 </div>
-                <div class="stat-value">₹45,000</div>
-                <div class="stat-change positive">↗ +15% from last month</div>
+                <div class="stat-value">5,678</div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i> -2.1% from last month
+                </div>
             </div>
         </div>
         
-        <div class="content-grid">
+        <div class="charts-section">
             <div class="chart-card">
-                <div class="card-header">
-                    <div class="card-title">Sales Chart (Last 30 Days)</div>
-                </div>
-                <div class="chart-placeholder">
-                    📊 Interactive Chart - Sales Trend
+                <div class="chart-title">Sales Overview</div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
                 </div>
             </div>
             
-            <div class="activity-card">
-                <div class="card-header">
-                    <div class="card-title">Recent Activities</div>
+            <div class="chart-card">
+                <div class="chart-title">Top Products</div>
+                <div class="chart-container">
+                    <canvas id="productsChart"></canvas>
                 </div>
-                <ul class="activity-list">
-                    <li class="activity-item">
-                        <div class="activity-icon">💰</div>
-                        <div class="activity-content">
-                            <div class="activity-text">New sale invoice #INV-001 created</div>
-                            <div class="activity-time">2 hours ago</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">🛒</div>
-                        <div class="activity-content">
-                            <div class="activity-text">Purchase order #PO-002 received</div>
-                            <div class="activity-time">4 hours ago</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">⚠️</div>
-                        <div class="activity-content">
-                            <div class="activity-text">Stock alert: Low inventory for Product A</div>
-                            <div class="activity-time">6 hours ago</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">✅</div>
-                        <div class="activity-content">
-                            <div class="activity-text">Payment received for invoice #INV-003</div>
-                            <div class="activity-time">1 day ago</div>
-                        </div>
-                    </li>
-                </ul>
             </div>
         </div>
         
         <div class="quick-actions">
-            <div class="action-card" onclick="location.href='08-sales.html'">
-                <div class="action-icon">💰</div>
-                <div class="action-title">New Sale</div>
-                <div class="action-desc">Create a new sales invoice</div>
+            <div class="quick-actions-title">Quick Actions</div>
+            <div class="actions-grid">
+                <a href="08-sales.html" class="action-btn">
+                    <div class="action-icon"><i class="fas fa-cash-register"></i></div>
+                    <div class="action-text">New Sale</div>
+                </a>
+                <a href="07-purchase.html" class="action-btn">
+                    <div class="action-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="action-text">New Purchase</div>
+                </a>
+                <a href="06-inventory.html" class="action-btn">
+                    <div class="action-icon"><i class="fas fa-boxes"></i></div>
+                    <div class="action-text">Add Inventory</div>
+                </a>
+                <a href="04-companies.html" class="action-btn">
+                    <div class="action-icon"><i class="fas fa-building"></i></div>
+                    <div class="action-text">Add Company</div>
+                </a>
+                <a href="09-accounting.html" class="action-btn">
+                    <div class="action-icon"><i class="fas fa-calculator"></i></div>
+                    <div class="action-text">Journal Entry</div>
+                </a>
+                <a href="10-reports.html" class="action-btn">
+                    <div class="action-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="action-text">Generate Report</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="recent-activities">
+            <div class="activities-title">Recent Activities</div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #4caf50;">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">New Sale Invoice #INV-001</div>
+                    <div class="activity-time">2 minutes ago</div>
+                </div>
+                <div class="activity-amount">₹2,500</div>
             </div>
             
-            <div class="action-card" onclick="location.href='07-purchase.html'">
-                <div class="action-icon">🛒</div>
-                <div class="action-title">Purchase Order</div>
-                <div class="action-desc">Create a new purchase order</div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #2196f3;">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Stock Updated - Product ABC</div>
+                    <div class="activity-time">15 minutes ago</div>
+                </div>
+                <div class="activity-amount">+50 units</div>
             </div>
             
-            <div class="action-card" onclick="location.href='06-inventory.html'">
-                <div class="action-icon">📦</div>
-                <div class="action-title">Stock Check</div>
-                <div class="action-desc">Check inventory levels</div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #ff9800;">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">New Customer Added</div>
+                    <div class="activity-time">1 hour ago</div>
+                </div>
+                <div class="activity-amount">John Doe</div>
             </div>
             
-            <div class="action-card" onclick="location.href='10-reports.html'">
-                <div class="action-icon">📊</div>
-                <div class="action-title">Reports</div>
-                <div class="action-desc">Generate business reports</div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #9c27b0;">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Purchase Order #PO-001</div>
+                    <div class="activity-time">2 hours ago</div>
+                </div>
+                <div class="activity-amount">₹5,000</div>
             </div>
         </div>
     </div>
-
+    
     <script>
-        // Check if user is logged in
-        document.addEventListener('DOMContentLoaded', function() {
-            const user = sessionStorage.getItem('user');
-            if (!user) {
-                window.location.href = '01-login.html';
-                return;
-            }
-            
-            const userData = JSON.parse(user);
-            updateUserInfo(userData);
-            loadDashboardData();
-            startRealTimeUpdates();
-        });
-        
-        function updateUserInfo(userData) {
-            const userAvatar = document.querySelector('.user-avatar');
-            const userName = document.querySelector('.user-info div:first-child');
-            const companyName = document.querySelector('.user-info div:last-child');
-            
-            if (userAvatar) userAvatar.textContent = userData.name.split(' ').map(n => n[0]).join('');
-            if (userName) userName.textContent = userData.name;
-            if (companyName) companyName.textContent = userData.company;
+        // Check authentication
+        if (localStorage.getItem('erp_logged_in') !== 'true') {
+            window.location.href = '01-login.html';
         }
         
-        function loadDashboardData() {
-            // Simulate loading dashboard data
-            const stats = [
-                { id: 'sales', value: 50000, change: 12, trend: 'up' },
-                { id: 'purchase', value: 30000, change: -5, trend: 'down' },
-                { id: 'inventory', value: 1250, change: 8, trend: 'up' },
-                { id: 'revenue', value: 45000, change: 15, trend: 'up' }
-            ];
-            
-            stats.forEach(stat => {
-                const valueElement = document.querySelector(`[data-stat="${stat.id}"] .stat-value`);
-                const changeElement = document.querySelector(`[data-stat="${stat.id}"] .stat-change`);
-                
-                if (valueElement) {
-                    valueElement.textContent = stat.id === 'inventory' ? stat.value.toLocaleString() : `₹${stat.value.toLocaleString()}`;
-                }
-                
-                if (changeElement) {
-                    const trend = stat.trend === 'up' ? '↗' : '↘';
-                    const color = stat.trend === 'up' ? 'positive' : 'negative';
-                    changeElement.innerHTML = `${trend} ${stat.change}% from last month`;
-                    changeElement.className = `stat-change ${color}`;
-                }
-            });
-        }
-        
-        function startRealTimeUpdates() {
-            // Simulate real-time updates every 30 seconds
-            setInterval(() => {
-                updateNotifications();
-                updateRecentActivities();
-            }, 30000);
-        }
-        
-        function updateNotifications() {
-            const notificationBadge = document.querySelector('.notification-badge');
-            if (notificationBadge) {
-                const currentCount = parseInt(notificationBadge.textContent) || 0;
-                const newCount = Math.max(0, currentCount + Math.floor(Math.random() * 3) - 1);
-                notificationBadge.textContent = newCount;
-                notificationBadge.style.display = newCount > 0 ? 'flex' : 'none';
-            }
-        }
-        
-        function updateRecentActivities() {
-            const activities = [
-                'New sale invoice #INV-001 created',
-                'Purchase order #PO-002 received',
-                'Stock alert: Low inventory for Product A',
-                'Payment received for invoice #INV-003',
-                'Customer John Doe registered',
-                'Inventory updated for Electronics category',
-                'GST return generated for current month',
-                'Loyalty points awarded to customer'
-            ];
-            
-            const activityList = document.querySelector('.activity-list');
-            if (activityList) {
-                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
-                const newActivity = document.createElement('li');
-                newActivity.className = 'activity-item';
-                newActivity.innerHTML = `
-                    <div class="activity-icon">💰</div>
-                    <div class="activity-content">
-                        <div class="activity-text">${randomActivity}</div>
-                        <div class="activity-time">Just now</div>
-                    </div>
-                `;
-                
-                // Remove oldest activity if more than 4
-                const existingActivities = activityList.querySelectorAll('.activity-item');
-                if (existingActivities.length >= 4) {
-                    existingActivities[existingActivities.length - 1].remove();
-                }
-                
-                activityList.insertBefore(newActivity, activityList.firstChild);
-            }
-        }
-        
+        // Sidebar functionality
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('overlay');
             
             sidebar.classList.toggle('open');
-            mainContent.classList.toggle('sidebar-open');
+            overlay.classList.toggle('show');
         }
         
-        // Close sidebar when clicking outside
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.querySelector('.menu-toggle');
-            
-            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
-                sidebar.classList.remove('open');
-                document.getElementById('mainContent').classList.remove('sidebar-open');
-            }
-        });
+        // Close sidebar when clicking overlay
+        document.getElementById('overlay').addEventListener('click', toggleSidebar);
         
-        // Add click handlers for quick actions
-        document.querySelectorAll('.action-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const title = this.querySelector('.action-title').textContent;
-                switch(title) {
-                    case 'New Sale':
-                        window.location.href = '08-sales.html';
-                        break;
-                    case 'Purchase Order':
-                        window.location.href = '07-purchase.html';
-                        break;
-                    case 'Stock Check':
-                        window.location.href = '06-inventory.html';
-                        break;
-                    case 'Reports':
-                        window.location.href = '10-reports.html';
-                        break;
+        // Logout function
+        function logout() {
+            localStorage.removeItem('erp_logged_in');
+            localStorage.removeItem('erp_username');
+            localStorage.removeItem('erp_password');
+            localStorage.removeItem('erp_company');
+            window.location.href = '01-login.html';
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        borderColor: '#1976d2',
+                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
             });
-        });
+            
+            // Products Chart
+            const productsCtx = document.getElementById('productsChart').getContext('2d');
+            new Chart(productsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Electronics', 'Clothing', 'Books', 'Home', 'Sports'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: [
+                            '#1976d2',
+                            '#4caf50',
+                            '#ff9800',
+                            '#f44336',
+                            '#9c27b0'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
         
-        // Add logout functionality
-        document.querySelector('.user-info').addEventListener('click', function() {
-            if (confirm('Are you sure you want to logout?')) {
-                sessionStorage.removeItem('user');
-                window.location.href = '01-login.html';
-            }
-        });
-        
-        // Add notification click handler
-        document.querySelector('.notification-icon').addEventListener('click', function() {
-            alert('You have 3 new notifications:\n• New sale invoice created\n• Low stock alert\n• Payment received');
-        });
+        // Initialize charts when page loads
+        document.addEventListener('DOMContentLoaded', initCharts);
     </script>
 </body>
 </html>

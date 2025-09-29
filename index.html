@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise ERP System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+        
+        .header p {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .quick-access {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .quick-access h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .quick-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .quick-btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .quick-btn:hover {
+            background: #1565c0;
+            transform: translateY(-2px);
+        }
+        
+        .quick-btn i {
+            font-size: 18px;
+        }
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .module-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .module-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .module-description {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .module-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .module-features li {
+            padding: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .module-features li:before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .module-link {
+            display: block;
+            background: #1976d2;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .module-link:hover {
+            background: #1565c0;
+        }
+        
+        .status-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .status-value {
+            color: #4caf50;
+            font-weight: 500;
+        }
+        
+        .status-value.warning {
+            color: #ff9800;
+        }
+        
+        .status-value.error {
+            color: #f44336;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-building"></i> Enterprise ERP System</h1>
+            <p>Complete Business Management Solution</p>
+        </div>
+        
+        <div class="quick-access">
+            <h2><i class="fas fa-bolt"></i> Quick Access</h2>
+            <div class="quick-buttons">
+                <a href="frontend-mockups/03-dashboard.html" class="quick-btn">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="frontend-mockups/08-sales.html" class="quick-btn">
+                    <i class="fas fa-cash-register"></i> POS
+                </a>
+                <a href="frontend-mockups/06-inventory.html" class="quick-btn">
+                    <i class="fas fa-boxes"></i> Inventory
+                </a>
+                <a href="frontend-mockups/07-purchase.html" class="quick-btn">
+                    <i class="fas fa-shopping-cart"></i> Purchase
+                </a>
+                <a href="frontend-mockups/09-accounting.html" class="quick-btn">
+                    <i class="fas fa-calculator"></i> Accounting
+                </a>
+                <a href="frontend-mockups/10-reports.html" class="quick-btn">
+                    <i class="fas fa-chart-line"></i> Reports
+                </a>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <h3><i class="fas fa-info-circle"></i> System Status</h3>
+            <div class="status-item">
+                <span class="status-label">Backend API</span>
+                <span class="status-value" id="api-status">Checking...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Database</span>
+                <span class="status-value" id="db-status">Checking...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Authentication</span>
+                <span class="status-value" id="auth-status">Ready</span>
+            </div>
+        </div>
+        
+        <div class="modules-grid">
+            <div class="module-card" onclick="location.href='frontend-mockups/01-login.html'">
+                <div class="module-icon">🔐</div>
+                <div class="module-title">Authentication</div>
+                <div class="module-description">
+                    Secure login, registration, and user management with role-based access control.
+                </div>
+                <ul class="module-features">
+                    <li>JWT Authentication</li>
+                    <li>Role-based Access</li>
+                    <li>Multi-company Support</li>
+                    <li>Password Security</li>
+                </ul>
+                <a href="frontend-mockups/01-login.html" class="module-link">Access Authentication</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/03-dashboard.html'">
+                <div class="module-icon">🏠</div>
+                <div class="module-title">Dashboard</div>
+                <div class="module-description">
+                    Real-time business overview with key metrics, charts, and quick actions.
+                </div>
+                <ul class="module-features">
+                    <li>Real-time Metrics</li>
+                    <li>Interactive Charts</li>
+                    <li>Quick Actions</li>
+                    <li>Recent Activities</li>
+                </ul>
+                <a href="frontend-mockups/03-dashboard.html" class="module-link">View Dashboard</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/04-companies.html'">
+                <div class="module-icon">🏢</div>
+                <div class="module-title">Company Management</div>
+                <div class="module-description">
+                    Multi-company support with company creation, editing, and management.
+                </div>
+                <ul class="module-features">
+                    <li>Multi-company Support</li>
+                    <li>Company Profiles</li>
+                    <li>Branch Management</li>
+                    <li>Settings Configuration</li>
+                </ul>
+                <a href="frontend-mockups/04-companies.html" class="module-link">Manage Companies</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/05-gst-management.html'">
+                <div class="module-icon">🏛️</div>
+                <div class="module-title">GST Management</div>
+                <div class="module-description">
+                    Complete GST compliance with tax calculations, returns, and state management.
+                </div>
+                <ul class="module-features">
+                    <li>GST Calculations</li>
+                    <li>Tax Returns</li>
+                    <li>State Code Management</li>
+                    <li>Compliance Reports</li>
+                </ul>
+                <a href="frontend-mockups/05-gst-management.html" class="module-link">GST Management</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/06-inventory.html'">
+                <div class="module-icon">📦</div>
+                <div class="module-title">Inventory Management</div>
+                <div class="module-description">
+                    Complete inventory control with items, groups, stock levels, and movements.
+                </div>
+                <ul class="module-features">
+                    <li>Item Management</li>
+                    <li>Stock Tracking</li>
+                    <li>Barcode Support</li>
+                    <li>Low Stock Alerts</li>
+                </ul>
+                <a href="frontend-mockups/06-inventory.html" class="module-link">Manage Inventory</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/07-purchase.html'">
+                <div class="module-icon">🛒</div>
+                <div class="module-title">Purchase Management</div>
+                <div class="module-description">
+                    Purchase orders, invoices, supplier management, and purchase tracking.
+                </div>
+                <ul class="module-features">
+                    <li>Purchase Orders</li>
+                    <li>Supplier Management</li>
+                    <li>Purchase Invoices</li>
+                    <li>Purchase Returns</li>
+                </ul>
+                <a href="frontend-mockups/07-purchase.html" class="module-link">Manage Purchases</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/08-sales.html'">
+                <div class="module-icon">💰</div>
+                <div class="module-title">Sales Management</div>
+                <div class="module-description">
+                    Point of Sale (POS), sales invoices, customer management, and sales tracking.
+                </div>
+                <ul class="module-features">
+                    <li>Point of Sale (POS)</li>
+                    <li>Sales Invoices</li>
+                    <li>Customer Management</li>
+                    <li>Sales Returns</li>
+                </ul>
+                <a href="frontend-mockups/08-sales.html" class="module-link">Manage Sales</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/09-accounting.html'">
+                <div class="module-icon">📊</div>
+                <div class="module-title">Accounting</div>
+                <div class="module-description">
+                    Chart of accounts, journal entries, trial balance, and financial statements.
+                </div>
+                <ul class="module-features">
+                    <li>Chart of Accounts</li>
+                    <li>Journal Entries</li>
+                    <li>Trial Balance</li>
+                    <li>Financial Statements</li>
+                </ul>
+                <a href="frontend-mockups/09-accounting.html" class="module-link">Manage Accounting</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/10-reports.html'">
+                <div class="module-icon">📈</div>
+                <div class="module-title">Reports & Analytics</div>
+                <div class="module-description">
+                    Comprehensive reporting system with custom reports and analytics.
+                </div>
+                <ul class="module-features">
+                    <li>Custom Reports</li>
+                    <li>Analytics Dashboard</li>
+                    <li>Export Options</li>
+                    <li>Scheduled Reports</li>
+                </ul>
+                <a href="frontend-mockups/10-reports.html" class="module-link">View Reports</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/11-loyalty.html'">
+                <div class="module-icon">🎁</div>
+                <div class="module-title">Loyalty Program</div>
+                <div class="module-description">
+                    Customer loyalty management with points, tiers, rewards, and campaigns.
+                </div>
+                <ul class="module-features">
+                    <li>Points System</li>
+                    <li>Customer Tiers</li>
+                    <li>Rewards Management</li>
+                    <li>Campaign Tracking</li>
+                </ul>
+                <a href="frontend-mockups/11-loyalty.html" class="module-link">Manage Loyalty</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/12-system.html'">
+                <div class="module-icon">🔧</div>
+                <div class="module-title">System Administration</div>
+                <div class="module-description">
+                    System health monitoring, user management, and administrative controls.
+                </div>
+                <ul class="module-features">
+                    <li>System Health</li>
+                    <li>User Management</li>
+                    <li>Backup & Restore</li>
+                    <li>System Settings</li>
+                </ul>
+                <a href="frontend-mockups/12-system.html" class="module-link">System Admin</a>
+            </div>
+            
+            <div class="module-card" onclick="location.href='frontend-mockups/13-mobile-dashboard.html'">
+                <div class="module-icon">📱</div>
+                <div class="module-title">Mobile Dashboard</div>
+                <div class="module-description">
+                    Mobile-responsive dashboard optimized for smartphones and tablets.
+                </div>
+                <ul class="module-features">
+                    <li>Mobile Responsive</li>
+                    <li>Touch Optimized</li>
+                    <li>Offline Support</li>
+                    <li>Push Notifications</li>
+                </ul>
+                <a href="frontend-mockups/13-mobile-dashboard.html" class="module-link">Mobile View</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check system status
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/health');
+                if (response.ok) {
+                    document.getElementById('api-status').textContent = 'Online';
+                    document.getElementById('api-status').className = 'status-value';
+                    document.getElementById('db-status').textContent = 'Connected';
+                    document.getElementById('db-status').className = 'status-value';
+                } else {
+                    throw new Error('API not responding');
+                }
+            } catch (error) {
+                document.getElementById('api-status').textContent = 'Offline';
+                document.getElementById('api-status').className = 'status-value error';
+                document.getElementById('db-status').textContent = 'Disconnected';
+                document.getElementById('db-status').className = 'status-value error';
+            }
+        }
+        
+        // Check status on page load
+        checkSystemStatus();
+        
+        // Auto-login functionality
+        function autoLogin() {
+            // Set default credentials in localStorage
+            localStorage.setItem('erp_username', 'admin');
+            localStorage.setItem('erp_password', 'admin123');
+            localStorage.setItem('erp_company', 'Demo Company');
+            localStorage.setItem('erp_logged_in', 'true');
+        }
+        
+        // Initialize auto-login
+        autoLogin();
+    </script>
+</body>
+</html>
