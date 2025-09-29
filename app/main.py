@@ -23,7 +23,7 @@ from .config import settings
 from .database import create_tables, get_db, engine, Base, check_database_connection
 from .api.endpoints import (
     # Core endpoints
-    auth, setup, companies, settings as settings_api, payments, expenses, reports, backup, gst, discount_management, report_studio, system_integration, whatsapp,
+    auth, setup, companies, settings as settings_api, payments, expenses, reports, backup, gst, discount_management, report_studio, system_integration, whatsapp, database_setup,
     # Accounting endpoints  
     double_entry_accounting, chart_of_accounts, financial_year, financial_year_management,
     # Sales endpoints
@@ -297,15 +297,40 @@ async def log_requests(request: Request, call_next):
 # Root endpoints
 @app.get("/")
 async def root():
-    """Root endpoint with system information"""
-    return {
-        "message": f"Welcome to {settings.app_name}",
-        "version": settings.app_version,
-        "status": "running",
-        "timestamp": datetime.now().isoformat(),
-        "docs": "/docs",
-        "admin": "/admin"
-    }
+    """Root endpoint with system information and setup check"""
+    try:
+        # Check if system is set up
+        from .api.endpoints.core.database_setup import get_setup_status
+        setup_status = await get_setup_status()
+        
+        if not setup_status.is_setup_complete:
+            return {
+                "message": f"{settings.app_name} - Setup Required",
+                "version": settings.app_version,
+                "setup_url": "/setup",
+                "status": "setup_required",
+                "setup_stage": setup_status.setup_stage,
+                "docs": "/docs"
+            }
+        else:
+            return {
+                "message": f"Welcome to {settings.app_name}",
+                "version": settings.app_version,
+                "status": "running",
+                "timestamp": datetime.now().isoformat(),
+                "docs": "/docs",
+                "admin": "/admin"
+            }
+    except Exception as e:
+        # If setup check fails, assume setup is needed
+        return {
+            "message": f"{settings.app_name} - Setup Required",
+            "version": settings.app_version,
+            "setup_url": "/setup",
+            "status": "setup_required",
+            "error": str(e),
+            "docs": "/docs"
+        }
 
 @app.get("/health")
 async def health_check():
@@ -374,6 +399,7 @@ api_routers = [
     (report_studio.router, "/report-studio", ["📊 Report Studio"]),
     (system_integration.router, "/system-integration", ["🔧 System Integration"]),
     (whatsapp.router, "/whatsapp", ["📱 WhatsApp Integration"]),
+    (database_setup.router, "/database-setup", ["🗄️ Database Setup Wizard"]),
     
     # Accounting endpoints
     (double_entry_accounting.router, "/double-entry-accounting", ["📊 Double Entry Accounting"]),
@@ -404,6 +430,13 @@ api_routers = [
 
 for router, prefix, tags in api_routers:
     app.include_router(router, prefix=f"{settings.api_prefix}{prefix}", tags=tags)
+
+# Setup wizard redirect
+@app.get("/setup")
+async def setup_wizard():
+    """Serve the setup wizard"""
+    from fastapi.responses import FileResponse
+    return FileResponse("setup_wizard.html")
 
 # Admin panel redirect
 @app.get("/admin")
