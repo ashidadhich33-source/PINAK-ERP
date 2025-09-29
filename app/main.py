@@ -24,7 +24,7 @@ from .database import create_tables, get_db, engine, Base, check_database_connec
 from .api.endpoints import (
     auth, setup, items, sales, purchases, reports,
     customers, suppliers, backup, expenses, staff,
-    settings as settings_api, payments, companies
+    settings as settings_api, payments, companies, gst
 )
 from .core.security import get_current_user
 from .services.backup_service import backup_service
@@ -351,6 +351,7 @@ async def version_info():
 api_routers = [
     (auth.router, "/auth", ["🔐 Authentication"]),
     (companies.router, "/companies", ["🏢 Company Management"]),
+    (gst.router, "/gst", ["🏛️ GST Management"]),
     (setup.router, "/setup", ["⚙️ Setup"]),
     (items.router, "/items", ["📦 Items & Inventory"]),
     (customers.router, "/customers", ["👥 Customer Management"]),
