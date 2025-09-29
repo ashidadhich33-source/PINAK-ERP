@@ -13,7 +13,7 @@ from ..models.financial_year_management import (
     YearAnalytics, YearComparison, YearBackup, YearRestore, YearAudit, YearReport,
     YearConfiguration, YearPermission
 )
-from ..models.chart_of_accounts import ChartOfAccount
+from ..models.company import ChartOfAccount
 
 logger = logging.getLogger(__name__)
 

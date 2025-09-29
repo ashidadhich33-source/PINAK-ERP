@@ -10,6 +10,7 @@ import logging
 from ..models.company import Company, ChartOfAccount
 from ..models.sales import SalesInvoice, SalesInvoiceItem
 from ..models.purchase import PurchaseBill, PurchaseBillItem
+from ..models.double_entry_accounting import JournalEntry, JournalEntryItem, AccountBalance
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +39,41 @@ class AccountBalanceService:
         if not account:
             raise ValueError("Account not found")
         
-        # This would require implementing journal entries
-        # For now, return basic structure with mock data
+        # Build query for journal entry items
+        query = db.query(JournalEntryItem).join(JournalEntry).filter(
+            JournalEntryItem.account_id == account_id,
+            JournalEntry.company_id == company_id,
+            JournalEntry.status == 'posted'  # Only posted entries
+        )
+        
+        # Apply date filters if provided
+        if from_date:
+            query = query.filter(JournalEntry.entry_date >= from_date)
+        if to_date:
+            query = query.filter(JournalEntry.entry_date <= to_date)
+        
+        # Get all journal entry items for this account
+        journal_items = query.all()
+        
+        # Calculate totals
+        debit_total = Decimal('0')
+        credit_total = Decimal('0')
+        transaction_count = len(journal_items)
+        
+        for item in journal_items:
+            debit_total += item.debit_amount
+            credit_total += item.credit_amount
+        
+        # Calculate closing balance
+        if account.account_type in ["Asset", "Expense"]:
+            # Assets and Expenses: Debit increases, Credit decreases
+            closing_balance = debit_total - credit_total
+            balance_type = "debit"
+        else:
+            # Liabilities, Equity, Income: Credit increases, Debit decreases
+            closing_balance = credit_total - debit_total
+            balance_type = "credit"
+        
         return {
             "account": {
                 "id": account.id,
@@ -51,12 +85,12 @@ class AccountBalanceService:
                 "from_date": from_date,
                 "to_date": to_date
             },
-            "opening_balance": Decimal('0'),
-            "debit_total": Decimal('0'),
-            "credit_total": Decimal('0'),
-            "closing_balance": Decimal('0'),
-            "balance_type": "debit" if account.account_type in ["Asset", "Expense"] else "credit",
-            "transaction_count": 0
+            "opening_balance": Decimal('0'),  # Would need to calculate from previous period
+            "debit_total": debit_total,
+            "credit_total": credit_total,
+            "closing_balance": closing_balance,
+            "balance_type": balance_type,
+            "transaction_count": transaction_count
         }
     
     def get_account_balances_bulk(
@@ -120,15 +154,26 @@ class AccountBalanceService:
             
             summary["accounts_by_type"][account_type]["count"] += 1
             
-            # This would require actual balance calculation
-            # For now, use mock data
-            mock_balance = Decimal('0')
-            if account.account_type in ["Asset", "Expense"]:
-                summary["accounts_by_type"][account_type]["total_debit"] += mock_balance
-                summary["total_debit"] += mock_balance
-            else:
-                summary["accounts_by_type"][account_type]["total_credit"] += mock_balance
-                summary["total_credit"] += mock_balance
+            # Calculate real balance for this account
+            try:
+                balance = self.calculate_account_balance(
+                    db=db,
+                    company_id=company_id,
+                    account_id=account.id,
+                    from_date=from_date,
+                    to_date=to_date
+                )
+                
+                if account.account_type in ["Asset", "Expense"]:
+                    summary["accounts_by_type"][account_type]["total_debit"] += balance["closing_balance"]
+                    summary["total_debit"] += balance["closing_balance"]
+                else:
+                    summary["accounts_by_type"][account_type]["total_credit"] += balance["closing_balance"]
+                    summary["total_credit"] += balance["closing_balance"]
+                    
+            except ValueError:
+                # Skip accounts with errors
+                continue
         
         summary["balanced"] = summary["total_debit"] == summary["total_credit"]
         

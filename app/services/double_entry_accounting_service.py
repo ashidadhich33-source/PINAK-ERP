@@ -14,7 +14,7 @@ from ..models.double_entry_accounting import (
     CashFlowStatement, CashFlowItem, AccountReconciliation, ReconciliationItem,
     AccountingPeriod, JournalEntryTemplate, AccountGroup
 )
-from ..models.chart_of_accounts import ChartOfAccount
+from ..models.company import ChartOfAccount
 from ..models.financial_year import FinancialYear
 
 logger = logging.getLogger(__name__)
