@@ -26,6 +26,8 @@ from .api.endpoints import (
     auth, setup, companies, settings as settings_api, payments, expenses, reports, backup, gst, discount_management, report_studio, system_integration, whatsapp, database_setup,
     # Accounting endpoints  
     double_entry_accounting, chart_of_accounts, financial_year, financial_year_management,
+    # Advanced Accounting endpoints
+    advanced_workflows, advanced_reporting, banking, analytic,
     # Sales endpoints
     enhanced_sales, sale_returns,
     # Purchase endpoints
@@ -36,8 +38,8 @@ from .api.endpoints import (
     customers, suppliers,
     # Loyalty endpoints
     loyalty_program,
-            # Indian Localization endpoints
-            indian_gst, indian_geography, pincode_lookup
+    # Indian Localization endpoints
+    indian_gst, indian_geography, pincode_lookup
 )
 from .core.security import get_current_user
 from .services.core.backup_service import backup_service
@@ -408,6 +410,12 @@ api_routers = [
     (chart_of_accounts.router, "/chart-of-accounts", ["📊 Chart of Accounts"]),
     (financial_year.router, "/financial-years", ["📅 Financial Year Management"]),
     (financial_year_management.router, "/financial-year-management", ["📅 Financial Year Management"]),
+    
+    # Advanced Accounting endpoints
+    (advanced_workflows.router, "/advanced-workflows", ["🔄 Advanced Workflows"]),
+    (advanced_reporting.router, "/advanced-reporting", ["📊 Advanced Reporting"]),
+    (banking.router, "/banking", ["🏦 Banking & Reconciliation"]),
+    (analytic.router, "/analytic", ["📈 Analytic Accounting"]),
     
     # Sales endpoints
     (enhanced_sales.router, "/enhanced-sales", ["💰 Enhanced Sales Management"]),
