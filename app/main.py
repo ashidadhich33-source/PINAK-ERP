@@ -36,8 +36,8 @@ from .api.endpoints import (
     customers, suppliers,
     # Loyalty endpoints
     loyalty_program,
-    # Indian Localization endpoints
-    indian_gst
+            # Indian Localization endpoints
+            indian_gst, indian_geography
 )
 from .core.security import get_current_user
 from .services.core.backup_service import backup_service
@@ -429,8 +429,9 @@ api_routers = [
     # Loyalty endpoints
     (loyalty_program.router, "/loyalty-program", ["🎁 Loyalty Program"]),
     
-    # Indian Localization endpoints
-    (indian_gst.router, "/indian-gst", ["🏛️ Indian GST Compliance"])
+            # Indian Localization endpoints
+            (indian_gst.router, "/indian-gst", ["🏛️ Indian GST Compliance"]),
+            (indian_geography.router, "/indian-geography", ["🌍 Indian Geography"])
 ]
 
 for router, prefix, tags in api_routers:

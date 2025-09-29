@@ -14,6 +14,7 @@ from ..models.sales import BillSeries
 from ..models.loyalty import LoyaltyGrade
 from ..models.inventory import StockLocation
 from ..core.security import SecurityService
+from .init_indian_geography import init_indian_geography_data
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,9 @@ def init_default_data(db: Session):
 
         # Create default company
         create_default_company(db)
+
+        # Initialize Indian Geography Data
+        init_indian_geography_data(db)
 
         # Create system settings
         create_system_settings(db)

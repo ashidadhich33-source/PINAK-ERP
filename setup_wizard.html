@@ -331,25 +331,58 @@
                 <input type="text" id="companyAddress" placeholder="123 Business Street">
             </div>
             
+            <!-- Geographic Selection -->
             <div class="form-row">
                 <div class="form-group">
-                    <label for="companyCity">City</label>
-                    <input type="text" id="companyCity" placeholder="Mumbai">
+                    <label for="companyCountry">Country *</label>
+                    <select id="companyCountry" required onchange="loadStates()">
+                        <option value="">Select Country</option>
+                        <option value="1" selected>India</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="companyState">State</label>
-                    <input type="text" id="companyState" placeholder="Maharashtra">
+                    <label for="companyState">State *</label>
+                    <select id="companyState" required onchange="loadCities()">
+                        <option value="">Select State</option>
+                    </select>
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="companyCountry">Country</label>
-                    <input type="text" id="companyCountry" placeholder="India" value="India">
+                    <label for="companyCity">City *</label>
+                    <select id="companyCity" required onchange="loadPincodes()">
+                        <option value="">Select City</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="companyPincode">Pincode</label>
-                    <input type="text" id="companyPincode" placeholder="400001">
+                    <label for="companyPincode">Pincode *</label>
+                    <select id="companyPincode" required>
+                        <option value="">Select Pincode</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Manual Address Fields (as backup) -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyCityManual">City (Manual)</label>
+                    <input type="text" id="companyCityManual" placeholder="Mumbai">
+                </div>
+                <div class="form-group">
+                    <label for="companyStateManual">State (Manual)</label>
+                    <input type="text" id="companyStateManual" placeholder="Maharashtra">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyPincodeManual">Pincode (Manual)</label>
+                    <input type="text" id="companyPincodeManual" placeholder="400001">
+                </div>
+                <div class="form-group">
+                    <label for="companyDistrict">District</label>
+                    <input type="text" id="companyDistrict" placeholder="Mumbai">
                 </div>
             </div>
             
@@ -577,12 +610,17 @@
                         company_email: document.getElementById('companyEmail').value,
                         company_phone: document.getElementById('companyPhone').value,
                         company_address: document.getElementById('companyAddress').value,
-                        company_city: document.getElementById('companyCity').value,
-                        company_state: document.getElementById('companyState').value,
-                        company_country: document.getElementById('companyCountry').value,
-                        company_pincode: document.getElementById('companyPincode').value,
+                        company_city: document.getElementById('companyCityManual').value || document.getElementById('companyCity').options[document.getElementById('companyCity').selectedIndex]?.text,
+                        company_state: document.getElementById('companyStateManual').value || document.getElementById('companyState').options[document.getElementById('companyState').selectedIndex]?.text,
+                        company_country: document.getElementById('companyCountry').options[document.getElementById('companyCountry').selectedIndex]?.text,
+                        company_pincode: document.getElementById('companyPincodeManual').value || document.getElementById('companyPincode').options[document.getElementById('companyPincode').selectedIndex]?.text,
                         company_gstin: document.getElementById('companyGSTIN').value,
                         company_website: document.getElementById('companyWebsite').value,
+                        // Geographic References
+                        country_id: document.getElementById('companyCountry').value,
+                        state_id: document.getElementById('companyState').value,
+                        city_id: document.getElementById('companyCity').value,
+                        pincode_id: document.getElementById('companyPincode').value,
                         currency: 'INR',
                         timezone: 'Asia/Kolkata'
                     },
@@ -623,8 +661,91 @@
             }
         }
         
+        // Geography Loading Functions
+        async function loadStates() {
+            const countrySelect = document.getElementById('companyCountry');
+            const stateSelect = document.getElementById('companyState');
+            const citySelect = document.getElementById('companyCity');
+            const pincodeSelect = document.getElementById('companyPincode');
+            
+            // Clear dependent dropdowns
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+            
+            if (!countrySelect.value) return;
+            
+            try {
+                const response = await fetch(`/api/v1/indian-geography/states`);
+                const states = await response.json();
+                
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.textContent = `${state.state_name} (${state.state_code})`;
+                    stateSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading states:', error);
+                showStatus('Error loading states. Please try again.', 'error');
+            }
+        }
+        
+        async function loadCities() {
+            const stateSelect = document.getElementById('companyState');
+            const citySelect = document.getElementById('companyCity');
+            const pincodeSelect = document.getElementById('companyPincode');
+            
+            // Clear dependent dropdowns
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+            
+            if (!stateSelect.value) return;
+            
+            try {
+                const response = await fetch(`/api/v1/indian-geography/cities?state_id=${stateSelect.value}`);
+                const cities = await response.json();
+                
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.city_name;
+                    citySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading cities:', error);
+                showStatus('Error loading cities. Please try again.', 'error');
+            }
+        }
+        
+        async function loadPincodes() {
+            const citySelect = document.getElementById('companyCity');
+            const pincodeSelect = document.getElementById('companyPincode');
+            
+            // Clear dependent dropdowns
+            pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+            
+            if (!citySelect.value) return;
+            
+            try {
+                const response = await fetch(`/api/v1/indian-geography/pincodes?city_id=${citySelect.value}&limit=50`);
+                const pincodes = await response.json();
+                
+                pincodes.forEach(pincode => {
+                    const option = document.createElement('option');
+                    option.value = pincode.id;
+                    option.textContent = `${pincode.pincode} - ${pincode.area_name}`;
+                    pincodeSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading pincodes:', error);
+                showStatus('Error loading pincodes. Please try again.', 'error');
+            }
+        }
+        
         // Initialize
         updateProgress();
+        loadStates(); // Load states on page load
     </script>
 </body>
 </html>

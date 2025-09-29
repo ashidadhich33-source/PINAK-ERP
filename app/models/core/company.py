@@ -26,6 +26,15 @@ class Company(BaseModel):
     country = Column(String(100), default='India')
     postal_code = Column(String(10), nullable=True)
     
+    # Geographic References (for Indian localization)
+    country_id = Column(Integer, ForeignKey('country.id'), nullable=True)
+    state_id = Column(Integer, ForeignKey('indian_state.id'), nullable=True)
+    city_id = Column(Integer, ForeignKey('indian_city.id'), nullable=True)
+    district_id = Column(Integer, ForeignKey('indian_district.id'), nullable=True)
+    taluka_id = Column(Integer, ForeignKey('indian_taluka.id'), nullable=True)
+    village_id = Column(Integer, ForeignKey('indian_village.id'), nullable=True)
+    pincode_id = Column(Integer, ForeignKey('indian_pincode.id'), nullable=True)
+    
     # Business Information
     gst_number = Column(String(15), nullable=True, unique=True)
     pan_number = Column(String(10), nullable=True, unique=True)
@@ -66,6 +75,15 @@ class Company(BaseModel):
     items = relationship("Item", back_populates="company")
     customers = relationship("Customer", back_populates="company")
     suppliers = relationship("Supplier", back_populates="company")
+    
+    # Geographic Relationships
+    country_ref = relationship("Country", foreign_keys=[country_id])
+    state_ref = relationship("IndianState", foreign_keys=[state_id])
+    city_ref = relationship("IndianCity", foreign_keys=[city_id])
+    district_ref = relationship("IndianDistrict", foreign_keys=[district_id])
+    taluka_ref = relationship("IndianTaluka", foreign_keys=[taluka_id])
+    village_ref = relationship("IndianVillage", foreign_keys=[village_id])
+    pincode_ref = relationship("IndianPincode", foreign_keys=[pincode_id])
     
     def __repr__(self):
         return f"<Company(name='{self.name}', gst='{self.gst_number}')>"

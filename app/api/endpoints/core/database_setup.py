@@ -52,6 +52,16 @@ class CompanySetup(BaseModel):
     company_pincode: Optional[str] = None
     company_gstin: Optional[str] = None
     company_website: Optional[str] = None
+    
+    # Geographic References (for Indian localization)
+    country_id: Optional[int] = None
+    state_id: Optional[int] = None
+    city_id: Optional[int] = None
+    district_id: Optional[int] = None
+    taluka_id: Optional[int] = None
+    village_id: Optional[int] = None
+    pincode_id: Optional[int] = None
+    
     financial_year_start: str = "04-01"  # April 1st
     financial_year_end: str = "03-31"   # March 31st
     currency: str = "INR"
