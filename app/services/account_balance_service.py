@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, func, desc, asc
 from typing import Optional, List, Dict, Tuple
 from decimal import Decimal
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import json
 import logging
 
@@ -189,23 +189,40 @@ class AccountBalanceService:
     ) -> List[Dict]:
         """Get account balance history"""
         
-        # This would require implementing journal entries
-        # For now, return mock data
-        history = []
+        from ..models.double_entry_accounting import JournalEntry, JournalEntryItem
         
+        history = []
         current_date = from_date
+        
         while current_date <= to_date:
+            # Calculate balance for this specific date
+            daily_balance = self.calculate_account_balance(
+                db=db,
+                company_id=company_id,
+                account_id=account_id,
+                from_date=from_date,
+                to_date=current_date
+            )
+            
+            # Get transaction count for this date
+            transaction_count = db.query(JournalEntryItem).join(JournalEntry).filter(
+                JournalEntryItem.account_id == account_id,
+                JournalEntry.company_id == company_id,
+                JournalEntry.entry_date == current_date,
+                JournalEntry.status == 'posted'
+            ).count()
+            
             history.append({
                 "date": current_date,
-                "opening_balance": Decimal('0'),
-                "debit_total": Decimal('0'),
-                "credit_total": Decimal('0'),
-                "closing_balance": Decimal('0'),
-                "transaction_count": 0
+                "opening_balance": daily_balance["opening_balance"],
+                "debit_total": daily_balance["debit_total"],
+                "credit_total": daily_balance["credit_total"],
+                "closing_balance": daily_balance["closing_balance"],
+                "transaction_count": transaction_count
             })
             
             # Move to next day
-            current_date = current_date.replace(day=current_date.day + 1)
+            current_date = current_date + timedelta(days=1)
         
         return history
     
@@ -236,11 +253,62 @@ class AccountBalanceService:
         
         elif period == "weekly":
             # Weekly aggregation
-            pass
+            current_date = from_date
+            week_start = current_date - timedelta(days=current_date.weekday())
+            
+            while week_start <= to_date:
+                week_end = week_start + timedelta(days=6)
+                if week_end > to_date:
+                    week_end = to_date
+                
+                # Calculate balance for this week
+                week_balance = self.calculate_account_balance(
+                    db=db,
+                    company_id=company_id,
+                    account_id=account_id,
+                    from_date=week_start,
+                    to_date=week_end
+                )
+                
+                trend_data.append({
+                    "period": f"Week {week_start.isocalendar()[1]}",
+                    "balance": week_balance["closing_balance"],
+                    "change": Decimal('0')  # Would need previous week for comparison
+                })
+                
+                week_start = week_end + timedelta(days=1)
         
         elif period == "monthly":
             # Monthly aggregation
-            pass
+            current_date = from_date.replace(day=1)
+            
+            while current_date <= to_date:
+                # Get last day of month
+                if current_date.month == 12:
+                    next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
+                else:
+                    next_month = current_date.replace(month=current_date.month + 1, day=1)
+                
+                month_end = next_month - timedelta(days=1)
+                if month_end > to_date:
+                    month_end = to_date
+                
+                # Calculate balance for this month
+                month_balance = self.calculate_account_balance(
+                    db=db,
+                    company_id=company_id,
+                    account_id=account_id,
+                    from_date=current_date,
+                    to_date=month_end
+                )
+                
+                trend_data.append({
+                    "period": current_date.strftime("%Y-%m"),
+                    "balance": month_balance["closing_balance"],
+                    "change": Decimal('0')  # Would need previous month for comparison
+                })
+                
+                current_date = next_month
         
         return {
             "account_id": account_id,

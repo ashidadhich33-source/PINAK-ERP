@@ -591,10 +591,31 @@ class FinancialYearManagementService:
     ):
         """Carry forward inventory"""
         
-        # This would carry forward inventory data
-        # Implementation depends on your inventory model
+        from ..models.stock import StockItem
         
-        pass
+        # Get all stock items for the company
+        stock_items = db.query(StockItem).filter(
+            StockItem.company_id == carry_forward.company_id
+        ).all()
+        
+        carried_forward = 0
+        for stock_item in stock_items:
+            # Create new stock item for new financial year
+            new_stock_item = StockItem(
+                company_id=carry_forward.company_id,
+                item_id=stock_item.item_id,
+                location_id=stock_item.location_id,
+                opening_quantity=stock_item.current_quantity,
+                current_quantity=stock_item.current_quantity,
+                financial_year_id=carry_forward.new_financial_year_id,
+                created_by=carry_forward.user_id
+            )
+            db.add(new_stock_item)
+            carried_forward += 1
+        
+        db.commit()
+        logger.info(f"Carried forward {carried_forward} stock items")
+        return carried_forward
     
     def _carry_forward_customers(
         self, 
@@ -603,10 +624,25 @@ class FinancialYearManagementService:
     ):
         """Carry forward customers"""
         
-        # This would carry forward customer data
-        # Implementation depends on your customer model
+        from ..models.customer import Customer
         
-        pass
+        # Get all customers for the company
+        customers = db.query(Customer).filter(
+            Customer.company_id == carry_forward.company_id,
+            Customer.is_active == True
+        ).all()
+        
+        carried_forward = 0
+        for customer in customers:
+            # Update customer for new financial year
+            customer.financial_year_id = carry_forward.new_financial_year_id
+            customer.updated_by = carry_forward.user_id
+            customer.updated_at = datetime.utcnow()
+            carried_forward += 1
+        
+        db.commit()
+        logger.info(f"Carried forward {carried_forward} customers")
+        return carried_forward
     
     def _carry_forward_suppliers(
         self, 
@@ -615,10 +651,25 @@ class FinancialYearManagementService:
     ):
         """Carry forward suppliers"""
         
-        # This would carry forward supplier data
-        # Implementation depends on your supplier model
+        from ..models.supplier import Supplier
         
-        pass
+        # Get all suppliers for the company
+        suppliers = db.query(Supplier).filter(
+            Supplier.company_id == carry_forward.company_id,
+            Supplier.is_active == True
+        ).all()
+        
+        carried_forward = 0
+        for supplier in suppliers:
+            # Update supplier for new financial year
+            supplier.financial_year_id = carry_forward.new_financial_year_id
+            supplier.updated_by = carry_forward.user_id
+            supplier.updated_at = datetime.utcnow()
+            carried_forward += 1
+        
+        db.commit()
+        logger.info(f"Carried forward {carried_forward} suppliers")
+        return carried_forward
     
     def _carry_forward_items(
         self, 
@@ -627,10 +678,25 @@ class FinancialYearManagementService:
     ):
         """Carry forward items"""
         
-        # This would carry forward item data
-        # Implementation depends on your item model
+        from ..models.item import Item
         
-        pass
+        # Get all items for the company
+        items = db.query(Item).filter(
+            Item.company_id == carry_forward.company_id,
+            Item.is_active == True
+        ).all()
+        
+        carried_forward = 0
+        for item in items:
+            # Update item for new financial year
+            item.financial_year_id = carry_forward.new_financial_year_id
+            item.updated_by = carry_forward.user_id
+            item.updated_at = datetime.utcnow()
+            carried_forward += 1
+        
+        db.commit()
+        logger.info(f"Carried forward {carried_forward} items")
+        return carried_forward
     
     # Year Analytics
     def get_year_analytics(

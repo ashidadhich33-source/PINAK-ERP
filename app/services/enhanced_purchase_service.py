@@ -20,6 +20,8 @@ from ..models.item import Item
 from ..models.supplier import Supplier
 from ..models.stock import StockItem, StockLocation
 from ..models.purchase import PurchaseBill, PurchaseBillItem
+from ..models.double_entry_accounting import JournalEntry, JournalEntryItem
+from ..models.company import ChartOfAccount
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +30,142 @@ class EnhancedPurchaseService:
     
     def __init__(self):
         pass
+    
+    def create_purchase_journal_entry(
+        self,
+        db: Session,
+        company_id: int,
+        purchase_invoice: PurchaseInvoice,
+        user_id: int = None
+    ) -> JournalEntry:
+        """Create journal entry for purchase invoice"""
+        
+        # Generate journal entry number
+        entry_number = f"JE-PURCH-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8]}"
+        
+        # Create journal entry
+        journal_entry = JournalEntry(
+            company_id=company_id,
+            entry_number=entry_number,
+            entry_date=purchase_invoice.invoice_date,
+            reference_number=purchase_invoice.invoice_number,
+            reference_type='purchase',
+            reference_id=purchase_invoice.id,
+            narration=f"Purchase Invoice {purchase_invoice.invoice_number}",
+            total_debit=Decimal('0'),
+            total_credit=Decimal('0'),
+            status='draft',
+            created_by=user_id
+        )
+        
+        db.add(journal_entry)
+        db.flush()  # Get the ID
+        
+        # Get or create accounts
+        purchase_account = self._get_or_create_account(
+            db, company_id, "Purchase Account", "Expense", user_id
+        )
+        supplier_account = self._get_or_create_account(
+            db, company_id, f"Supplier: {purchase_invoice.supplier.name}", "Liability", user_id
+        )
+        
+        # Create journal entry items
+        journal_items = []
+        
+        # Debit: Purchase Account (Expense)
+        purchase_debit = JournalEntryItem(
+            company_id=company_id,
+            entry_id=journal_entry.id,
+            account_id=purchase_account.id,
+            debit_amount=purchase_invoice.subtotal_amount,
+            credit_amount=Decimal('0'),
+            description=f"Purchase from {purchase_invoice.supplier.name}",
+            reference=purchase_invoice.invoice_number,
+            created_by=user_id
+        )
+        journal_items.append(purchase_debit)
+        
+        # Credit: Supplier Account (Accounts Payable)
+        supplier_credit = JournalEntryItem(
+            company_id=company_id,
+            entry_id=journal_entry.id,
+            account_id=supplier_account.id,
+            debit_amount=Decimal('0'),
+            credit_amount=purchase_invoice.total_amount,
+            description=f"Purchase from {purchase_invoice.supplier.name}",
+            reference=purchase_invoice.invoice_number,
+            created_by=user_id
+        )
+        journal_items.append(supplier_credit)
+        
+        # Add GST entries if applicable
+        if purchase_invoice.gst_amount and purchase_invoice.gst_amount > 0:
+            gst_account = self._get_or_create_account(
+                db, company_id, "GST Input Credit", "Asset", user_id
+            )
+            
+            gst_debit = JournalEntryItem(
+                company_id=company_id,
+                entry_id=journal_entry.id,
+                account_id=gst_account.id,
+                debit_amount=purchase_invoice.gst_amount,
+                credit_amount=Decimal('0'),
+                description="GST Input Credit",
+                reference=purchase_invoice.invoice_number,
+                created_by=user_id
+            )
+            journal_items.append(gst_debit)
+        
+        # Add all items to database
+        for item in journal_items:
+            db.add(item)
+        
+        # Update journal entry totals
+        journal_entry.total_debit = sum(item.debit_amount for item in journal_items)
+        journal_entry.total_credit = sum(item.credit_amount for item in journal_items)
+        journal_entry.status = 'posted'
+        
+        db.commit()
+        
+        logger.info(f"Purchase journal entry created: {entry_number}")
+        return journal_entry
+    
+    def _get_or_create_account(
+        self,
+        db: Session,
+        company_id: int,
+        account_name: str,
+        account_type: str,
+        user_id: int = None
+    ) -> ChartOfAccount:
+        """Get or create chart of account"""
+        
+        # Try to find existing account
+        account = db.query(ChartOfAccount).filter(
+            ChartOfAccount.company_id == company_id,
+            ChartOfAccount.account_name == account_name
+        ).first()
+        
+        if account:
+            return account
+        
+        # Create new account
+        account_code = f"ACC-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        
+        account = ChartOfAccount(
+            company_id=company_id,
+            account_code=account_code,
+            account_name=account_name,
+            account_type=account_type,
+            is_active=True,
+            created_by=user_id
+        )
+        
+        db.add(account)
+        db.commit()
+        db.refresh(account)
+        
+        return account
     
     # Excel Import Management
     def import_purchase_excel(
