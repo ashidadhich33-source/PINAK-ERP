@@ -325,6 +325,15 @@ class PurchaseInvoice(BaseModel):
     purchase_documents = relationship("PurchaseDocument", foreign_keys="PurchaseDocument.purchase_invoice_id")
     purchase_audit_trails = relationship("PurchaseAuditTrail", foreign_keys="PurchaseAuditTrail.purchase_invoice_id")
     
+    # Indian Localization Integration Relationships
+    purchase_gst = relationship("PurchaseGST", foreign_keys="PurchaseGST.purchase_invoice_id")
+    purchase_e_invoice = relationship("PurchaseEInvoice", foreign_keys="PurchaseEInvoice.purchase_invoice_id")
+    purchase_e_waybill = relationship("PurchaseEWaybill", foreign_keys="PurchaseEWaybill.purchase_invoice_id")
+    purchase_tds = relationship("PurchaseTDS", foreign_keys="PurchaseTDS.purchase_invoice_id")
+    purchase_tcs = relationship("PurchaseTCS", foreign_keys="PurchaseTCS.purchase_invoice_id")
+    purchase_indian_banking = relationship("PurchaseIndianBanking", foreign_keys="PurchaseIndianBanking.purchase_invoice_id")
+    purchase_indian_geography = relationship("PurchaseIndianGeography", foreign_keys="PurchaseIndianGeography.purchase_invoice_id")
+    
     def __repr__(self):
         return f"<PurchaseInvoice(number='{self.invoice_number}', supplier_id={self.supplier_id})>"
 

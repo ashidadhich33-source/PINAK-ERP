@@ -27,6 +27,18 @@ from .purchase_accounting_integration import (
     PaymentStatus
 )
 
+from .purchase_gst_integration import (
+    PurchaseGST,
+    PurchaseEInvoice,
+    PurchaseEWaybill,
+    PurchaseTDS,
+    PurchaseTCS,
+    PurchaseIndianBanking,
+    PurchaseIndianGeography,
+    GSTTaxType,
+    PlaceOfSupplyType
+)
+
 __all__ = [
     # Enhanced Purchase
     "PurchaseOrder",
@@ -51,5 +63,14 @@ __all__ = [
     "PurchaseDocument",
     "PurchaseAuditTrail",
     "JournalEntryStatus",
-    "PaymentStatus"
+    "PaymentStatus",
+    "PurchaseGST",
+    "PurchaseEInvoice",
+    "PurchaseEWaybill",
+    "PurchaseTDS",
+    "PurchaseTCS",
+    "PurchaseIndianBanking",
+    "PurchaseIndianGeography",
+    "GSTTaxType",
+    "PlaceOfSupplyType"
 ]

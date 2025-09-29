@@ -26,6 +26,18 @@ from .sales_accounting_integration import (
     PaymentStatus
 )
 
+from .sales_gst_integration import (
+    SaleGST,
+    SaleEInvoice,
+    SaleEWaybill,
+    SaleTDS,
+    SaleTCS,
+    SaleIndianBanking,
+    SaleIndianGeography,
+    GSTTaxType,
+    PlaceOfSupplyType
+)
+
 __all__ = [
     "SaleChallan",
     "SaleChallanItem",
@@ -47,5 +59,14 @@ __all__ = [
     "SaleDocument",
     "SaleAuditTrail",
     "JournalEntryStatus",
-    "PaymentStatus"
+    "PaymentStatus",
+    "SaleGST",
+    "SaleEInvoice",
+    "SaleEWaybill",
+    "SaleTDS",
+    "SaleTCS",
+    "SaleIndianBanking",
+    "SaleIndianGeography",
+    "GSTTaxType",
+    "PlaceOfSupplyType"
 ]

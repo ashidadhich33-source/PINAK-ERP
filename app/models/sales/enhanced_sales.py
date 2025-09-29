@@ -369,6 +369,15 @@ class SaleInvoice(BaseModel):
     sale_documents = relationship("SaleDocument", foreign_keys="SaleDocument.sale_invoice_id")
     sale_audit_trails = relationship("SaleAuditTrail", foreign_keys="SaleAuditTrail.sale_invoice_id")
     
+    # Indian Localization Integration Relationships
+    sale_gst = relationship("SaleGST", foreign_keys="SaleGST.sale_invoice_id")
+    sale_e_invoice = relationship("SaleEInvoice", foreign_keys="SaleEInvoice.sale_invoice_id")
+    sale_e_waybill = relationship("SaleEWaybill", foreign_keys="SaleEWaybill.sale_invoice_id")
+    sale_tds = relationship("SaleTDS", foreign_keys="SaleTDS.sale_invoice_id")
+    sale_tcs = relationship("SaleTCS", foreign_keys="SaleTCS.sale_invoice_id")
+    sale_indian_banking = relationship("SaleIndianBanking", foreign_keys="SaleIndianBanking.sale_invoice_id")
+    sale_indian_geography = relationship("SaleIndianGeography", foreign_keys="SaleIndianGeography.sale_invoice_id")
+    
     def __repr__(self):
         return f"<SaleInvoice(number='{self.invoice_number}', customer_id={self.customer_id})>"
 
