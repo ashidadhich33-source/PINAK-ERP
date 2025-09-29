@@ -728,19 +728,64 @@
             if (!citySelect.value) return;
             
             try {
-                const response = await fetch(`/api/v1/indian-geography/pincodes?city_id=${citySelect.value}&limit=50`);
-                const pincodes = await response.json();
+                // Get city name from selected option
+                const cityName = citySelect.options[citySelect.selectedIndex].text;
                 
-                pincodes.forEach(pincode => {
-                    const option = document.createElement('option');
-                    option.value = pincode.id;
-                    option.textContent = `${pincode.pincode} - ${pincode.area_name}`;
-                    pincodeSelect.appendChild(option);
-                });
+                // Use pincode lookup API
+                const response = await fetch(`/api/v1/pincode-lookup/pincodes/city/${encodeURIComponent(cityName)}`);
+                const cityData = await response.json();
+                
+                if (cityData.pincodes && cityData.pincodes.length > 0) {
+                    cityData.pincodes.forEach(pincode => {
+                        const option = document.createElement('option');
+                        option.value = pincode;
+                        option.textContent = pincode;
+                        pincodeSelect.appendChild(option);
+                    });
+                } else {
+                    // Fallback to manual entry
+                    pincodeSelect.innerHTML = '<option value="">No pincodes found - use manual entry</option>';
+                }
             } catch (error) {
                 console.error('Error loading pincodes:', error);
-                showStatus('Error loading pincodes. Please try again.', 'error');
+                showStatus('Error loading pincodes. Please use manual entry.', 'error');
+                // Fallback to manual entry
+                pincodeSelect.innerHTML = '<option value="">Use manual entry below</option>';
             }
+        }
+        
+        // Enhanced pincode search function
+        async function searchPincodes(query) {
+            if (!query || query.length < 3) return [];
+            
+            try {
+                const response = await fetch(`/api/v1/pincode-lookup/pincodes/search?q=${encodeURIComponent(query)}&limit=10`);
+                const searchResults = await response.json();
+                return searchResults.results || [];
+            } catch (error) {
+                console.error('Error searching pincodes:', error);
+                return [];
+            }
+        }
+        
+        // Auto-complete for pincode search
+        function setupPincodeAutocomplete() {
+            const pincodeInput = document.getElementById('companyPincodeManual');
+            if (!pincodeInput) return;
+            
+            let searchTimeout;
+            pincodeInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value;
+                
+                if (query.length >= 3) {
+                    searchTimeout = setTimeout(async () => {
+                        const results = await searchPincodes(query);
+                        // You can implement dropdown suggestions here
+                        console.log('Pincode search results:', results);
+                    }, 300);
+                }
+            });
         }
         
         // Initialize
