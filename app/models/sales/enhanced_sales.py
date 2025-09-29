@@ -1,8 +1,16 @@
 # backend/app/models/enhanced_sales.py
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Numeric, Date, JSON
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Numeric, Date, JSON, Enum
 from sqlalchemy.orm import relationship
 from datetime import datetime
+from enum import Enum as PyEnum
 from .base import BaseModel
+
+class PlaceOfSupplyType(PyEnum):
+    """Place of Supply Types for Indian GST"""
+    INTRA_STATE = "intra_state"  # Within same state
+    INTER_STATE = "inter_state"  # Between different states
+    EXPORT = "export"  # Export of goods/services
+    IMPORT = "import"  # Import of goods/services
 
 class SaleChallan(BaseModel):
     """Sale challan management"""
@@ -270,7 +278,7 @@ class SaleOrderItem(BaseModel):
         return f"<SaleOrderItem(item_id={self.item_id}, quantity={self.quantity})>"
 
 class SaleInvoice(BaseModel):
-    """Sale invoice management"""
+    """Sale invoice management with Indian GST compliance"""
     __tablename__ = "sale_invoice"
     
     invoice_number = Column(String(100), unique=True, nullable=False)
@@ -278,12 +286,43 @@ class SaleInvoice(BaseModel):
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
     bill_id = Column(Integer, ForeignKey('sale_bill.id'), nullable=True)
     invoice_type = Column(String(50), default='regular')  # regular, credit_note, debit_note
-    total_amount = Column(Numeric(12, 2), nullable=False)
+    
+    # Indian GST Compliance Fields
+    gstin = Column(String(15), nullable=True)  # Customer GSTIN
+    place_of_supply = Column(Enum(PlaceOfSupplyType), nullable=True)
+    supplier_state_code = Column(String(2), nullable=True)
+    recipient_state_code = Column(String(2), nullable=True)
+    
+    # Amount Fields
+    subtotal_amount = Column(Numeric(12, 2), nullable=False)  # Amount before GST
+    cgst_rate = Column(Numeric(5, 2), nullable=True)
     cgst_amount = Column(Numeric(10, 2), default=0)
+    sgst_rate = Column(Numeric(5, 2), nullable=True)
     sgst_amount = Column(Numeric(10, 2), default=0)
+    igst_rate = Column(Numeric(5, 2), nullable=True)
     igst_amount = Column(Numeric(10, 2), default=0)
+    cess_rate = Column(Numeric(5, 2), nullable=True)
+    cess_amount = Column(Numeric(10, 2), default=0)
     total_gst_amount = Column(Numeric(10, 2), default=0)
-    net_amount = Column(Numeric(12, 2), nullable=False)
+    total_amount = Column(Numeric(12, 2), nullable=False)  # Final amount including GST
+    
+    # E-invoice Fields
+    irn = Column(String(64), nullable=True)  # Invoice Reference Number
+    qr_code = Column(Text, nullable=True)  # QR code data
+    e_invoice_status = Column(String(20), nullable=True)  # generated, uploaded, accepted, rejected
+    
+    # E-waybill Fields
+    eway_bill_no = Column(String(50), nullable=True)
+    eway_bill_date = Column(Date, nullable=True)
+    eway_bill_valid_upto = Column(DateTime, nullable=True)
+    
+    # TDS Fields
+    tds_applicable = Column(Boolean, default=False)
+    tds_rate = Column(Numeric(5, 2), nullable=True)
+    tds_amount = Column(Numeric(10, 2), default=0)
+    tds_section = Column(String(10), nullable=True)
+    
+    # Status and Notes
     status = Column(String(20), default='draft')  # draft, confirmed, paid, cancelled
     notes = Column(Text, nullable=True)
     
@@ -296,19 +335,37 @@ class SaleInvoice(BaseModel):
         return f"<SaleInvoice(number='{self.invoice_number}', customer_id={self.customer_id})>"
 
 class SaleInvoiceItem(BaseModel):
-    """Individual items in sale invoice"""
+    """Individual items in sale invoice with Indian GST compliance"""
     __tablename__ = "sale_invoice_item"
     
     invoice_id = Column(Integer, ForeignKey('sale_invoice.id'), nullable=False)
     item_id = Column(Integer, ForeignKey('item.id'), nullable=False)
     variant_id = Column(Integer, ForeignKey('inventory_variant.id'), nullable=True)
+    
+    # Basic Item Information
     quantity = Column(Numeric(10, 2), nullable=False)
     unit_price = Column(Numeric(10, 2), nullable=False)
-    total_amount = Column(Numeric(10, 2), nullable=False)
+    subtotal_amount = Column(Numeric(10, 2), nullable=False)  # Amount before GST
+    
+    # HSN/SAC Information
+    hsn_code = Column(String(8), nullable=True)
+    sac_code = Column(String(6), nullable=True)
+    
+    # GST Information
     gst_rate = Column(Numeric(5, 2), nullable=True)
+    cgst_rate = Column(Numeric(5, 2), nullable=True)
     cgst_amount = Column(Numeric(10, 2), nullable=True)
+    sgst_rate = Column(Numeric(5, 2), nullable=True)
     sgst_amount = Column(Numeric(10, 2), nullable=True)
+    igst_rate = Column(Numeric(5, 2), nullable=True)
     igst_amount = Column(Numeric(10, 2), nullable=True)
+    cess_rate = Column(Numeric(5, 2), nullable=True)
+    cess_amount = Column(Numeric(10, 2), nullable=True)
+    total_gst_amount = Column(Numeric(10, 2), nullable=True)
+    total_amount = Column(Numeric(10, 2), nullable=False)  # Final amount including GST
+    
+    # Unit of Measure
+    unit_of_measure = Column(String(10), nullable=True)  # NOS, KGS, LTR, etc.
     
     # Relationships
     invoice_record = relationship("SaleInvoice", back_populates="invoice_items")
