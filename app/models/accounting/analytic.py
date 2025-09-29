@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Foreign
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class AnalyticAccountType(PyEnum):
     """Analytic account types"""
@@ -42,7 +42,7 @@ class AnalyticAccount(BaseModel):
     variance_amount = Column(Numeric(15, 2), default=0)
     color = Column(String(7), nullable=True)  # Hex color code
     icon = Column(String(50), nullable=True)  # Icon name
-    metadata = Column(JSON, nullable=True)  # Additional account data
+    account_model_metadata = Column(JSON, nullable=True)  # Additional account data
     
     # Relationships
     parent = relationship("AnalyticAccount", remote_side=[BaseModel.id])

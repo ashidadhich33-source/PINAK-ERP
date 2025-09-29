@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Foreign
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class GSTTaxType(PyEnum):
     """GST Tax Types"""
@@ -58,7 +58,7 @@ class SaleGST(BaseModel):
     # Additional Information
     gst_in_voice = Column(String(15), nullable=True)  # Customer GSTIN
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional GST data
+    model_metadata = Column(JSON, nullable=True)  # Additional GST data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -96,7 +96,7 @@ class SaleEInvoice(BaseModel):
     last_generation_attempt = Column(DateTime, nullable=True)
     error_message = Column(Text, nullable=True)
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional E-invoice data
+    model_metadata = Column(JSON, nullable=True)  # Additional E-invoice data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -143,7 +143,7 @@ class SaleEWaybill(BaseModel):
     last_generation_attempt = Column(DateTime, nullable=True)
     error_message = Column(Text, nullable=True)
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional E-waybill data
+    model_metadata = Column(JSON, nullable=True)  # Additional E-waybill data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -179,7 +179,7 @@ class SaleTDS(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional TDS data
+    model_metadata = Column(JSON, nullable=True)  # Additional TDS data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -214,7 +214,7 @@ class SaleTCS(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional TCS data
+    model_metadata = Column(JSON, nullable=True)  # Additional TCS data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -253,7 +253,7 @@ class SaleIndianBanking(BaseModel):
     payment_status = Column(String(20), default='pending')  # pending, completed, failed
     payment_reference = Column(String(100), nullable=True)
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional banking data
+    model_metadata = Column(JSON, nullable=True)  # Additional banking data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")
@@ -289,7 +289,7 @@ class SaleIndianGeography(BaseModel):
     
     # Additional Information
     notes = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)  # Additional geography data
+    model_metadata = Column(JSON, nullable=True)  # Additional geography data
     
     # Relationships
     sale_invoice = relationship("SaleInvoice")

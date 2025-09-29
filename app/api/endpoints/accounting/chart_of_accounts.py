@@ -6,9 +6,9 @@ from pydantic import BaseModel, validator
 from decimal import Decimal
 from datetime import date, datetime
 
-from ...database import get_db
-from ...models.company import Company, ChartOfAccount
-from ...models.user import User
+from ....database import get_db
+from ....models.company import Company, ChartOfAccount
+from ....models.user import User
 from ...core.security import get_current_user, require_permission
 from ...services.chart_of_accounts_service import chart_of_accounts_service
 

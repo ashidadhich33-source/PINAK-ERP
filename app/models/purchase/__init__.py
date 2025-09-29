@@ -5,10 +5,7 @@ from .enhanced_purchase import (
     PurchaseInvoice,
     PurchaseInvoiceItem,
     PurchaseReturn,
-    PurchaseReturnItem,
-    PurchasePayment,
-    PurchaseChallan,
-    PurchaseChallanItem
+    PurchaseReturnItem
 )
 
 from .purchase import (
@@ -70,9 +67,6 @@ __all__ = [
     "PurchaseInvoiceItem",
     "PurchaseReturn",
     "PurchaseReturnItem",
-    "PurchasePayment",
-    "PurchaseChallan",
-    "PurchaseChallanItem",
     
     # Basic Purchase
     "PurchaseBill",

@@ -6,10 +6,10 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, date
 from decimal import Decimal
 
-from ...database import get_db
+from ....database import get_db
 from ...core.security import get_current_user, require_permission
-from ...models.core import User, Company
-from ...models.accounting.analytic import (
+from ....models.core import User, Company
+from ....models.accounting.analytic import (
     AnalyticAccount, AnalyticLine, AnalyticPlan, AnalyticPlanAccount,
     AnalyticDistribution, AnalyticBudget, AnalyticBudgetLine,
     AnalyticReport, AnalyticTag, AnalyticTagLine, AnalyticAccountType,

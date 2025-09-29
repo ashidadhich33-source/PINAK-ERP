@@ -2,7 +2,7 @@
 from sqlalchemy import Column, String, Numeric, Integer, ForeignKey, DateTime, Boolean, Date, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import BaseModel
+from ..base import BaseModel
 
 class PurchaseBill(BaseModel):
     """Purchase bill from supplier"""
