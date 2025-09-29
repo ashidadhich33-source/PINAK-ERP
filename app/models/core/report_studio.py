@@ -26,36 +26,7 @@ class ReportCategory(BaseModel):
     def __repr__(self):
         return f"<ReportCategory(name='{self.category_name}', code='{self.category_code}')>"
 
-class ReportTemplate(BaseModel):
-    """Report template management"""
-    __tablename__ = "report_template"
-    
-    template_name = Column(String(200), nullable=False)
-    template_code = Column(String(100), unique=True, nullable=False)
-    category_id = Column(Integer, ForeignKey('report_category.id'), nullable=False)
-    description = Column(Text, nullable=True)
-    report_type = Column(String(50), nullable=False)  # table, chart, dashboard, summary
-    data_source = Column(String(100), nullable=False)  # table name or query
-    query_sql = Column(Text, nullable=True)
-    template_config = Column(JSON, nullable=False)  # Report configuration
-    parameters = Column(JSON, nullable=True)  # Report parameters
-    filters = Column(JSON, nullable=True)  # Report filters
-    columns = Column(JSON, nullable=True)  # Report columns
-    chart_config = Column(JSON, nullable=True)  # Chart configuration
-    layout_config = Column(JSON, nullable=True)  # Layout configuration
-    is_public = Column(Boolean, default=False)
-    is_system = Column(Boolean, default=False)
-    is_active = Column(Boolean, default=True)
-    version = Column(String(20), default='1.0')
-    notes = Column(Text, nullable=True)
-    
-    # Relationships
-    category = relationship("ReportCategory", back_populates="reports")
-    report_instances = relationship("ReportInstance", back_populates="template")
-    report_schedules = relationship("ReportSchedule", back_populates="template")
-    
-    def __repr__(self):
-        return f"<ReportTemplate(name='{self.template_name}', type='{self.report_type}')>"
+# ReportTemplate moved to accounting/advanced_reporting.py for enhanced functionality
 
 class ReportInstance(BaseModel):
     """Report instance management"""

@@ -45,9 +45,14 @@ from .api.endpoints import (
 )
 from .core.security import get_current_user
 from .services.core.backup_service import backup_service
-from .core.init_data import initialize_default_data
+from .init_data import initialize_default_data
 from .core.exceptions import setup_exception_handlers
 from .core.middleware import setup_middlewares
+from .core.enhanced_error_handling import (
+    validation_exception_handler,
+    http_exception_handler,
+    generic_exception_handler
+)
 
 # Configure logging
 def setup_logging():
@@ -246,6 +251,11 @@ setup_middlewares(app)
 
 # Setup exception handlers
 setup_exception_handlers(app)
+
+# Add enhanced error handlers
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 # Add CORS middleware
 app.add_middleware(
@@ -504,7 +514,7 @@ async def get_user_profile(current_user=Depends(get_current_user)):
 @app.get(f"{settings.api_prefix}/dashboard")
 async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_db)):
     """Get dashboard summary data"""
-    from .models.sales import SalesInvoice
+    from .models.sales import SaleInvoice
     from .models.customers import Customer
     from .models.inventory import Item
     from sqlalchemy import func
@@ -517,8 +527,8 @@ async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_d
     total_items = db.query(Item).filter(Item.status == 'active').count()
     
     # Today's sales
-    today_sales = db.query(func.sum(SalesInvoice.total_amount)).filter(
-        func.date(SalesInvoice.invoice_date) == today
+    today_sales = db.query(func.sum(SaleInvoice.total_amount)).filter(
+        func.date(SaleInvoice.invoice_date) == today
     ).scalar() or 0
     
     return {

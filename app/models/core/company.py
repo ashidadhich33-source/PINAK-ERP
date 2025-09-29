@@ -114,37 +114,7 @@ class UserCompany(BaseModel):
     def __repr__(self):
         return f"<UserCompany(user_id={self.user_id}, company_id={self.company_id}, role='{self.role}')>"
 
-class FinancialYear(BaseModel):
-    """Financial Year management per company"""
-    __tablename__ = "financial_year"
-    
-    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
-    
-    # Financial Year Information
-    year_name = Column(String(20), nullable=False)  # 2024-25
-    start_date = Column(Date, nullable=False)
-    end_date = Column(Date, nullable=False)
-    
-    # Status
-    is_active = Column(Boolean, default=False)
-    is_closed = Column(Boolean, default=False)
-    closed_at = Column(DateTime, nullable=True)
-    closed_by = Column(Integer, ForeignKey('user.id'), nullable=True)
-    
-    # Opening Balances
-    opening_balances = Column(Text, nullable=True)  # JSON string
-    
-    # Closing Information
-    closing_remarks = Column(Text, nullable=True)
-    next_year_id = Column(Integer, ForeignKey('financial_year.id'), nullable=True)
-    
-    # Relationships
-    company = relationship("Company", back_populates="financial_years")
-    closed_by_user = relationship("User", foreign_keys=[closed_by])
-    next_year = relationship("FinancialYear", remote_side=[BaseModel.id])
-    
-    def __repr__(self):
-        return f"<FinancialYear(company_id={self.company_id}, year='{self.year_name}')>"
+# FinancialYear moved to accounting/financial_year_management.py for enhanced functionality
 
 class GSTSlab(BaseModel):
     """Dynamic GST slab management per company"""
