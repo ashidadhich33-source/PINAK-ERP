@@ -9,12 +9,10 @@ from sqlalchemy.orm import Session
 from datetime import datetime, date
 from decimal import Decimal
 
-from ..models.user import User, Role, Permission
-from ..models.company import Company, SystemSettings, FinancialYear
-from ..models.enhanced_sales import BillSeries
-from ..models.supplier import PaymentMode, Staff
+from ..models.core import User, Role, Permission, Company, SystemSettings, FinancialYear, PaymentMode, Staff
+from ..models.sales import BillSeries
 from ..models.loyalty import LoyaltyGrade
-from ..models.stock import StockLocation
+from ..models.inventory import StockLocation
 from ..core.security import SecurityService
 
 logger = logging.getLogger(__name__)

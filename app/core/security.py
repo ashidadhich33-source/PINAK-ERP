@@ -67,7 +67,7 @@ async def get_current_user(
     payload = SecurityService.verify_token(token)
     
     # Import here to avoid circular imports
-    from ..models.user import User
+    from ..models.core import User
     
     user = db.query(User).filter(User.username == payload.get("sub")).first()
     if user is None:
