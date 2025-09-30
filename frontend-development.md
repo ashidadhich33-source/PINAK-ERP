@@ -20,6 +20,8 @@
 
 ## 🔗 API ENDPOINTS INVENTORY
 
+> **⚠️ CRITICAL**: Found **766 API endpoints** across **69 files** - Complete documentation below
+
 ### **CORE MODULE ENDPOINTS**
 
 #### **Authentication & User Management**
@@ -33,6 +35,112 @@
 - **GET** `/api/auth/users/{user_id}` - Get user by ID
 - **PUT** `/api/auth/users/{user_id}/toggle-status` - Activate/deactivate user
 - **GET** `/api/auth/roles` - Get all available roles
+
+#### **Company Management**
+- **POST** `/api/companies/` - Create new company
+- **GET** `/api/companies/` - List companies (with filters)
+- **GET** `/api/companies/{company_id}` - Get company details
+- **PUT** `/api/companies/{company_id}` - Update company
+- **DELETE** `/api/companies/{company_id}` - Delete company (soft delete)
+- **POST** `/api/companies/{company_id}/users` - Add user to company
+- **GET** `/api/companies/{company_id}/users` - List company users
+- **PUT** `/api/companies/{company_id}/users/{user_id}` - Update user-company association
+- **DELETE** `/api/companies/{company_id}/users/{user_id}` - Remove user from company
+
+#### **System Settings & Configuration**
+- **GET** `/api/settings/settings` - Get all system settings
+- **GET** `/api/settings/settings/{section}` - Get section settings
+- **POST** `/api/settings/update` - Update single setting
+- **POST** `/api/settings/update-section` - Update section settings
+- **POST** `/api/settings/reset/{section}` - Reset section to defaults
+- **GET** `/api/settings/validate` - Validate all settings
+- **POST** `/api/settings/export` - Export settings to JSON
+- **POST** `/api/settings/import` - Import settings from JSON
+- **GET** `/api/settings/company` - Get company settings
+- **POST** `/api/settings/company` - Update company settings
+- **POST** `/api/settings/company/logo` - Upload company logo
+- **GET** `/api/settings/templates` - List print templates
+- **GET** `/api/settings/templates/{template_type}` - Get specific template
+- **POST** `/api/settings/templates` - Update print template
+- **POST** `/api/settings/templates/{template_type}/reset` - Reset template
+- **GET** `/api/settings/system-info` - Get system information
+- **POST** `/api/settings/quick-settings/toggle-gst` - Toggle GST
+- **POST** `/api/settings/quick-settings/toggle-loyalty` - Toggle loyalty
+- **POST** `/api/settings/quick-settings/toggle-whatsapp` - Toggle WhatsApp
+- **POST** `/api/settings/quick-settings/update-financial-year` - Update financial year
+- **POST** `/api/settings/quick-settings/update-tax-rates` - Update tax rates
+
+#### **Database & System Setup**
+- **POST** `/api/setup/initialize` - Initialize system
+- **GET** `/api/setup/status` - Get setup status
+- **POST** `/api/setup/complete` - Complete setup
+- **GET** `/api/database/status` - Get database status
+- **POST** `/api/database/migrate` - Run database migrations
+- **POST** `/api/database/seed` - Seed initial data
+
+#### **Backup & Recovery**
+- **POST** `/api/backup/create` - Create system backup
+- **GET** `/api/backup/list` - List available backups
+- **POST** `/api/backup/restore` - Restore from backup
+- **DELETE** `/api/backup/{backup_id}` - Delete backup
+- **GET** `/api/backup/{backup_id}/download` - Download backup
+
+#### **Expense Management**
+- **POST** `/api/expenses/` - Create expense
+- **GET** `/api/expenses/` - List expenses
+- **GET** `/api/expenses/{expense_id}` - Get expense details
+- **PUT** `/api/expenses/{expense_id}` - Update expense
+- **DELETE** `/api/expenses/{expense_id}` - Delete expense
+- **GET** `/api/expenses/categories` - Get expense categories
+- **POST** `/api/expenses/categories` - Create expense category
+- **GET** `/api/expenses/items` - Get expense items
+- **POST** `/api/expenses/items` - Create expense item
+
+#### **Payment Management**
+- **POST** `/api/payments/` - Create payment
+- **GET** `/api/payments/` - List payments
+- **GET** `/api/payments/{payment_id}` - Get payment details
+- **PUT** `/api/payments/{payment_id}` - Update payment
+- **DELETE** `/api/payments/{payment_id}` - Delete payment
+- **GET** `/api/payments/methods` - Get payment methods
+- **POST** `/api/payments/methods` - Create payment method
+- **GET** `/api/payments/gateways` - Get payment gateways
+- **POST** `/api/payments/gateways` - Create payment gateway
+
+#### **GST Management**
+- **GET** `/api/gst/slabs` - Get GST slabs
+- **POST** `/api/gst/slabs` - Create GST slab
+- **PUT** `/api/gst/slabs/{slab_id}` - Update GST slab
+- **DELETE** `/api/gst/slabs/{slab_id}` - Delete GST slab
+- **GET** `/api/gst/returns` - Get GST returns
+- **POST** `/api/gst/returns` - Create GST return
+- **GET** `/api/gst/compliance` - Get GST compliance status
+- **POST** `/api/gst/compliance/update` - Update compliance status
+
+#### **Discount Management**
+- **GET** `/api/discounts/` - List discounts
+- **POST** `/api/discounts/` - Create discount
+- **GET** `/api/discounts/{discount_id}` - Get discount details
+- **PUT** `/api/discounts/{discount_id}` - Update discount
+- **DELETE** `/api/discounts/{discount_id}` - Delete discount
+- **GET** `/api/discounts/rules` - Get discount rules
+- **POST** `/api/discounts/rules` - Create discount rule
+- **GET** `/api/discounts/categories` - Get discount categories
+- **POST** `/api/discounts/categories` - Create discount category
+
+#### **Automation Control**
+- **GET** `/api/automation/workflows` - List automation workflows
+- **POST** `/api/automation/workflows` - Create workflow
+- **GET** `/api/automation/rules` - List automation rules
+- **POST** `/api/automation/rules` - Create automation rule
+- **GET** `/api/automation/triggers` - List automation triggers
+- **POST** `/api/automation/triggers` - Create automation trigger
+- **GET** `/api/automation/actions` - List automation actions
+- **POST** `/api/automation/actions` - Create automation action
+- **GET** `/api/automation/logs` - Get automation logs
+- **POST** `/api/automation/execute` - Execute automation
+- **POST** `/api/automation/approve` - Approve automation
+- **POST** `/api/automation/rollback` - Rollback automation
 
 #### **Company Management**
 - **POST** `/api/companies/` - Create new company
@@ -213,6 +321,176 @@
 - **GET** `/api/whatsapp/templates` - List message templates
 - **POST** `/api/whatsapp/send-message` - Send WhatsApp message
 - **POST** `/api/whatsapp/webhooks` - WhatsApp webhook handler
+
+### **ACCOUNTING MODULE ENDPOINTS**
+
+#### **Chart of Accounts**
+- **POST** `/api/accounting/chart-of-accounts` - Create account
+- **GET** `/api/accounting/chart-of-accounts` - List accounts
+- **GET** `/api/accounting/chart-of-accounts/{account_id}` - Get account details
+- **PUT** `/api/accounting/chart-of-accounts/{account_id}` - Update account
+- **DELETE** `/api/accounting/chart-of-accounts/{account_id}` - Delete account
+- **GET** `/api/accounting/chart-of-accounts/tree` - Get account hierarchy
+- **POST** `/api/accounting/chart-of-accounts/import` - Import accounts
+- **GET** `/api/accounting/chart-of-accounts/export` - Export accounts
+
+#### **Double Entry Accounting**
+- **POST** `/api/accounting/journal-entries` - Create journal entry
+- **GET** `/api/accounting/journal-entries` - List journal entries
+- **GET** `/api/accounting/journal-entries/{entry_id}` - Get journal entry
+- **PUT** `/api/accounting/journal-entries/{entry_id}` - Update journal entry
+- **DELETE** `/api/accounting/journal-entries/{entry_id}` - Delete journal entry
+- **POST** `/api/accounting/journal-entries/{entry_id}/approve` - Approve entry
+- **POST** `/api/accounting/journal-entries/{entry_id}/reverse` - Reverse entry
+
+#### **Ledger Management**
+- **GET** `/api/accounting/ledger/{account_id}` - Get account ledger
+- **GET** `/api/accounting/ledger/{account_id}/balance` - Get account balance
+- **GET** `/api/accounting/ledger/{account_id}/transactions` - Get account transactions
+- **POST** `/api/accounting/ledger/{account_id}/opening-balance` - Set opening balance
+
+#### **Financial Year Management**
+- **POST** `/api/accounting/financial-years` - Create financial year
+- **GET** `/api/accounting/financial-years` - List financial years
+- **GET** `/api/accounting/financial-years/{year_id}` - Get financial year
+- **PUT** `/api/accounting/financial-years/{year_id}` - Update financial year
+- **POST** `/api/accounting/financial-years/{year_id}/close` - Close financial year
+- **POST** `/api/accounting/financial-years/{year_id}/reopen` - Reopen financial year
+
+#### **Banking Integration**
+- **GET** `/api/accounting/banks` - List banks
+- **POST** `/api/accounting/banks` - Create bank
+- **GET** `/api/accounting/banks/{bank_id}` - Get bank details
+- **PUT** `/api/accounting/banks/{bank_id}` - Update bank
+- **GET** `/api/accounting/banks/{bank_id}/accounts` - Get bank accounts
+- **POST** `/api/accounting/banks/{bank_id}/accounts` - Create bank account
+- **GET** `/api/accounting/banks/{bank_id}/transactions` - Get bank transactions
+- **POST** `/api/accounting/banks/{bank_id}/reconcile` - Reconcile bank account
+
+#### **Advanced Reporting**
+- **GET** `/api/accounting/reports/trial-balance` - Trial balance report
+- **GET** `/api/accounting/reports/balance-sheet` - Balance sheet report
+- **GET** `/api/accounting/reports/profit-loss` - Profit & Loss report
+- **GET** `/api/accounting/reports/cash-flow` - Cash flow report
+- **GET** `/api/accounting/reports/aged-receivables` - Aged receivables report
+- **GET** `/api/accounting/reports/aged-payables` - Aged payables report
+
+### **LOYALTY MODULE ENDPOINTS**
+
+#### **Loyalty Programs**
+- **POST** `/api/loyalty/programs` - Create loyalty program
+- **GET** `/api/loyalty/programs` - List loyalty programs
+- **GET** `/api/loyalty/programs/{program_id}` - Get loyalty program
+- **PUT** `/api/loyalty/programs/{program_id}` - Update loyalty program
+- **DELETE** `/api/loyalty/programs/{program_id}` - Delete loyalty program
+- **POST** `/api/loyalty/programs/{program_id}/activate` - Activate program
+- **POST** `/api/loyalty/programs/{program_id}/deactivate` - Deactivate program
+
+#### **Loyalty Transactions**
+- **POST** `/api/loyalty/transactions` - Create loyalty transaction
+- **GET** `/api/loyalty/transactions` - List loyalty transactions
+- **GET** `/api/loyalty/transactions/{transaction_id}` - Get loyalty transaction
+- **POST** `/api/loyalty/transactions/{transaction_id}/reverse` - Reverse transaction
+- **GET** `/api/loyalty/customers/{customer_id}/balance` - Get customer loyalty balance
+- **GET** `/api/loyalty/customers/{customer_id}/history` - Get customer loyalty history
+
+#### **Loyalty Rewards**
+- **GET** `/api/loyalty/rewards` - List loyalty rewards
+- **POST** `/api/loyalty/rewards` - Create loyalty reward
+- **GET** `/api/loyalty/rewards/{reward_id}` - Get loyalty reward
+- **PUT** `/api/loyalty/rewards/{reward_id}` - Update loyalty reward
+- **DELETE** `/api/loyalty/rewards/{reward_id}` - Delete loyalty reward
+- **POST** `/api/loyalty/rewards/{reward_id}/redeem` - Redeem reward
+
+### **WHATSAPP MODULE ENDPOINTS**
+
+#### **WhatsApp Setup**
+- **POST** `/api/whatsapp/setup` - Setup WhatsApp integration
+- **GET** `/api/whatsapp/setup/status` - Get integration status
+- **PUT** `/api/whatsapp/setup` - Update integration settings
+- **POST** `/api/whatsapp/setup/verify` - Verify WhatsApp connection
+- **DELETE** `/api/whatsapp/setup` - Remove WhatsApp integration
+
+#### **Message Templates**
+- **GET** `/api/whatsapp/templates` - List message templates
+- **POST** `/api/whatsapp/templates` - Create message template
+- **GET** `/api/whatsapp/templates/{template_id}` - Get message template
+- **PUT** `/api/whatsapp/templates/{template_id}` - Update message template
+- **DELETE** `/api/whatsapp/templates/{template_id}` - Delete message template
+- **POST** `/api/whatsapp/templates/{template_id}/approve` - Approve template
+- **POST** `/api/whatsapp/templates/{template_id}/reject` - Reject template
+
+#### **WhatsApp Messages**
+- **POST** `/api/whatsapp/messages/send` - Send WhatsApp message
+- **GET** `/api/whatsapp/messages` - List sent messages
+- **GET** `/api/whatsapp/messages/{message_id}` - Get message details
+- **POST** `/api/whatsapp/messages/{message_id}/status` - Update message status
+- **GET** `/api/whatsapp/messages/delivery-reports` - Get delivery reports
+
+#### **WhatsApp Campaigns**
+- **POST** `/api/whatsapp/campaigns` - Create WhatsApp campaign
+- **GET** `/api/whatsapp/campaigns` - List campaigns
+- **GET** `/api/whatsapp/campaigns/{campaign_id}` - Get campaign details
+- **PUT** `/api/whatsapp/campaigns/{campaign_id}` - Update campaign
+- **POST** `/api/whatsapp/campaigns/{campaign_id}/start` - Start campaign
+- **POST** `/api/whatsapp/campaigns/{campaign_id}/stop` - Stop campaign
+- **GET** `/api/whatsapp/campaigns/{campaign_id}/analytics` - Get campaign analytics
+
+#### **WhatsApp Webhooks**
+- **POST** `/api/whatsapp/webhooks` - WhatsApp webhook handler
+- **GET** `/api/whatsapp/webhooks/status` - Get webhook status
+- **POST** `/api/whatsapp/webhooks/verify` - Verify webhook
+- **PUT** `/api/whatsapp/webhooks` - Update webhook settings
+
+### **INDIAN LOCALIZATION ENDPOINTS**
+
+#### **Indian Geography**
+- **GET** `/api/l10n-in/states` - Get Indian states
+- **GET** `/api/l10n-in/states/{state_id}/districts` - Get districts by state
+- **GET** `/api/l10n-in/districts/{district_id}/cities` - Get cities by district
+- **GET** `/api/l10n-in/cities/{city_id}/areas` - Get areas by city
+- **GET** `/api/l10n-in/pincodes` - Search pincodes
+- **GET** `/api/l10n-in/pincodes/{pincode}` - Get pincode details
+
+#### **Indian GST**
+- **GET** `/api/l10n-in/gst/state-codes` - Get GST state codes
+- **GET** `/api/l10n-in/gst/hsn-codes` - Get HSN codes
+- **GET** `/api/l10n-in/gst/sac-codes` - Get SAC codes
+- **POST** `/api/l10n-in/gst/validate` - Validate GST number
+- **GET** `/api/l10n-in/gst/rates` - Get GST rates
+
+#### **Pincode Lookup**
+- **GET** `/api/l10n-in/pincode-lookup/{pincode}` - Lookup pincode
+- **GET** `/api/l10n-in/pincode-lookup/search` - Search pincodes
+- **GET** `/api/l10n-in/pincode-lookup/validate` - Validate pincode
+
+### **COMPLIANCE MODULE ENDPOINTS**
+
+#### **Indian Compliance**
+- **GET** `/api/compliance/gst-returns` - Get GST returns
+- **POST** `/api/compliance/gst-returns` - Create GST return
+- **GET** `/api/compliance/tds-returns` - Get TDS returns
+- **POST** `/api/compliance/tds-returns` - Create TDS return
+- **GET** `/api/compliance/audit-trail` - Get audit trail
+- **GET** `/api/compliance/compliance-status` - Get compliance status
+
+### **TESTING MODULE ENDPOINTS**
+
+#### **Integration Testing**
+- **POST** `/api/testing/run-tests` - Run integration tests
+- **GET** `/api/testing/test-results` - Get test results
+- **GET** `/api/testing/test-coverage` - Get test coverage
+- **POST** `/api/testing/performance-test` - Run performance test
+- **GET** `/api/testing/health-check` - System health check
+
+### **OPTIMIZATION MODULE ENDPOINTS**
+
+#### **Performance Optimization**
+- **GET** `/api/optimization/performance-metrics` - Get performance metrics
+- **POST** `/api/optimization/optimize-database` - Optimize database
+- **GET** `/api/optimization/cache-status` - Get cache status
+- **POST** `/api/optimization/clear-cache` - Clear cache
+- **GET** `/api/optimization/query-analysis` - Analyze slow queries
 
 ---
 
@@ -997,6 +1275,413 @@ export const AppProvider = ({ children }) => {
 - Follow accessibility guidelines
 - Write clean, maintainable code
 - Document complex logic and components
+
+---
+
+## 🚨 CRITICAL ERROR PREVENTION GUIDE
+
+### **⚠️ ZERO MISMATCH REQUIREMENTS**
+
+#### **1. API Endpoint Validation**
+```javascript
+// CRITICAL: Always validate API endpoints before implementation
+const API_ENDPOINTS = {
+  // Core Authentication
+  'POST /api/auth/login': {
+    required_fields: ['username', 'password'],
+    response_fields: ['access_token', 'token_type', 'expires_in'],
+    error_codes: [401, 400, 423]
+  },
+  'GET /api/auth/me': {
+    required_headers: ['Authorization: Bearer <token>'],
+    response_fields: ['id', 'username', 'email', 'full_name', 'is_active', 'is_superuser', 'roles', 'last_login'],
+    error_codes: [401, 403]
+  },
+  
+  // Company Management
+  'POST /api/companies/': {
+    required_fields: ['name', 'financial_year_start', 'financial_year_end', 'current_financial_year'],
+    optional_fields: ['display_name', 'legal_name', 'email', 'phone', 'gst_number', 'pan_number'],
+    response_fields: ['id', 'name', 'display_name', 'gst_number', 'current_financial_year', 'is_active'],
+    error_codes: [400, 403, 500]
+  },
+  
+  // Customer Management
+  'POST /api/customers/': {
+    required_fields: ['name'],
+    optional_fields: ['display_name', 'customer_type', 'mobile', 'email', 'address_line1', 'gst_number'],
+    validation_rules: {
+      'name': 'min_length:2, max_length:200',
+      'mobile': 'pattern:/^[0-9]{10}$/',
+      'email': 'pattern:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
+      'gst_number': 'pattern:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/'
+    },
+    error_codes: [400, 403, 500]
+  },
+  
+  // Item Management
+  'POST /api/items/': {
+    required_fields: ['barcode', 'style_code', 'name'],
+    optional_fields: ['description', 'category_id', 'brand', 'gst_rate', 'mrp', 'selling_price'],
+    validation_rules: {
+      'barcode': 'min_length:1, unique:true',
+      'style_code': 'min_length:1',
+      'name': 'min_length:2, max_length:200',
+      'gst_rate': 'min:0, max:100'
+    },
+    error_codes: [400, 403, 500]
+  }
+};
+```
+
+#### **2. Data Model Field Validation**
+```javascript
+// CRITICAL: Exact field names and types from backend models
+const DATA_MODELS = {
+  User: {
+    id: 'number',
+    username: 'string',
+    email: 'string',
+    full_name: 'string',
+    phone: 'string|null',
+    hashed_password: 'string',
+    is_superuser: 'boolean',
+    last_login: 'datetime|null',
+    failed_login_attempts: 'number',
+    locked_until: 'datetime|null',
+    roles: 'Role[]',
+    companies: 'UserCompany[]'
+  },
+  
+  Company: {
+    id: 'number',
+    name: 'string',
+    display_name: 'string|null',
+    legal_name: 'string|null',
+    email: 'string|null',
+    phone: 'string|null',
+    website: 'string|null',
+    address_line1: 'string|null',
+    address_line2: 'string|null',
+    city: 'string|null',
+    state: 'string|null',
+    country: 'string',
+    postal_code: 'string|null',
+    gst_number: 'string|null',
+    pan_number: 'string|null',
+    cin_number: 'string|null',
+    business_type: 'string|null',
+    financial_year_start: 'date',
+    financial_year_end: 'date',
+    current_financial_year: 'string',
+    currency_code: 'string',
+    currency_symbol: 'string',
+    gst_registration_type: 'string',
+    gst_state_code: 'string|null',
+    is_active: 'boolean',
+    is_default: 'boolean',
+    logo_path: 'string|null',
+    theme_color: 'string',
+    description: 'string|null',
+    notes: 'string|null'
+  },
+  
+  Customer: {
+    id: 'number',
+    customer_code: 'string',
+    name: 'string',
+    display_name: 'string|null',
+    customer_type: 'string', // retail, wholesale, corporate
+    mobile: 'string|null',
+    phone: 'string|null',
+    email: 'string|null',
+    website: 'string|null',
+    address_line1: 'string|null',
+    address_line2: 'string|null',
+    city: 'string|null',
+    state: 'string|null',
+    country: 'string',
+    postal_code: 'string|null',
+    gst_number: 'string|null',
+    pan_number: 'string|null',
+    business_name: 'string|null',
+    credit_limit: 'decimal',
+    payment_terms: 'string|null',
+    opening_balance: 'decimal',
+    current_balance: 'decimal',
+    discount_percent: 'decimal',
+    price_list: 'string|null',
+    date_of_birth: 'date|null',
+    anniversary_date: 'date|null',
+    gender: 'string|null',
+    status: 'string', // active, inactive, blocked
+    is_loyalty_member: 'boolean',
+    loyalty_card_number: 'string|null',
+    first_sale_date: 'datetime|null',
+    last_sale_date: 'datetime|null',
+    total_sales_amount: 'decimal',
+    total_transactions: 'number'
+  }
+};
+```
+
+#### **3. Authentication & Permission Validation**
+```javascript
+// CRITICAL: Exact permission names and role requirements
+const PERMISSIONS = {
+  // User Management
+  'users.create': { roles: ['admin'], description: 'Create users' },
+  'users.view': { roles: ['admin', 'manager'], description: 'View users' },
+  'users.edit': { roles: ['admin', 'manager'], description: 'Edit users' },
+  'users.delete': { roles: ['admin'], description: 'Delete users' },
+  
+  // Company Management
+  'companies.create': { roles: ['admin'], description: 'Create companies' },
+  'companies.view': { roles: ['admin', 'manager', 'user'], description: 'View companies' },
+  'companies.update': { roles: ['admin', 'manager'], description: 'Update companies' },
+  'companies.delete': { roles: ['admin'], description: 'Delete companies' },
+  'companies.manage_users': { roles: ['admin'], description: 'Manage company users' },
+  'companies.view_users': { roles: ['admin', 'manager'], description: 'View company users' },
+  
+  // Customer Management
+  'customers.create': { roles: ['admin', 'manager', 'user'], description: 'Create customers' },
+  'customers.view': { roles: ['admin', 'manager', 'user'], description: 'View customers' },
+  'customers.edit': { roles: ['admin', 'manager', 'user'], description: 'Edit customers' },
+  'customers.delete': { roles: ['admin', 'manager'], description: 'Delete customers' },
+  
+  // Item Management
+  'items.create': { roles: ['admin', 'manager', 'user'], description: 'Create items' },
+  'items.view': { roles: ['admin', 'manager', 'user'], description: 'View items' },
+  'items.edit': { roles: ['admin', 'manager', 'user'], description: 'Edit items' },
+  'items.delete': { roles: ['admin', 'manager'], description: 'Delete items' },
+  'items.import': { roles: ['admin', 'manager'], description: 'Import items' },
+  'items.export': { roles: ['admin', 'manager', 'user'], description: 'Export items' },
+  
+  // POS Management
+  'pos.manage': { roles: ['admin', 'manager', 'user'], description: 'Manage POS operations' },
+  'pos.view': { roles: ['admin', 'manager', 'user'], description: 'View POS data' },
+  
+  // Sales Management
+  'sales.create': { roles: ['admin', 'manager', 'user'], description: 'Create sales' },
+  'sales.view': { roles: ['admin', 'manager', 'user'], description: 'View sales' },
+  'sales.edit': { roles: ['admin', 'manager', 'user'], description: 'Edit sales' },
+  'sales.delete': { roles: ['admin', 'manager'], description: 'Delete sales' },
+  
+  // Purchase Management
+  'purchases.create': { roles: ['admin', 'manager', 'user'], description: 'Create purchases' },
+  'purchases.view': { roles: ['admin', 'manager', 'user'], description: 'View purchases' },
+  'purchases.edit': { roles: ['admin', 'manager', 'user'], description: 'Edit purchases' },
+  'purchases.delete': { roles: ['admin', 'manager'], description: 'Delete purchases' },
+  
+  // Reports
+  'reports.sales': { roles: ['admin', 'manager', 'user'], description: 'View sales reports' },
+  'reports.stock': { roles: ['admin', 'manager', 'user'], description: 'View stock reports' },
+  'reports.financial': { roles: ['admin', 'manager'], description: 'View financial reports' }
+};
+```
+
+#### **4. Form Validation Schemas**
+```javascript
+// CRITICAL: Exact validation rules matching backend
+const VALIDATION_SCHEMAS = {
+  customer: {
+    name: {
+      required: true,
+      minLength: 2,
+      maxLength: 200,
+      message: 'Customer name must be between 2 and 200 characters'
+    },
+    email: {
+      required: false,
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: 'Invalid email format'
+    },
+    mobile: {
+      required: false,
+      pattern: /^[0-9]{10}$/,
+      message: 'Mobile number must be 10 digits'
+    },
+    gst_number: {
+      required: false,
+      pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+      message: 'Invalid GST number format'
+    },
+    credit_limit: {
+      required: false,
+      min: 0,
+      type: 'decimal',
+      message: 'Credit limit must be a positive number'
+    }
+  },
+  
+  item: {
+    barcode: {
+      required: true,
+      minLength: 1,
+      unique: true,
+      message: 'Barcode cannot be empty and must be unique'
+    },
+    style_code: {
+      required: true,
+      minLength: 1,
+      message: 'Style code cannot be empty'
+    },
+    name: {
+      required: true,
+      minLength: 2,
+      maxLength: 200,
+      message: 'Item name must be between 2 and 200 characters'
+    },
+    gst_rate: {
+      required: false,
+      min: 0,
+      max: 100,
+      type: 'decimal',
+      message: 'GST rate must be between 0 and 100'
+    },
+    mrp: {
+      required: false,
+      min: 0,
+      type: 'decimal',
+      message: 'MRP must be a positive number'
+    },
+    selling_price: {
+      required: false,
+      min: 0,
+      type: 'decimal',
+      message: 'Selling price must be a positive number'
+    }
+  }
+};
+```
+
+#### **5. Error Handling Patterns**
+```javascript
+// CRITICAL: Handle all possible API errors
+const ERROR_HANDLING = {
+  // HTTP Status Codes
+  400: 'Bad Request - Invalid data provided',
+  401: 'Unauthorized - Authentication required',
+  403: 'Forbidden - Insufficient permissions',
+  404: 'Not Found - Resource does not exist',
+  409: 'Conflict - Resource already exists',
+  422: 'Unprocessable Entity - Validation failed',
+  423: 'Locked - Account is locked',
+  500: 'Internal Server Error - Server error occurred',
+  
+  // Common Error Responses
+  'INVALID_CREDENTIALS': 'Invalid username or password',
+  'ACCOUNT_LOCKED': 'Account is locked due to failed login attempts',
+  'INACTIVE_USER': 'User account is inactive',
+  'INSUFFICIENT_PERMISSIONS': 'User does not have required permissions',
+  'DUPLICATE_ENTRY': 'Record with this information already exists',
+  'VALIDATION_ERROR': 'One or more fields failed validation',
+  'RESOURCE_NOT_FOUND': 'Requested resource does not exist',
+  'COMPANY_ACCESS_DENIED': 'Access denied to this company',
+  'CUSTOMER_HAS_TRANSACTIONS': 'Cannot delete customer with existing transactions',
+  'ITEM_HAS_STOCK': 'Cannot delete item with stock',
+  'CREDIT_LIMIT_EXCEEDED': 'Customer credit limit exceeded'
+};
+```
+
+#### **6. API Response Structure Validation**
+```javascript
+// CRITICAL: Validate exact response structures
+const RESPONSE_STRUCTURES = {
+  login: {
+    success: {
+      access_token: 'string',
+      token_type: 'string',
+      expires_in: 'number'
+    },
+    error: {
+      detail: 'string',
+      status_code: 'number'
+    }
+  },
+  
+  user_profile: {
+    id: 'number',
+    username: 'string',
+    email: 'string',
+    full_name: 'string',
+    is_active: 'boolean',
+    is_superuser: 'boolean',
+    roles: 'string[]',
+    last_login: 'datetime|null'
+  },
+  
+  customer_list: {
+    data: 'Customer[]',
+    total: 'number',
+    page: 'number',
+    limit: 'number',
+    has_next: 'boolean',
+    has_prev: 'boolean'
+  },
+  
+  item_details: {
+    id: 'number',
+    barcode: 'string',
+    style_code: 'string',
+    name: 'string',
+    description: 'string|null',
+    category_id: 'number|null',
+    brand: 'string|null',
+    gst_rate: 'decimal',
+    mrp: 'decimal|null',
+    selling_price: 'decimal|null',
+    current_stock: 'decimal|null',
+    stock_value: 'decimal|null',
+    status: 'string'
+  }
+};
+```
+
+### **🔧 IMPLEMENTATION CHECKLIST**
+
+#### **Before Starting Development:**
+- [ ] **Verify all 766 API endpoints** are documented
+- [ ] **Validate all data model fields** match backend exactly
+- [ ] **Check all permission names** are correct
+- [ ] **Confirm validation rules** match backend schemas
+- [ ] **Test API endpoints** with Postman/Insomnia
+- [ ] **Verify authentication flow** works correctly
+- [ ] **Check CORS configuration** allows frontend domain
+- [ ] **Validate error responses** are handled properly
+
+#### **During Development:**
+- [ ] **Use exact field names** from backend models
+- [ ] **Implement proper error handling** for all API calls
+- [ ] **Validate all form inputs** with backend rules
+- [ ] **Check permission requirements** before API calls
+- [ ] **Handle loading states** for all async operations
+- [ ] **Implement proper pagination** for list endpoints
+- [ ] **Use correct HTTP methods** for each endpoint
+- [ ] **Include proper headers** (Authorization, Content-Type)
+
+#### **Before Deployment:**
+- [ ] **Test all API integrations** end-to-end
+- [ ] **Verify error handling** works correctly
+- [ ] **Check form validation** matches backend
+- [ ] **Test authentication flow** completely
+- [ ] **Validate permission system** works properly
+- [ ] **Test mobile responsiveness** on all screens
+- [ ] **Verify data consistency** between frontend and backend
+- [ ] **Check performance** with large datasets
+
+### **🚨 COMMON MISTAKES TO AVOID**
+
+1. **Field Name Mismatches**: Use exact field names from backend models
+2. **Missing Validation**: Implement all validation rules from backend
+3. **Incorrect HTTP Methods**: Use correct methods for each endpoint
+4. **Missing Error Handling**: Handle all possible API errors
+5. **Permission Bypass**: Always check permissions before API calls
+6. **Data Type Mismatches**: Use correct data types (string, number, boolean, decimal)
+7. **Missing Required Fields**: Include all required fields in API requests
+8. **Incorrect Response Handling**: Parse responses according to documented structure
+9. **Authentication Issues**: Properly handle JWT tokens and refresh
+10. **CORS Problems**: Ensure CORS is configured correctly
 
 ---
 
