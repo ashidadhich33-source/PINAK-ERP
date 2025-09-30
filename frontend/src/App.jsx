@@ -81,6 +81,19 @@ const IndianBanking = lazy(() => import('./pages/localization/IndianBanking'));
 // Enhanced Sales routes
 const EnhancedSales = lazy(() => import('./pages/sales/EnhancedSales'));
 
+// Banking routes
+const BankingReconciliation = lazy(() => import('./pages/banking/BankingReconciliation'));
+
+// Advanced Reporting routes
+const AdvancedReporting = lazy(() => import('./pages/reporting/AdvancedReporting'));
+
+// WhatsApp Integration routes
+const WhatsAppIntegration = lazy(() => import('./pages/marketing/WhatsAppIntegration'));
+
+// Admin routes
+const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
+const SystemSettings = lazy(() => import('./pages/admin/SystemSettings'));
+
 // Store routes
 const StoreManagement = lazy(() => import('./pages/store/StoreManagement'));
 const POSSessions = lazy(() => import('./pages/store/POSSessions'));
@@ -210,6 +223,27 @@ function App() {
                         </LazyComponent>
                       } />
                       
+                      {/* Banking routes */}
+                      <Route path="/banking" element={
+                        <LazyComponent>
+                          <BankingReconciliation />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Advanced Reporting routes */}
+                      <Route path="/reporting/advanced" element={
+                        <LazyComponent>
+                          <AdvancedReporting />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* WhatsApp Integration routes */}
+                      <Route path="/whatsapp" element={
+                        <LazyComponent>
+                          <WhatsAppIntegration />
+                        </LazyComponent>
+                      } />
+                      
                       {/* Reports routes */}
                       <Route path="/reports" element={
                         <LazyComponent>
@@ -220,7 +254,12 @@ function App() {
                       {/* Admin routes */}
                       <Route path="/admin/settings" element={
                         <LazyComponent>
-                          <SettingsDashboard />
+                          <SystemSettings />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/users" element={
+                        <LazyComponent>
+                          <UserManagement />
                         </LazyComponent>
                       } />
                       <Route path="/admin/company" element={

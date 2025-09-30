@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { whatsappService } from '../../services/whatsappService';
+import { bankingService } from '../../services/bankingService';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Alert from '../../components/common/Alert';
@@ -12,36 +12,32 @@ import {
   Search, 
   Download, 
   Upload,
-  MessageSquare,
+  Building2,
   Eye,
   Edit,
   Trash2,
   CheckCircle,
   XCircle,
   Clock,
+  DollarSign,
   Filter,
   Calendar,
-  Send,
-  Users,
-  Target,
-  Settings,
-  Play,
-  Pause,
-  RefreshCw,
+  CreditCard,
   FileText,
-  BarChart3,
   TrendingUp,
-  Bell,
-  Share
+  TrendingDown,
+  RefreshCw,
+  Settings,
+  Target
 } from 'lucide-react';
 
-const WhatsAppIntegration = () => {
+const BankingReconciliation = () => {
   const { addNotification } = useApp();
-  const [activeTab, setActiveTab] = useState('templates');
-  const [templates, setTemplates] = useState([]);
-  const [campaigns, setCampaigns] = useState([]);
-  const [messageHistory, setMessageHistory] = useState([]);
-  const [webhooks, setWebhooks] = useState([]);
+  const [activeTab, setActiveTab] = useState('bank-accounts');
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [bankStatements, setBankStatements] = useState([]);
+  const [reconciliations, setReconciliations] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,21 +64,21 @@ const WhatsAppIntegration = () => {
       
       let data;
       switch (activeTab) {
-        case 'templates':
-          data = await whatsappService.getMessageTemplates(params);
-          setTemplates(data);
+        case 'bank-accounts':
+          data = await bankingService.getBankAccounts(params);
+          setBankAccounts(data);
           break;
-        case 'campaigns':
-          data = await whatsappService.getCampaigns(params);
-          setCampaigns(data);
+        case 'bank-statements':
+          data = await bankingService.getBankStatements(params);
+          setBankStatements(data);
           break;
-        case 'message-history':
-          data = await whatsappService.getMessageHistory(params);
-          setMessageHistory(data);
+        case 'reconciliations':
+          data = await bankingService.getReconciliations(params);
+          setReconciliations(data);
           break;
-        case 'webhooks':
-          data = await whatsappService.getWebhooks(params);
-          setWebhooks(data);
+        case 'payment-methods':
+          data = await bankingService.getPaymentMethods(params);
+          setPaymentMethods(data);
           break;
         default:
           break;
@@ -121,17 +117,21 @@ const WhatsAppIntegration = () => {
 
     try {
       switch (activeTab) {
-        case 'templates':
-          await whatsappService.deleteMessageTemplate(id);
-          setTemplates(prev => prev.filter(item => item.id !== id));
+        case 'bank-accounts':
+          await bankingService.deleteBankAccount(id);
+          setBankAccounts(prev => prev.filter(item => item.id !== id));
           break;
-        case 'campaigns':
-          await whatsappService.deleteCampaign(id);
-          setCampaigns(prev => prev.filter(item => item.id !== id));
+        case 'bank-statements':
+          await bankingService.deleteBankStatement(id);
+          setBankStatements(prev => prev.filter(item => item.id !== id));
           break;
-        case 'webhooks':
-          await whatsappService.deleteWebhook(id);
-          setWebhooks(prev => prev.filter(item => item.id !== id));
+        case 'reconciliations':
+          await bankingService.deleteReconciliation(id);
+          setReconciliations(prev => prev.filter(item => item.id !== id));
+          break;
+        case 'payment-methods':
+          await bankingService.deletePaymentMethod(id);
+          setPaymentMethods(prev => prev.filter(item => item.id !== id));
           break;
         default:
           break;
@@ -150,43 +150,16 @@ const WhatsAppIntegration = () => {
     }
   };
 
-  // Handle start campaign
-  const handleStartCampaign = async (campaignId) => {
+  // Handle auto reconcile
+  const handleAutoReconcile = async (reconciliationId) => {
     try {
-      await whatsappService.startCampaign(campaignId);
-      setCampaigns(prev => prev.map(campaign => 
-        campaign.id === campaignId 
-          ? { ...campaign, status: 'running' }
-          : campaign
-      ));
+      await bankingService.autoReconcile(reconciliationId);
       addNotification({
         type: 'success',
         title: 'Success',
-        message: 'Campaign started successfully',
+        message: 'Auto reconciliation completed',
       });
-    } catch (err) {
-      addNotification({
-        type: 'danger',
-        title: 'Error',
-        message: err.message,
-      });
-    }
-  };
-
-  // Handle stop campaign
-  const handleStopCampaign = async (campaignId) => {
-    try {
-      await whatsappService.stopCampaign(campaignId);
-      setCampaigns(prev => prev.map(campaign => 
-        campaign.id === campaignId 
-          ? { ...campaign, status: 'stopped' }
-          : campaign
-      ));
-      addNotification({
-        type: 'success',
-        title: 'Success',
-        message: 'Campaign stopped successfully',
-      });
+      fetchData();
     } catch (err) {
       addNotification({
         type: 'danger',
@@ -199,7 +172,7 @@ const WhatsAppIntegration = () => {
   // Handle export
   const handleExport = async () => {
     try {
-      await whatsappService.exportWhatsAppData('csv', activeTab, filters);
+      await bankingService.exportBankingData('csv', activeTab, filters);
       addNotification({
         type: 'success',
         title: 'Export Started',
@@ -217,14 +190,14 @@ const WhatsAppIntegration = () => {
   // Get current data based on active tab
   const getCurrentData = () => {
     switch (activeTab) {
-      case 'templates':
-        return templates;
-      case 'campaigns':
-        return campaigns;
-      case 'message-history':
-        return messageHistory;
-      case 'webhooks':
-        return webhooks;
+      case 'bank-accounts':
+        return bankAccounts;
+      case 'bank-statements':
+        return bankStatements;
+      case 'reconciliations':
+        return reconciliations;
+      case 'payment-methods':
+        return paymentMethods;
       default:
         return [];
     }
@@ -233,387 +206,383 @@ const WhatsAppIntegration = () => {
   // Get columns based on active tab
   const getColumns = () => {
     switch (activeTab) {
-      case 'templates':
+      case 'bank-accounts':
         return [
           {
-            key: 'template_name',
-            label: 'Template Name',
-            render: (template) => (
+            key: 'account_name',
+            label: 'Account Name',
+            render: (account) => (
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-primary-600" />
+                  <Building2 className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{template.template_name}</p>
-                  <p className="text-sm text-gray-500">{template.template_code}</p>
+                  <p className="font-medium text-gray-900">{account.account_name}</p>
+                  <p className="text-sm text-gray-500">{account.bank_name}</p>
                 </div>
               </div>
             ),
           },
           {
-            key: 'template_type',
+            key: 'account_number',
+            label: 'Account Number',
+            render: (account) => (
+              <div>
+                <p className="font-medium text-gray-900">{account.account_number}</p>
+                <p className="text-sm text-gray-500">{account.ifsc_code}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'account_type',
             label: 'Type',
-            render: (template) => (
+            render: (account) => (
               <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                {template.template_type}
+                {account.account_type}
               </span>
             ),
           },
           {
-            key: 'content',
-            label: 'Content',
-            render: (template) => (
-              <div className="max-w-xs">
-                <p className="text-sm text-gray-900 truncate">{template.content || '-'}</p>
-              </div>
-            ),
-          },
-          {
-            key: 'language',
-            label: 'Language',
-            render: (template) => (
-              <span className="text-sm text-gray-900">{template.language || 'English'}</span>
-            ),
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            render: (template) => {
-              const statusInfo = {
-                approved: { icon: CheckCircle, color: 'text-success-600', bgColor: 'bg-success-100' },
-                pending: { icon: Clock, color: 'text-warning-600', bgColor: 'bg-warning-100' },
-                rejected: { icon: XCircle, color: 'text-danger-600', bgColor: 'bg-danger-100' },
-              }[template.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
-              
-              const Icon = statusInfo.icon;
-              return (
-                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
-                  <Icon className="w-3 h-3 mr-1" />
-                  {template.status}
-                </span>
-              );
-            },
-          },
-          {
-            key: 'actions',
-            label: 'Actions',
-            render: (template) => (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to={`/whatsapp/templates/${template.id}`}
-                  className="text-primary-600 hover:text-primary-900"
-                >
-                  <Eye className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={`/whatsapp/templates/${template.id}/edit`}
-                  className="text-secondary-600 hover:text-secondary-900"
-                >
-                  <Edit className="w-4 h-4" />
-                </Link>
-                <button
-                  onClick={() => handleDelete(template.id)}
-                  className="text-danger-600 hover:text-danger-900"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ),
-          },
-        ];
-      case 'campaigns':
-        return [
-          {
-            key: 'campaign_name',
-            label: 'Campaign',
-            render: (campaign) => (
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <Target className="w-5 h-5 text-primary-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{campaign.campaign_name}</p>
-                  <p className="text-sm text-gray-500">{campaign.campaign_code}</p>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'template',
-            label: 'Template',
-            render: (campaign) => (
-              <div>
-                <p className="font-medium text-gray-900">{campaign.template?.template_name || '-'}</p>
-                <p className="text-sm text-gray-500">{campaign.template?.template_type || ''}</p>
-              </div>
-            ),
-          },
-          {
-            key: 'recipients',
-            label: 'Recipients',
-            render: (campaign) => (
-              <div className="text-center">
-                <p className="font-medium text-gray-900">{campaign.recipient_count || 0}</p>
-                <p className="text-sm text-gray-500">recipients</p>
-              </div>
-            ),
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            render: (campaign) => {
-              const statusInfo = {
-                running: { icon: Play, color: 'text-success-600', bgColor: 'bg-success-100' },
-                stopped: { icon: Pause, color: 'text-warning-600', bgColor: 'bg-warning-100' },
-                completed: { icon: CheckCircle, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-                draft: { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' },
-              }[campaign.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
-              
-              const Icon = statusInfo.icon;
-              return (
-                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
-                  <Icon className="w-3 h-3 mr-1" />
-                  {campaign.status}
-                </span>
-              );
-            },
-          },
-          {
-            key: 'progress',
-            label: 'Progress',
-            render: (campaign) => (
-              <div className="w-full">
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                  <span>{campaign.sent_count || 0} sent</span>
-                  <span>{Math.round(((campaign.sent_count || 0) / (campaign.recipient_count || 1)) * 100)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-primary-600 h-2 rounded-full" 
-                    style={{ width: `${Math.round(((campaign.sent_count || 0) / (campaign.recipient_count || 1)) * 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'actions',
-            label: 'Actions',
-            render: (campaign) => (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to={`/whatsapp/campaigns/${campaign.id}`}
-                  className="text-primary-600 hover:text-primary-900"
-                >
-                  <Eye className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={`/whatsapp/campaigns/${campaign.id}/edit`}
-                  className="text-secondary-600 hover:text-secondary-900"
-                >
-                  <Edit className="w-4 h-4" />
-                </Link>
-                {campaign.status === 'draft' && (
-                  <button
-                    onClick={() => handleStartCampaign(campaign.id)}
-                    className="text-success-600 hover:text-success-900"
-                    title="Start Campaign"
-                  >
-                    <Play className="w-4 h-4" />
-                  </button>
-                )}
-                {campaign.status === 'running' && (
-                  <button
-                    onClick={() => handleStopCampaign(campaign.id)}
-                    className="text-warning-600 hover:text-warning-900"
-                    title="Stop Campaign"
-                  >
-                    <Pause className="w-4 h-4" />
-                  </button>
-                )}
-                <button
-                  onClick={() => handleDelete(campaign.id)}
-                  className="text-danger-600 hover:text-danger-900"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ),
-          },
-        ];
-      case 'message-history':
-        return [
-          {
-            key: 'message_info',
-            label: 'Message',
-            render: (message) => (
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-primary-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{message.recipient_name || 'Unknown'}</p>
-                  <p className="text-sm text-gray-500">{message.recipient_phone}</p>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'content',
-            label: 'Content',
-            render: (message) => (
-              <div className="max-w-xs">
-                <p className="text-sm text-gray-900 truncate">{message.content || '-'}</p>
-              </div>
-            ),
-          },
-          {
-            key: 'message_type',
-            label: 'Type',
-            render: (message) => (
-              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                {message.message_type}
-              </span>
-            ),
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            render: (message) => {
-              const statusInfo = {
-                sent: { icon: CheckCircle, color: 'text-success-600', bgColor: 'bg-success-100' },
-                delivered: { icon: CheckCircle, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-                read: { icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-100' },
-                failed: { icon: XCircle, color: 'text-danger-600', bgColor: 'bg-danger-100' },
-                pending: { icon: Clock, color: 'text-warning-600', bgColor: 'bg-warning-100' },
-              }[message.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
-              
-              const Icon = statusInfo.icon;
-              return (
-                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
-                  <Icon className="w-3 h-3 mr-1" />
-                  {message.status}
-                </span>
-              );
-            },
-          },
-          {
-            key: 'sent_at',
-            label: 'Sent At',
-            render: (message) => (
-              <div>
-                <p className="font-medium text-gray-900">
-                  {new Date(message.sent_at).toLocaleDateString()}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {new Date(message.sent_at).toLocaleTimeString()}
-                </p>
-              </div>
-            ),
-          },
-          {
-            key: 'actions',
-            label: 'Actions',
-            render: (message) => (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to={`/whatsapp/messages/${message.id}`}
-                  className="text-primary-600 hover:text-primary-900"
-                >
-                  <Eye className="w-4 h-4" />
-                </Link>
-                {message.status === 'failed' && (
-                  <button
-                    onClick={() => {/* Handle resend */}}
-                    className="text-blue-600 hover:text-blue-900"
-                    title="Resend Message"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            ),
-          },
-        ];
-      case 'webhooks':
-        return [
-          {
-            key: 'webhook_name',
-            label: 'Webhook',
-            render: (webhook) => (
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <Bell className="w-5 h-5 text-primary-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{webhook.webhook_name}</p>
-                  <p className="text-sm text-gray-500">{webhook.url}</p>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'events',
-            label: 'Events',
-            render: (webhook) => (
-              <div className="flex flex-wrap gap-1">
-                {webhook.events?.map((event, index) => (
-                  <span key={index} className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">
-                    {event}
-                  </span>
-                ))}
+            key: 'balance',
+            label: 'Balance',
+            render: (account) => (
+              <div className="text-right">
+                <p className="font-medium text-gray-900">₹{account.current_balance || 0}</p>
+                <p className="text-sm text-gray-500">{account.currency}</p>
               </div>
             ),
           },
           {
             key: 'is_active',
             label: 'Status',
-            render: (webhook) => (
+            render: (account) => (
               <div className="flex items-center space-x-2">
-                {webhook.is_active ? (
+                {account.is_active ? (
                   <CheckCircle className="w-4 h-4 text-success-500" />
                 ) : (
                   <XCircle className="w-4 h-4 text-danger-500" />
                 )}
                 <span className="text-sm text-gray-900">
-                  {webhook.is_active ? 'Active' : 'Inactive'}
+                  {account.is_active ? 'Active' : 'Inactive'}
                 </span>
-              </div>
-            ),
-          },
-          {
-            key: 'last_triggered',
-            label: 'Last Triggered',
-            render: (webhook) => (
-              <div>
-                <p className="font-medium text-gray-900">
-                  {webhook.last_triggered ? new Date(webhook.last_triggered).toLocaleDateString() : 'Never'}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {webhook.trigger_count || 0} times
-                </p>
               </div>
             ),
           },
           {
             key: 'actions',
             label: 'Actions',
-            render: (webhook) => (
+            render: (account) => (
               <div className="flex items-center space-x-2">
                 <Link
-                  to={`/whatsapp/webhooks/${webhook.id}`}
+                  to={`/banking/accounts/${account.id}`}
                   className="text-primary-600 hover:text-primary-900"
                 >
                   <Eye className="w-4 h-4" />
                 </Link>
                 <Link
-                  to={`/whatsapp/webhooks/${webhook.id}/edit`}
+                  to={`/banking/accounts/${account.id}/edit`}
+                  className="text-secondary-600 hover:text-secondary-900"
+                >
+                  <Edit className="w-4 h-4" />
+                </Link>
+                <Link
+                  to={`/banking/accounts/${account.id}/statements`}
+                  className="text-blue-600 hover:text-blue-900"
+                  title="View Statements"
+                >
+                  <FileText className="w-4 h-4" />
+                </Link>
+                <button
+                  onClick={() => handleDelete(account.id)}
+                  className="text-danger-600 hover:text-danger-900"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ),
+          },
+        ];
+      case 'bank-statements':
+        return [
+          {
+            key: 'statement_info',
+            label: 'Statement',
+            render: (statement) => (
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-primary-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{statement.statement_name}</p>
+                  <p className="text-sm text-gray-500">{statement.bank_account?.account_name}</p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'statement_date',
+            label: 'Statement Date',
+            render: (statement) => (
+              <div>
+                <p className="font-medium text-gray-900">
+                  {new Date(statement.statement_date).toLocaleDateString()}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {new Date(statement.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            ),
+          },
+          {
+            key: 'balance',
+            label: 'Balance',
+            render: (statement) => (
+              <div className="text-right">
+                <p className="font-medium text-gray-900">₹{statement.opening_balance || 0}</p>
+                <p className="text-sm text-gray-500">to ₹{statement.closing_balance || 0}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'transactions',
+            label: 'Transactions',
+            render: (statement) => (
+              <div className="text-center">
+                <p className="font-medium text-gray-900">{statement.transaction_count || 0}</p>
+                <p className="text-sm text-gray-500">transactions</p>
+              </div>
+            ),
+          },
+          {
+            key: 'status',
+            label: 'Status',
+            render: (statement) => {
+              const statusInfo = {
+                imported: { icon: CheckCircle, color: 'text-success-600', bgColor: 'bg-success-100' },
+                processing: { icon: Clock, color: 'text-warning-600', bgColor: 'bg-warning-100' },
+                error: { icon: XCircle, color: 'text-danger-600', bgColor: 'bg-danger-100' },
+              }[statement.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
+              
+              const Icon = statusInfo.icon;
+              return (
+                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  <Icon className="w-3 h-3 mr-1" />
+                  {statement.status}
+                </span>
+              );
+            },
+          },
+          {
+            key: 'actions',
+            label: 'Actions',
+            render: (statement) => (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to={`/banking/statements/${statement.id}`}
+                  className="text-primary-600 hover:text-primary-900"
+                >
+                  <Eye className="w-4 h-4" />
+                </Link>
+                <Link
+                  to={`/banking/statements/${statement.id}/edit`}
                   className="text-secondary-600 hover:text-secondary-900"
                 >
                   <Edit className="w-4 h-4" />
                 </Link>
                 <button
-                  onClick={() => handleDelete(webhook.id)}
+                  onClick={() => handleDelete(statement.id)}
+                  className="text-danger-600 hover:text-danger-900"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ),
+          },
+        ];
+      case 'reconciliations':
+        return [
+          {
+            key: 'reconciliation_info',
+            label: 'Reconciliation',
+            render: (reconciliation) => (
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <Target className="w-5 h-5 text-primary-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{reconciliation.reconciliation_name}</p>
+                  <p className="text-sm text-gray-500">{reconciliation.bank_account?.account_name}</p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'reconciliation_date',
+            label: 'Date',
+            render: (reconciliation) => (
+              <div>
+                <p className="font-medium text-gray-900">
+                  {new Date(reconciliation.reconciliation_date).toLocaleDateString()}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {new Date(reconciliation.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            ),
+          },
+          {
+            key: 'balance',
+            label: 'Balance',
+            render: (reconciliation) => (
+              <div className="text-right">
+                <p className="font-medium text-gray-900">₹{reconciliation.statement_balance || 0}</p>
+                <p className="text-sm text-gray-500">vs ₹{reconciliation.book_balance || 0}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'difference',
+            label: 'Difference',
+            render: (reconciliation) => {
+              const difference = (reconciliation.statement_balance || 0) - (reconciliation.book_balance || 0);
+              return (
+                <div className="text-right">
+                  <p className={`font-medium ${difference === 0 ? 'text-success-600' : 'text-danger-600'}`}>
+                    ₹{Math.abs(difference)}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {difference === 0 ? 'Balanced' : difference > 0 ? 'Over' : 'Under'}
+                  </p>
+                </div>
+              );
+            },
+          },
+          {
+            key: 'status',
+            label: 'Status',
+            render: (reconciliation) => {
+              const statusInfo = {
+                balanced: { icon: CheckCircle, color: 'text-success-600', bgColor: 'bg-success-100' },
+                unbalanced: { icon: XCircle, color: 'text-danger-600', bgColor: 'bg-danger-100' },
+                in_progress: { icon: Clock, color: 'text-warning-600', bgColor: 'bg-warning-100' },
+              }[reconciliation.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
+              
+              const Icon = statusInfo.icon;
+              return (
+                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  <Icon className="w-3 h-3 mr-1" />
+                  {reconciliation.status}
+                </span>
+              );
+            },
+          },
+          {
+            key: 'actions',
+            label: 'Actions',
+            render: (reconciliation) => (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to={`/banking/reconciliations/${reconciliation.id}`}
+                  className="text-primary-600 hover:text-primary-900"
+                >
+                  <Eye className="w-4 h-4" />
+                </Link>
+                <Link
+                  to={`/banking/reconciliations/${reconciliation.id}/edit`}
+                  className="text-secondary-600 hover:text-secondary-900"
+                >
+                  <Edit className="w-4 h-4" />
+                </Link>
+                {reconciliation.status === 'unbalanced' && (
+                  <button
+                    onClick={() => handleAutoReconcile(reconciliation.id)}
+                    className="text-blue-600 hover:text-blue-900"
+                    title="Auto Reconcile"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDelete(reconciliation.id)}
+                  className="text-danger-600 hover:text-danger-900"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ),
+          },
+        ];
+      case 'payment-methods':
+        return [
+          {
+            key: 'method_name',
+            label: 'Payment Method',
+            render: (method) => (
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-primary-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{method.method_name}</p>
+                  <p className="text-sm text-gray-500">{method.method_code}</p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'method_type',
+            label: 'Type',
+            render: (method) => (
+              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                {method.method_type}
+              </span>
+            ),
+          },
+          {
+            key: 'bank_account',
+            label: 'Bank Account',
+            render: (method) => (
+              <div>
+                <p className="font-medium text-gray-900">{method.bank_account?.account_name || '-'}</p>
+                <p className="text-sm text-gray-500">{method.bank_account?.account_number || ''}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'is_active',
+            label: 'Status',
+            render: (method) => (
+              <div className="flex items-center space-x-2">
+                {method.is_active ? (
+                  <CheckCircle className="w-4 h-4 text-success-500" />
+                ) : (
+                  <XCircle className="w-4 h-4 text-danger-500" />
+                )}
+                <span className="text-sm text-gray-900">
+                  {method.is_active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+            ),
+          },
+          {
+            key: 'actions',
+            label: 'Actions',
+            render: (method) => (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to={`/banking/payment-methods/${method.id}`}
+                  className="text-primary-600 hover:text-primary-900"
+                >
+                  <Eye className="w-4 h-4" />
+                </Link>
+                <Link
+                  to={`/banking/payment-methods/${method.id}/edit`}
+                  className="text-secondary-600 hover:text-secondary-900"
+                >
+                  <Edit className="w-4 h-4" />
+                </Link>
+                <button
+                  onClick={() => handleDelete(method.id)}
                   className="text-danger-600 hover:text-danger-900"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -630,7 +599,7 @@ const WhatsAppIntegration = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" text="Loading WhatsApp data..." />
+        <LoadingSpinner size="lg" text="Loading banking data..." />
       </div>
     );
   }
@@ -640,8 +609,8 @@ const WhatsAppIntegration = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">WhatsApp Integration</h1>
-          <p className="text-gray-600">Manage WhatsApp messaging, campaigns, and templates</p>
+          <h1 className="text-2xl font-bold text-gray-900">Banking & Reconciliation</h1>
+          <p className="text-gray-600">Manage bank accounts, statements, and reconciliation</p>
         </div>
         <div className="flex items-center space-x-3">
           <Button
@@ -667,10 +636,10 @@ const WhatsAppIntegration = () => {
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8 px-6">
             {[
-              { id: 'templates', name: 'Message Templates', icon: FileText },
-              { id: 'campaigns', name: 'Campaigns', icon: Target },
-              { id: 'message-history', name: 'Message History', icon: MessageSquare },
-              { id: 'webhooks', name: 'Webhooks', icon: Bell },
+              { id: 'bank-accounts', name: 'Bank Accounts', icon: Building2 },
+              { id: 'bank-statements', name: 'Bank Statements', icon: FileText },
+              { id: 'reconciliations', name: 'Reconciliations', icon: Target },
+              { id: 'payment-methods', name: 'Payment Methods', icon: CreditCard },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -718,8 +687,8 @@ const WhatsAppIntegration = () => {
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
-                  <option value="running">Running</option>
-                  <option value="stopped">Stopped</option>
+                  <option value="balanced">Balanced</option>
+                  <option value="unbalanced">Unbalanced</option>
                 </select>
               </div>
               
@@ -770,4 +739,4 @@ const WhatsAppIntegration = () => {
   );
 };
 
-export default WhatsAppIntegration;
+export default BankingReconciliation;

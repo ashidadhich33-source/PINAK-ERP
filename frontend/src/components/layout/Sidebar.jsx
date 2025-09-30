@@ -123,6 +123,18 @@ const Sidebar = () => {
       permission: 'loyalty.view',
     },
     {
+      name: 'Banking',
+      href: '/banking',
+      icon: CreditCard,
+      permission: 'banking.view',
+    },
+    {
+      name: 'Advanced Reporting',
+      href: '/reporting/advanced',
+      icon: BarChart3,
+      permission: 'reporting.view',
+    },
+    {
       name: 'WhatsApp',
       href: '/whatsapp',
       icon: MessageSquare,
@@ -148,6 +160,12 @@ const Sidebar = () => {
       href: '/admin/settings',
       icon: Settings,
       permission: 'admin.settings',
+    },
+    {
+      name: 'User Management',
+      href: '/admin/users',
+      icon: Users,
+      permission: 'admin.users',
     },
     {
       name: 'Company Settings',
