@@ -35,6 +35,13 @@ class PurchaseBill(BaseModel):
     # Status
     status = Column(String(20), default='pending')  # pending, paid, cancelled
     
+    # Usage Tracking
+    used_in_pos = Column(Boolean, default=False)
+    used_in_sales = Column(Boolean, default=False)
+    pos_transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=True)
+    sale_id = Column(Integer, ForeignKey('sale.id'), nullable=True)
+    modification_locked = Column(Boolean, default=False)
+    
     # Relationships
     supplier = relationship("Supplier")
     items = relationship("PurchaseBillItem", back_populates="purchase_bill")
@@ -71,6 +78,13 @@ class PurchaseBillItem(BaseModel):
     
     # MRP Information
     mrp = Column(Numeric(10, 2))
+    
+    # Usage Tracking
+    used_in_pos = Column(Boolean, default=False)
+    used_in_sales = Column(Boolean, default=False)
+    pos_transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=True)
+    sale_id = Column(Integer, ForeignKey('sale.id'), nullable=True)
+    modification_locked = Column(Boolean, default=False)
     
     # Relationships
     purchase_bill = relationship("PurchaseBill", back_populates="items")
