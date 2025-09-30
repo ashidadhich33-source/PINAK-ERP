@@ -37,6 +37,57 @@ const SalesList = lazy(() => import('./pages/sales/SalesList'));
 // Reports routes
 const ReportsDashboard = lazy(() => import('./pages/reports/ReportsDashboard'));
 
+// Admin routes
+const SettingsDashboard = lazy(() => import('./pages/admin/SettingsDashboard'));
+const CompanySettings = lazy(() => import('./pages/admin/CompanySettings'));
+const PrintTemplates = lazy(() => import('./pages/admin/PrintTemplates'));
+const SystemInfo = lazy(() => import('./pages/admin/SystemInfo'));
+const DatabaseManagement = lazy(() => import('./pages/admin/DatabaseManagement'));
+const BackupRecovery = lazy(() => import('./pages/admin/BackupRecovery'));
+const AutomationDashboard = lazy(() => import('./pages/admin/AutomationDashboard'));
+
+// Accounting routes
+const ChartOfAccounts = lazy(() => import('./pages/accounting/ChartOfAccounts'));
+const JournalEntries = lazy(() => import('./pages/accounting/JournalEntries'));
+const GeneralLedger = lazy(() => import('./pages/accounting/GeneralLedger'));
+const AccountingReports = lazy(() => import('./pages/accounting/FinancialReports'));
+
+// Purchase routes
+const PurchaseOrders = lazy(() => import('./pages/purchases/PurchaseOrders'));
+const PurchaseInvoices = lazy(() => import('./pages/purchases/PurchaseInvoices'));
+const VendorManagement = lazy(() => import('./pages/purchases/VendorManagement'));
+const PurchaseAnalytics = lazy(() => import('./pages/purchases/PurchaseAnalytics'));
+
+// Reporting routes
+const FinancialReports = lazy(() => import('./pages/reports/FinancialReports'));
+const StockReports = lazy(() => import('./pages/reports/StockReports'));
+const DashboardReports = lazy(() => import('./pages/reports/DashboardReports'));
+const AdvancedReporting = lazy(() => import('./pages/reports/AdvancedReporting'));
+
+// Loyalty routes
+const LoyaltyPrograms = lazy(() => import('./pages/loyalty/LoyaltyPrograms'));
+const LoyaltyTransactions = lazy(() => import('./pages/loyalty/LoyaltyTransactions'));
+
+// Marketing routes
+const WhatsAppIntegration = lazy(() => import('./pages/marketing/WhatsAppIntegration'));
+const MarketingAutomation = lazy(() => import('./pages/marketing/MarketingAutomation'));
+
+// Localization routes
+const IndianGeography = lazy(() => import('./pages/localization/IndianGeography'));
+const IndianGST = lazy(() => import('./pages/localization/IndianGST'));
+const IndianBanking = lazy(() => import('./pages/localization/IndianBanking'));
+
+// Store routes
+const StoreManagement = lazy(() => import('./pages/store/StoreManagement'));
+const POSSessions = lazy(() => import('./pages/store/POSSessions'));
+const POSReceipts = lazy(() => import('./pages/store/POSReceipts'));
+
+// Payment routes
+const PaymentManagement = lazy(() => import('./pages/payment/PaymentManagement'));
+const PaymentModes = lazy(() => import('./pages/payment/PaymentModes'));
+const FinancialTransactions = lazy(() => import('./pages/payment/FinancialTransactions'));
+const FinancialIntegration = lazy(() => import('./pages/payment/FinancialIntegration'));
+
 function App() {
   return (
     <AppProvider>
@@ -154,6 +205,189 @@ function App() {
                       <Route path="/reports" element={
                         <LazyComponent>
                           <ReportsDashboard />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Admin routes */}
+                      <Route path="/admin/settings" element={
+                        <LazyComponent>
+                          <SettingsDashboard />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/company" element={
+                        <LazyComponent>
+                          <CompanySettings />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/templates" element={
+                        <LazyComponent>
+                          <PrintTemplates />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/system" element={
+                        <LazyComponent>
+                          <SystemInfo />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/database" element={
+                        <LazyComponent>
+                          <DatabaseManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/backup" element={
+                        <LazyComponent>
+                          <BackupRecovery />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/automation" element={
+                        <LazyComponent>
+                          <AutomationDashboard />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Accounting routes */}
+                      <Route path="/accounting/chart-of-accounts" element={
+                        <LazyComponent>
+                          <ChartOfAccounts />
+                        </LazyComponent>
+                      } />
+                      <Route path="/accounting/journal-entries" element={
+                        <LazyComponent>
+                          <JournalEntries />
+                        </LazyComponent>
+                      } />
+                      <Route path="/accounting/general-ledger" element={
+                        <LazyComponent>
+                          <GeneralLedger />
+                        </LazyComponent>
+                      } />
+                      <Route path="/accounting/financial-reports" element={
+                        <LazyComponent>
+                          <AccountingReports />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Purchase routes */}
+                      <Route path="/purchases/orders" element={
+                        <LazyComponent>
+                          <PurchaseOrders />
+                        </LazyComponent>
+                      } />
+                      <Route path="/purchases/invoices" element={
+                        <LazyComponent>
+                          <PurchaseInvoices />
+                        </LazyComponent>
+                      } />
+                      <Route path="/purchases/vendors" element={
+                        <LazyComponent>
+                          <VendorManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/purchases/analytics" element={
+                        <LazyComponent>
+                          <PurchaseAnalytics />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Reporting routes */}
+                      <Route path="/reports/financial" element={
+                        <LazyComponent>
+                          <FinancialReports />
+                        </LazyComponent>
+                      } />
+                      <Route path="/reports/stock" element={
+                        <LazyComponent>
+                          <StockReports />
+                        </LazyComponent>
+                      } />
+                      <Route path="/reports/dashboards" element={
+                        <LazyComponent>
+                          <DashboardReports />
+                        </LazyComponent>
+                      } />
+                      <Route path="/reports/advanced" element={
+                        <LazyComponent>
+                          <AdvancedReporting />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Loyalty routes */}
+                      <Route path="/loyalty/programs" element={
+                        <LazyComponent>
+                          <LoyaltyPrograms />
+                        </LazyComponent>
+                      } />
+                      <Route path="/loyalty/transactions" element={
+                        <LazyComponent>
+                          <LoyaltyTransactions />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Marketing routes */}
+                      <Route path="/marketing/whatsapp" element={
+                        <LazyComponent>
+                          <WhatsAppIntegration />
+                        </LazyComponent>
+                      } />
+                      <Route path="/marketing/automation" element={
+                        <LazyComponent>
+                          <MarketingAutomation />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Localization routes */}
+                      <Route path="/localization/geography" element={
+                        <LazyComponent>
+                          <IndianGeography />
+                        </LazyComponent>
+                      } />
+                      <Route path="/localization/gst" element={
+                        <LazyComponent>
+                          <IndianGST />
+                        </LazyComponent>
+                      } />
+                      <Route path="/localization/banking" element={
+                        <LazyComponent>
+                          <IndianBanking />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Store routes */}
+                      <Route path="/store/management" element={
+                        <LazyComponent>
+                          <StoreManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/store/sessions" element={
+                        <LazyComponent>
+                          <POSSessions />
+                        </LazyComponent>
+                      } />
+                      <Route path="/store/receipts" element={
+                        <LazyComponent>
+                          <POSReceipts />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Payment routes */}
+                      <Route path="/payment/management" element={
+                        <LazyComponent>
+                          <PaymentManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/payment/modes" element={
+                        <LazyComponent>
+                          <PaymentModes />
+                        </LazyComponent>
+                      } />
+                      <Route path="/payment/transactions" element={
+                        <LazyComponent>
+                          <FinancialTransactions />
+                        </LazyComponent>
+                      } />
+                      <Route path="/payment/integration" element={
+                        <LazyComponent>
+                          <FinancialIntegration />
                         </LazyComponent>
                       } />
                       
