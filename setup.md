@@ -3,10 +3,11 @@
 ## 🎯 Project Overview
 
 This is a comprehensive ERP (Enterprise Resource Planning) system built with:
-- **Backend**: FastAPI (Python) with SQLAlchemy ORM
-- **Frontend**: React with Vite, Tailwind CSS
-- **Database**: SQLite (default) or PostgreSQL
+- **Backend**: FastAPI (Python 3.8+) with SQLAlchemy ORM
+- **Frontend**: React 18+ with Vite, Tailwind CSS
+- **Database**: SQLite (default) or PostgreSQL 12+
 - **Features**: Inventory, Sales, Purchase, Accounting, GST, Loyalty, POS, Reports
+- **Server Requirements**: Python 3.8+, Node.js 16+, PostgreSQL 12+ (optional)
 
 ## 📁 Project Structure
 
@@ -38,9 +39,183 @@ This is a comprehensive ERP (Enterprise Resource Planning) system built with:
 
 ### Prerequisites
 
+#### For Windows Systems:
+- **Python 3.8+** with pip (Download from python.org)
+- **Node.js 16+** with npm (Download from nodejs.org)
+- **Git** (for version control) - Download from git-scm.com
+- **PostgreSQL 12+** (optional, for production) - Download from postgresql.org
+- **Visual Studio Build Tools** (for Python packages with C extensions)
+
+#### For Linux/Mac Systems:
 - **Python 3.8+** with pip
 - **Node.js 16+** with npm
 - **Git** (for version control)
+- **PostgreSQL 12+** (optional, for production)
+
+## 🪟 Windows Installation Guide
+
+### Step 1: Install Prerequisites
+
+#### 1.1 Install Python 3.8+
+1. Download Python from [python.org](https://www.python.org/downloads/)
+2. **IMPORTANT**: Check "Add Python to PATH" during installation
+3. Verify installation:
+   ```cmd
+   python --version
+   pip --version
+   ```
+
+#### 1.2 Install Node.js 16+
+1. Download Node.js from [nodejs.org](https://nodejs.org/)
+2. Choose the LTS version (recommended)
+3. Verify installation:
+   ```cmd
+   node --version
+   npm --version
+   ```
+
+#### 1.3 Install PostgreSQL (Optional but Recommended)
+1. Download PostgreSQL from [postgresql.org](https://www.postgresql.org/download/windows/)
+2. During installation:
+   - Set a strong password for the `postgres` user
+   - Note the port (default: 5432)
+   - Remember the installation directory
+3. Verify installation:
+   ```cmd
+   psql --version
+   ```
+
+#### 1.4 Install Visual Studio Build Tools (Required for some Python packages)
+1. Download from [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+2. Install "C++ build tools" workload
+3. This is required for packages like `psycopg2-binary`
+
+### Step 2: Clone and Setup Project
+
+#### 2.1 Clone the Repository
+```cmd
+git clone <repository-url>
+cd pinak-erp-system
+```
+
+#### 2.2 Create Virtual Environment
+```cmd
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+venv\Scripts\activate
+
+# Verify activation (you should see (venv) in your prompt)
+```
+
+### Step 3: Backend Setup
+
+#### 3.1 Install Python Dependencies
+```cmd
+# Make sure virtual environment is activated
+pip install --upgrade pip
+pip install -r Requirements.txt
+```
+
+#### 3.2 Database Setup Options
+
+**Option A: SQLite (Default - Easiest)**
+```cmd
+# No additional setup required
+# Database will be created automatically at ./database/erp_system.db
+```
+
+**Option B: PostgreSQL (Recommended for Production)**
+```cmd
+# 1. Create database in PostgreSQL
+psql -U postgres -h localhost
+CREATE DATABASE erp_system;
+CREATE USER erp_user WITH PASSWORD 'your_secure_password';
+GRANT ALL PRIVILEGES ON DATABASE erp_system TO erp_user;
+\q
+
+# 2. Create .env file in project root
+# Copy the example below and modify as needed
+```
+
+#### 3.3 Environment Configuration
+Create a `.env` file in the project root:
+```env
+# Database Configuration
+DATABASE_TYPE=sqlite
+# For PostgreSQL, use:
+# DATABASE_TYPE=postgresql
+# POSTGRES_HOST=localhost
+# POSTGRES_PORT=5432
+# POSTGRES_DB=erp_system
+# POSTGRES_USER=erp_user
+# POSTGRES_PASSWORD=your_secure_password
+
+# Server Configuration
+HOST=127.0.0.1
+PORT=8000
+DEBUG=true
+
+# Security
+SECRET_KEY=your-secret-key-here-change-this-in-production
+
+# Company Settings
+COMPANY_NAME=Your Company Name
+COMPANY_ADDRESS=Your Company Address
+```
+
+### Step 4: Frontend Setup
+
+#### 4.1 Install Node.js Dependencies
+```cmd
+cd frontend
+npm install
+```
+
+#### 4.2 Build Frontend (Optional)
+```cmd
+# For development
+npm run dev
+
+# For production
+npm run build
+```
+
+### Step 5: Run the Application
+
+#### 5.1 Start Backend Server
+```cmd
+# From project root directory
+python run_app.py
+```
+
+#### 5.2 Start Frontend (In a new terminal)
+```cmd
+cd frontend
+npm run dev
+```
+
+#### 5.3 Access the Application
+- **Backend API**: http://127.0.0.1:8000
+- **API Documentation**: http://127.0.0.1:8000/docs
+- **Setup Wizard**: http://127.0.0.1:8000/setup
+- **Frontend**: http://localhost:3000
+
+### Step 6: Initial Setup Wizard
+
+1. Open your browser and go to: http://127.0.0.1:8000/setup
+2. Follow the setup wizard:
+   - **Step 1**: Choose database type (SQLite or PostgreSQL)
+   - **Step 2**: Enter company information
+   - **Step 3**: Create admin user account
+   - **Step 4**: Complete setup
+
+3. **Default Login Credentials**:
+   - Username: `admin`
+   - Password: `admin123`
+
+## 🚀 Quick Start (Alternative Method)
 
 ### 1. Backend Setup
 
@@ -100,30 +275,119 @@ npm run build
 
 The frontend will be available at: `http://localhost:3000`
 
+## 🖥️ Server Requirements
+
+### Minimum System Requirements
+- **OS**: Windows 10/11, Linux (Ubuntu 18.04+), macOS 10.15+
+- **RAM**: 4GB minimum, 8GB recommended
+- **Storage**: 10GB free space
+- **CPU**: 2 cores minimum, 4 cores recommended
+
+### Production Server Requirements
+- **OS**: Linux (Ubuntu 20.04+), CentOS 8+, RHEL 8+
+- **RAM**: 8GB minimum, 16GB recommended
+- **Storage**: 50GB+ SSD recommended
+- **CPU**: 4 cores minimum, 8 cores recommended
+- **Database**: PostgreSQL 12+ (recommended for production)
+
+### Database Requirements
+
+#### SQLite (Default - Development/Small Business)
+- **Pros**: No server setup, file-based, easy to backup
+- **Cons**: Limited concurrent users, not suitable for production
+- **Use Case**: Development, small businesses (< 10 users)
+- **File Location**: `./database/erp_system.db`
+
+#### PostgreSQL (Recommended for Production)
+- **Pros**: High performance, concurrent users, ACID compliance
+- **Cons**: Requires server setup and maintenance
+- **Use Case**: Production, medium to large businesses
+- **Requirements**: PostgreSQL 12+, 2GB+ RAM for database server
+
+#### MySQL (Alternative)
+- **Pros**: Popular, good performance, easy setup
+- **Cons**: Less advanced features than PostgreSQL
+- **Use Case**: Web applications, existing MySQL infrastructure
+
 ## 🗄️ Database Setup
 
 ### SQLite (Default)
 The system uses SQLite by default. The database file will be created automatically at:
 - `./database/erp_system.db`
 
-### PostgreSQL (Optional)
+### PostgreSQL (Recommended for Production)
 To use PostgreSQL instead:
 
-1. Install PostgreSQL
-2. Create a database:
-```sql
-CREATE DATABASE erp_system;
-```
+1. **Install PostgreSQL**:
+   ```bash
+   # Ubuntu/Debian
+   sudo apt update
+   sudo apt install postgresql postgresql-contrib
+   
+   # Windows - Download from postgresql.org
+   # macOS
+   brew install postgresql
+   ```
 
-3. Update `.env` file:
-```env
-DATABASE_TYPE=postgresql
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=erp_system
-POSTGRES_USER=your_username
-POSTGRES_PASSWORD=your_password
-```
+2. **Create Database and User**:
+   ```sql
+   -- Connect as postgres user
+   sudo -u postgres psql
+   
+   -- Create database
+   CREATE DATABASE erp_system;
+   
+   -- Create user
+   CREATE USER erp_user WITH PASSWORD 'your_secure_password';
+   
+   -- Grant privileges
+   GRANT ALL PRIVILEGES ON DATABASE erp_system TO erp_user;
+   GRANT ALL PRIVILEGES ON SCHEMA public TO erp_user;
+   
+   -- Exit
+   \q
+   ```
+
+3. **Update Environment Configuration**:
+   ```env
+   DATABASE_TYPE=postgresql
+   POSTGRES_HOST=localhost
+   POSTGRES_PORT=5432
+   POSTGRES_DB=erp_system
+   POSTGRES_USER=erp_user
+   POSTGRES_PASSWORD=your_secure_password
+   ```
+
+### MySQL (Alternative)
+To use MySQL:
+
+1. **Install MySQL**:
+   ```bash
+   # Ubuntu/Debian
+   sudo apt install mysql-server
+   
+   # Windows - Download from mysql.com
+   # macOS
+   brew install mysql
+   ```
+
+2. **Create Database**:
+   ```sql
+   CREATE DATABASE erp_system;
+   CREATE USER 'erp_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+   GRANT ALL PRIVILEGES ON erp_system.* TO 'erp_user'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+
+3. **Update Environment Configuration**:
+   ```env
+   DATABASE_TYPE=mysql
+   MYSQL_HOST=localhost
+   MYSQL_PORT=3306
+   MYSQL_DB=erp_system
+   MYSQL_USER=erp_user
+   MYSQL_PASSWORD=your_secure_password
+   ```
 
 ## 🔧 Configuration
 
@@ -291,25 +555,119 @@ npm run lint
 
 ### Common Issues
 
+#### Windows-Specific Issues
+
+1. **Python Installation Issues**:
+   ```
+   Error: 'python' is not recognized as an internal or external command
+   Solution: Add Python to PATH during installation or manually add to system PATH
+   ```
+
+2. **Visual Studio Build Tools Required**:
+   ```
+   Error: Microsoft Visual C++ 14.0 is required
+   Solution: Install Visual Studio Build Tools with C++ workload
+   ```
+
+3. **PostgreSQL Connection Issues**:
+   ```
+   Error: psycopg2.OperationalError: FATAL: password authentication failed
+   Solution: Check PostgreSQL user credentials and pg_hba.conf settings
+   ```
+
+4. **Node.js/npm Issues**:
+   ```
+   Error: 'npm' is not recognized
+   Solution: Reinstall Node.js and ensure it's added to PATH
+   ```
+
+#### General Issues
+
 1. **Database Connection Failed**:
-   - Check database configuration
+   - Check database configuration in `.env` file
    - Ensure database server is running
    - Verify connection credentials
+   - For PostgreSQL: Check `pg_hba.conf` and `postgresql.conf`
 
 2. **Frontend Not Loading**:
    - Check if backend is running on port 8000
-   - Verify CORS settings
+   - Verify CORS settings in `app/config.py`
    - Check browser console for errors
+   - Ensure frontend is running on port 3000
 
 3. **Import Errors**:
-   - Ensure all dependencies are installed
+   - Ensure all dependencies are installed: `pip install -r Requirements.txt`
    - Check Python path configuration
    - Verify file permissions
+   - Activate virtual environment: `venv\Scripts\activate` (Windows)
+
+4. **Port Already in Use**:
+   ```
+   Error: [Errno 98] Address already in use
+   Solution: Change port in .env file or kill process using the port
+   ```
+
+5. **Permission Denied Errors**:
+   - Run Command Prompt as Administrator (Windows)
+   - Check file/folder permissions
+   - Ensure user has write access to project directory
+
+### Database-Specific Troubleshooting
+
+#### SQLite Issues
+- **Database locked**: Close all connections, restart application
+- **File permissions**: Ensure write access to database directory
+- **Corrupted database**: Restore from backup or recreate
+
+#### PostgreSQL Issues
+- **Connection refused**: Check if PostgreSQL service is running
+- **Authentication failed**: Verify user credentials and pg_hba.conf
+- **Database does not exist**: Create database manually
+- **Permission denied**: Grant proper privileges to user
+
+#### MySQL Issues
+- **Access denied**: Check user privileges and password
+- **Connection timeout**: Check firewall and network settings
+- **Character set issues**: Ensure UTF-8 encoding
+
+### Performance Issues
+
+1. **Slow Database Queries**:
+   - Add database indexes
+   - Optimize query patterns
+   - Consider database connection pooling
+
+2. **High Memory Usage**:
+   - Check for memory leaks
+   - Optimize data loading
+   - Consider increasing server RAM
+
+3. **Slow Frontend Loading**:
+   - Enable gzip compression
+   - Optimize images and assets
+   - Use CDN for static files
 
 ### Getting Help
-- Check the logs in `./logs/` directory
-- Review API documentation at `/docs`
-- Check system health at `/health`
+
+1. **Check Logs**:
+   - Application logs: `./logs/erp_system.log`
+   - Daily logs: `./logs/erp_YYYYMMDD.log`
+   - Database logs: Check PostgreSQL/MySQL logs
+
+2. **System Health**:
+   - Health check: http://127.0.0.1:8000/health
+   - API documentation: http://127.0.0.1:8000/docs
+   - Database status: Check connection in health endpoint
+
+3. **Debug Mode**:
+   - Enable debug mode in `.env`: `DEBUG=true`
+   - Check detailed error messages
+   - Use development tools for frontend debugging
+
+4. **Community Support**:
+   - Check project documentation
+   - Review GitHub issues
+   - Contact support team
 
 ## 📈 Performance Optimization
 
