@@ -32,7 +32,12 @@ import {
   Building2,
   BarChart3,
   Package,
-  Settings
+  Settings,
+  Award,
+  Star,
+  MessageSquare,
+  Target,
+  Zap
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -246,6 +251,36 @@ const Sidebar = () => {
     },
   ];
 
+  const loyaltyNavigation = [
+    {
+      name: 'Loyalty Programs',
+      href: '/loyalty/programs',
+      icon: Award,
+      permission: 'loyalty.programs',
+    },
+    {
+      name: 'Loyalty Transactions',
+      href: '/loyalty/transactions',
+      icon: Star,
+      permission: 'loyalty.transactions',
+    },
+  ];
+
+  const marketingNavigation = [
+    {
+      name: 'WhatsApp Integration',
+      href: '/marketing/whatsapp',
+      icon: MessageSquare,
+      permission: 'marketing.whatsapp',
+    },
+    {
+      name: 'Marketing Automation',
+      href: '/marketing/automation',
+      icon: Target,
+      permission: 'marketing.automation',
+    },
+  ];
+
   const filteredNavigation = navigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
@@ -263,6 +298,14 @@ const Sidebar = () => {
   );
 
   const filteredReportingNavigation = reportingNavigation.filter(item => 
+    !item.permission || hasPermission(item.permission)
+  );
+
+  const filteredLoyaltyNavigation = loyaltyNavigation.filter(item => 
+    !item.permission || hasPermission(item.permission)
+  );
+
+  const filteredMarketingNavigation = marketingNavigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
 
@@ -450,6 +493,82 @@ const Sidebar = () => {
                 </div>
                 
                 {filteredReportingNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive
+                            ? 'bg-primary-100 text-primary-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`
+                      }
+                    >
+                      <Icon className="flex-shrink-0 h-5 w-5" />
+                      {!sidebarCollapsed && (
+                        <span className="ml-3">{item.name}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Loyalty Section */}
+            {filteredLoyaltyNavigation.length > 0 && (
+              <>
+                <div className="pt-6">
+                  <div className="flex items-center px-3 py-2">
+                    <Award className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    {!sidebarCollapsed && (
+                      <span className="ml-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Loyalty
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {filteredLoyaltyNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive
+                            ? 'bg-primary-100 text-primary-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`
+                      }
+                    >
+                      <Icon className="flex-shrink-0 h-5 w-5" />
+                      {!sidebarCollapsed && (
+                        <span className="ml-3">{item.name}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Marketing Section */}
+            {filteredMarketingNavigation.length > 0 && (
+              <>
+                <div className="pt-6">
+                  <div className="flex items-center px-3 py-2">
+                    <Target className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    {!sidebarCollapsed && (
+                      <span className="ml-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Marketing
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {filteredMarketingNavigation.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavLink

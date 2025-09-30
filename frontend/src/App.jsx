@@ -64,6 +64,14 @@ const StockReports = lazy(() => import('./pages/reports/StockReports'));
 const DashboardReports = lazy(() => import('./pages/reports/DashboardReports'));
 const AdvancedReporting = lazy(() => import('./pages/reports/AdvancedReporting'));
 
+// Loyalty routes
+const LoyaltyPrograms = lazy(() => import('./pages/loyalty/LoyaltyPrograms'));
+const LoyaltyTransactions = lazy(() => import('./pages/loyalty/LoyaltyTransactions'));
+
+// Marketing routes
+const WhatsAppIntegration = lazy(() => import('./pages/marketing/WhatsAppIntegration'));
+const MarketingAutomation = lazy(() => import('./pages/marketing/MarketingAutomation'));
+
 function App() {
   return (
     <AppProvider>
@@ -284,6 +292,30 @@ function App() {
                       <Route path="/reports/advanced" element={
                         <LazyComponent>
                           <AdvancedReporting />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Loyalty routes */}
+                      <Route path="/loyalty/programs" element={
+                        <LazyComponent>
+                          <LoyaltyPrograms />
+                        </LazyComponent>
+                      } />
+                      <Route path="/loyalty/transactions" element={
+                        <LazyComponent>
+                          <LoyaltyTransactions />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Marketing routes */}
+                      <Route path="/marketing/whatsapp" element={
+                        <LazyComponent>
+                          <WhatsAppIntegration />
+                        </LazyComponent>
+                      } />
+                      <Route path="/marketing/automation" element={
+                        <LazyComponent>
+                          <MarketingAutomation />
                         </LazyComponent>
                       } />
                       
