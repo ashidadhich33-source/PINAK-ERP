@@ -77,6 +77,11 @@ const IndianGeography = lazy(() => import('./pages/localization/IndianGeography'
 const IndianGST = lazy(() => import('./pages/localization/IndianGST'));
 const IndianBanking = lazy(() => import('./pages/localization/IndianBanking'));
 
+// Store routes
+const StoreManagement = lazy(() => import('./pages/store/StoreManagement'));
+const POSSessions = lazy(() => import('./pages/store/POSSessions'));
+const POSReceipts = lazy(() => import('./pages/store/POSReceipts'));
+
 function App() {
   return (
     <AppProvider>
@@ -338,6 +343,23 @@ function App() {
                       <Route path="/localization/banking" element={
                         <LazyComponent>
                           <IndianBanking />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Store routes */}
+                      <Route path="/store/management" element={
+                        <LazyComponent>
+                          <StoreManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/store/sessions" element={
+                        <LazyComponent>
+                          <POSSessions />
+                        </LazyComponent>
+                      } />
+                      <Route path="/store/receipts" element={
+                        <LazyComponent>
+                          <POSReceipts />
                         </LazyComponent>
                       } />
                       
