@@ -169,4 +169,44 @@ export const customersService = {
       throw new Error(error.message || 'Failed to delete customer group');
     }
   },
+
+  // Get customer by code
+  getCustomerByCode: async (customerCode) => {
+    try {
+      const customer = await apiService.get(`/api/customers/code/${customerCode}`);
+      return customer;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch customer by code');
+    }
+  },
+
+  // Get customer by mobile
+  getCustomerByMobile: async (mobile) => {
+    try {
+      const customer = await apiService.get(`/api/customers/mobile/${mobile}`);
+      return customer;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch customer by mobile');
+    }
+  },
+
+  // Update customer loyalty
+  updateCustomerLoyalty: async (customerId, loyaltyData) => {
+    try {
+      const customer = await apiService.put(`/api/customers/${customerId}/loyalty`, loyaltyData);
+      return customer;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update customer loyalty');
+    }
+  },
+
+  // Get customer balance summary
+  getCustomerBalance: async (customerId) => {
+    try {
+      const balance = await apiService.get(`/api/customers/${customerId}/balance-summary`);
+      return balance;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch customer balance');
+    }
+  },
 };

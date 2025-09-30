@@ -216,4 +216,124 @@ export const posService = {
       throw new Error(error.message || 'Failed to search POS customers');
     }
   },
+
+  // Get all POS sessions
+  getPosSessions: async (params = {}) => {
+    try {
+      const sessions = await apiService.get('/api/pos/pos-sessions', params);
+      return sessions;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch POS sessions');
+    }
+  },
+
+  // Complete POS transaction
+  completePosTransaction: async (transactionId, completionData) => {
+    try {
+      const result = await apiService.post(`/api/pos/pos-transactions/${transactionId}/complete`, completionData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to complete POS transaction');
+    }
+  },
+
+  // Add POS transaction item
+  addPosTransactionItem: async (transactionId, itemData) => {
+    try {
+      const item = await apiService.post(`/api/pos/pos-transactions/${transactionId}/items`, itemData);
+      return item;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to add POS transaction item');
+    }
+  },
+
+  // Add POS transaction payment
+  addPosTransactionPayment: async (transactionId, paymentData) => {
+    try {
+      const payment = await apiService.post(`/api/pos/pos-transactions/${transactionId}/payments`, paymentData);
+      return payment;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to add POS transaction payment');
+    }
+  },
+
+  // Void POS transaction
+  voidPosTransaction: async (transactionId, voidData) => {
+    try {
+      const result = await apiService.post(`/api/pos/pos-transactions/${transactionId}/void`, voidData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to void POS transaction');
+    }
+  },
+
+  // Create store
+  createStore: async (storeData) => {
+    try {
+      const store = await apiService.post('/api/pos/stores', storeData);
+      return store;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create store');
+    }
+  },
+
+  // Get stores
+  getStores: async (params = {}) => {
+    try {
+      const stores = await apiService.get('/api/pos/stores', params);
+      return stores;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch stores');
+    }
+  },
+
+  // Generate POS receipt
+  generatePosReceipt: async (transactionId, receiptData) => {
+    try {
+      const receipt = await apiService.post(`/api/pos/pos-transactions/${transactionId}/receipt`, receiptData);
+      return receipt;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to generate POS receipt');
+    }
+  },
+
+  // Print POS receipt
+  printPosReceipt: async (transactionId, printData) => {
+    try {
+      const result = await apiService.post(`/api/pos/pos-transactions/${transactionId}/print-receipt`, printData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to print POS receipt');
+    }
+  },
+
+  // Get POS sales report
+  getPosSalesReport: async (params = {}) => {
+    try {
+      const report = await apiService.get('/api/pos/pos-analytics/sales-report', params);
+      return report;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch POS sales report');
+    }
+  },
+
+  // Link POS exchange
+  linkPosExchange: async (transactionId, exchangeData) => {
+    try {
+      const result = await apiService.post(`/api/pos/pos-transactions/${transactionId}/link-exchange`, exchangeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to link POS exchange');
+    }
+  },
+
+  // Link POS return
+  linkPosReturn: async (transactionId, returnData) => {
+    try {
+      const result = await apiService.post(`/api/pos/pos-transactions/${transactionId}/link-return`, returnData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to link POS return');
+    }
+  },
 };

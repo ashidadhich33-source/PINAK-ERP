@@ -269,4 +269,84 @@ export const inventoryService = {
       throw new Error(error.message || 'Failed to fetch inventory summary');
     }
   },
+
+  // Get item by barcode
+  getItemByBarcode: async (barcode) => {
+    try {
+      const item = await apiService.get(`/api/inventory/items/barcode/${barcode}`);
+      return item;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch item by barcode');
+    }
+  },
+
+  // Get item categories
+  getItemCategories: async () => {
+    try {
+      const categories = await apiService.get('/api/inventory/items/categories');
+      return categories;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch item categories');
+    }
+  },
+
+  // Create item category
+  createItemCategory: async (categoryData) => {
+    try {
+      const category = await apiService.post('/api/inventory/items/categories', categoryData);
+      return category;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create item category');
+    }
+  },
+
+  // Update item category
+  updateItemCategory: async (categoryId, categoryData) => {
+    try {
+      const category = await apiService.put(`/api/inventory/items/categories/${categoryId}`, categoryData);
+      return category;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update item category');
+    }
+  },
+
+  // Delete item category
+  deleteItemCategory: async (categoryId) => {
+    try {
+      await apiService.delete(`/api/inventory/items/categories/${categoryId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete item category');
+    }
+  },
+
+  // Update brand
+  updateBrand: async (brandId, brandData) => {
+    try {
+      const brand = await apiService.put(`/api/inventory/items/brands/${brandId}`, brandData);
+      return brand;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update brand');
+    }
+  },
+
+  // Delete brand
+  deleteBrand: async (brandId) => {
+    try {
+      await apiService.delete(`/api/inventory/items/brands/${brandId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete brand');
+    }
+  },
+
+  // Get stock valuation
+  getStockValuation: async (params = {}) => {
+    try {
+      const valuation = await apiService.get('/api/inventory/items/stock-valuation', params);
+      return valuation;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch stock valuation');
+    }
+  },
 };
