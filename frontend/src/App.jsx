@@ -1,37 +1,41 @@
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './contexts/AppContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { PosProvider } from './contexts/PosContext';
 import Layout from './components/layout/Layout';
-import Login from './pages/auth/Login';
-import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import LazyComponent from './components/common/LazyComponent';
+
+// Lazy load components for better performance
+const Login = lazy(() => import('./pages/auth/Login'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 // Companies routes
-import CompaniesList from './pages/companies/CompaniesList';
-import CompanyDetails from './pages/companies/CompanyDetails';
-import CompanyFormPage from './pages/companies/CompanyFormPage';
+const CompaniesList = lazy(() => import('./pages/companies/CompaniesList'));
+const CompanyDetails = lazy(() => import('./pages/companies/CompanyDetails'));
+const CompanyFormPage = lazy(() => import('./pages/companies/CompanyFormPage'));
 
 // Customers routes
-import CustomersList from './pages/customers/CustomersList';
-import CustomerDetails from './pages/customers/CustomerDetails';
-import CustomerFormPage from './pages/customers/CustomerFormPage';
+const CustomersList = lazy(() => import('./pages/customers/CustomersList'));
+const CustomerDetails = lazy(() => import('./pages/customers/CustomerDetails'));
+const CustomerFormPage = lazy(() => import('./pages/customers/CustomerFormPage'));
 
 // Inventory routes
-import InventoryList from './pages/inventory/InventoryList';
-import ItemDetails from './pages/inventory/ItemDetails';
-import ItemFormPage from './pages/inventory/ItemFormPage';
+const InventoryList = lazy(() => import('./pages/inventory/InventoryList'));
+const ItemDetails = lazy(() => import('./pages/inventory/ItemDetails'));
+const ItemFormPage = lazy(() => import('./pages/inventory/ItemFormPage'));
 
 // POS routes
-import POSDashboard from './pages/pos/POSDashboard';
-import POSTerminal from './pages/pos/POSTerminal';
+const POSDashboard = lazy(() => import('./pages/pos/POSDashboard'));
+const POSTerminal = lazy(() => import('./pages/pos/POSTerminal'));
 
 // Sales routes
-import SalesList from './pages/sales/SalesList';
+const SalesList = lazy(() => import('./pages/sales/SalesList'));
 
 // Reports routes
-import ReportsDashboard from './pages/reports/ReportsDashboard';
+const ReportsDashboard = lazy(() => import('./pages/reports/ReportsDashboard'));
 
 function App() {
   return (
@@ -41,7 +45,11 @@ function App() {
           <div className="App">
             <Routes>
               {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={
+                <LazyComponent>
+                  <Login />
+                </LazyComponent>
+              } />
               
               {/* Protected Routes */}
               <Route
@@ -51,35 +59,103 @@ function App() {
                     <Layout>
                       <Routes>
                       <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/dashboard" element={
+                        <LazyComponent>
+                          <Dashboard />
+                        </LazyComponent>
+                      } />
                       
                       {/* Companies routes */}
-                      <Route path="/companies" element={<CompaniesList />} />
-                      <Route path="/companies/new" element={<CompanyFormPage />} />
-                      <Route path="/companies/:id" element={<CompanyDetails />} />
-                      <Route path="/companies/:id/edit" element={<CompanyFormPage />} />
+                      <Route path="/companies" element={
+                        <LazyComponent>
+                          <CompaniesList />
+                        </LazyComponent>
+                      } />
+                      <Route path="/companies/new" element={
+                        <LazyComponent>
+                          <CompanyFormPage />
+                        </LazyComponent>
+                      } />
+                      <Route path="/companies/:id" element={
+                        <LazyComponent>
+                          <CompanyDetails />
+                        </LazyComponent>
+                      } />
+                      <Route path="/companies/:id/edit" element={
+                        <LazyComponent>
+                          <CompanyFormPage />
+                        </LazyComponent>
+                      } />
                       
                       {/* Customers routes */}
-                      <Route path="/customers" element={<CustomersList />} />
-                      <Route path="/customers/new" element={<CustomerFormPage />} />
-                      <Route path="/customers/:id" element={<CustomerDetails />} />
-                      <Route path="/customers/:id/edit" element={<CustomerFormPage />} />
+                      <Route path="/customers" element={
+                        <LazyComponent>
+                          <CustomersList />
+                        </LazyComponent>
+                      } />
+                      <Route path="/customers/new" element={
+                        <LazyComponent>
+                          <CustomerFormPage />
+                        </LazyComponent>
+                      } />
+                      <Route path="/customers/:id" element={
+                        <LazyComponent>
+                          <CustomerDetails />
+                        </LazyComponent>
+                      } />
+                      <Route path="/customers/:id/edit" element={
+                        <LazyComponent>
+                          <CustomerFormPage />
+                        </LazyComponent>
+                      } />
                       
                       {/* Inventory routes */}
-                      <Route path="/inventory" element={<InventoryList />} />
-                      <Route path="/inventory/items/new" element={<ItemFormPage />} />
-                      <Route path="/inventory/items/:id" element={<ItemDetails />} />
-                      <Route path="/inventory/items/:id/edit" element={<ItemFormPage />} />
+                      <Route path="/inventory" element={
+                        <LazyComponent>
+                          <InventoryList />
+                        </LazyComponent>
+                      } />
+                      <Route path="/inventory/items/new" element={
+                        <LazyComponent>
+                          <ItemFormPage />
+                        </LazyComponent>
+                      } />
+                      <Route path="/inventory/items/:id" element={
+                        <LazyComponent>
+                          <ItemDetails />
+                        </LazyComponent>
+                      } />
+                      <Route path="/inventory/items/:id/edit" element={
+                        <LazyComponent>
+                          <ItemFormPage />
+                        </LazyComponent>
+                      } />
                       
                       {/* POS routes */}
-                      <Route path="/pos" element={<POSDashboard />} />
-                      <Route path="/pos/terminal" element={<POSTerminal />} />
+                      <Route path="/pos" element={
+                        <LazyComponent>
+                          <POSDashboard />
+                        </LazyComponent>
+                      } />
+                      <Route path="/pos/terminal" element={
+                        <LazyComponent>
+                          <POSTerminal />
+                        </LazyComponent>
+                      } />
                       
                       {/* Sales routes */}
-                      <Route path="/sales" element={<SalesList />} />
+                      <Route path="/sales" element={
+                        <LazyComponent>
+                          <SalesList />
+                        </LazyComponent>
+                      } />
                       
                       {/* Reports routes */}
-                      <Route path="/reports" element={<ReportsDashboard />} />
+                      <Route path="/reports" element={
+                        <LazyComponent>
+                          <ReportsDashboard />
+                        </LazyComponent>
+                      } />
                       
                       {/* Add more routes here as we build them */}
                       </Routes>

@@ -1,0 +1,70 @@
+{
+  "name": "PINAK-ERP",
+  "short_name": "PINAK-ERP",
+  "description": "Enterprise Resource Planning System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View business dashboard",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "64x64"
+        }
+      ]
+    },
+    {
+      "name": "POS Terminal",
+      "short_name": "POS",
+      "description": "Point of Sale Terminal",
+      "url": "/pos/terminal",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "64x64"
+        }
+      ]
+    },
+    {
+      "name": "Sales",
+      "short_name": "Sales",
+      "description": "View sales and orders",
+      "url": "/sales",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "64x64"
+        }
+      ]
+    }
+  ]
+}
