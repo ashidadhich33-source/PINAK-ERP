@@ -315,5 +315,133 @@ export const loyaltyService = {
     } catch (error) {
       throw new Error(error.message || 'Failed to validate points redemption');
     }
-  }
+  },
+
+  // Loyalty Program Status Management
+  activateLoyaltyProgram: async (programId) => {
+    try {
+      const result = await apiService.post(`/api/loyalty/programs/${programId}/activate`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to activate loyalty program');
+    }
+  },
+
+  deactivateLoyaltyProgram: async (programId) => {
+    try {
+      const result = await apiService.post(`/api/loyalty/programs/${programId}/deactivate`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to deactivate loyalty program');
+    }
+  },
+
+  // Loyalty Export
+  exportLoyaltyData: async (format, data, filters = {}) => {
+    try {
+      const response = await apiService.post('/api/loyalty/export', {
+        format,
+        data,
+        filters
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to export loyalty data');
+    }
+  },
+
+  // Loyalty Tiers
+  createLoyaltyTier: async (tierData) => {
+    try {
+      const tier = await apiService.post('/api/loyalty/loyalty-tiers', tierData);
+      return tier;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create loyalty tier');
+    }
+  },
+
+  getLoyaltyTiers: async (params = {}) => {
+    try {
+      const tiers = await apiService.get('/api/loyalty/loyalty-tiers', params);
+      return tiers;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch loyalty tiers');
+    }
+  },
+
+  // Customer Loyalty Tiers
+  createCustomerLoyaltyTier: async (customerTierData) => {
+    try {
+      const customerTier = await apiService.post('/api/loyalty/customer-loyalty-tiers', customerTierData);
+      return customerTier;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create customer loyalty tier');
+    }
+  },
+
+  // Loyalty Points
+  createLoyaltyPoint: async (pointData) => {
+    try {
+      const point = await apiService.post('/api/loyalty/loyalty-points', pointData);
+      return point;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create loyalty point');
+    }
+  },
+
+  earnLoyaltyPoint: async (earnData) => {
+    try {
+      const result = await apiService.post('/api/loyalty/loyalty-points/earn', earnData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to earn loyalty point');
+    }
+  },
+
+  // Loyalty Rewards
+  createLoyaltyReward: async (rewardData) => {
+    try {
+      const reward = await apiService.post('/api/loyalty/loyalty-rewards', rewardData);
+      return reward;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create loyalty reward');
+    }
+  },
+
+  getLoyaltyRewards: async (params = {}) => {
+    try {
+      const rewards = await apiService.get('/api/loyalty/loyalty-rewards', params);
+      return rewards;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch loyalty rewards');
+    }
+  },
+
+  redeemLoyaltyReward: async (redeemData) => {
+    try {
+      const result = await apiService.post('/api/loyalty/loyalty-rewards/redeem', redeemData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to redeem loyalty reward');
+    }
+  },
+
+  // Loyalty Campaigns
+  createLoyaltyCampaign: async (campaignData) => {
+    try {
+      const campaign = await apiService.post('/api/loyalty/loyalty-campaigns', campaignData);
+      return campaign;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create loyalty campaign');
+    }
+  },
+
+  getLoyaltyCampaigns: async (params = {}) => {
+    try {
+      const campaigns = await apiService.get('/api/loyalty/loyalty-campaigns', params);
+      return campaigns;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch loyalty campaigns');
+    }
+  },
 };

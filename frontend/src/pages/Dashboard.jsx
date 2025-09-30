@@ -1,5 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useApp } from '../../contexts/AppContext';
+import { salesService } from '../services/salesService';
+import { customersService } from '../services/customersService';
+import { inventoryService } from '../services/inventoryService';
+import { posService } from '../services/posService';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import { 
   Users, 
   Package, 
@@ -7,44 +13,103 @@ import {
   TrendingUp,
   DollarSign,
   Activity,
-  AlertTriangle
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { addNotification } = useApp();
+  const [dashboardData, setDashboardData] = useState({
+    totalCustomers: 0,
+    totalProducts: 0,
+    todaySales: 0,
+    revenueGrowth: 0,
+    recentSales: [],
+    topProducts: [],
+    salesTrends: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Fetch dashboard data
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch data from multiple services
+      const [salesStats, customers, products, posStats] = await Promise.all([
+        salesService.getSaleStatistics(),
+        customersService.getCustomers({ limit: 1 }),
+        inventoryService.getItems({ limit: 1 }),
+        posService.getPosDashboard()
+      ]);
+
+      setDashboardData({
+        totalCustomers: customers.total || 0,
+        totalProducts: products.total || 0,
+        todaySales: salesStats.today_sales || 0,
+        revenueGrowth: salesStats.revenue_growth || 0,
+        recentSales: salesStats.recent_sales || [],
+        topProducts: salesStats.top_products || [],
+        salesTrends: salesStats.trends || []
+      });
+    } catch (error) {
+      addNotification({
+        type: 'danger',
+        title: 'Error',
+        message: 'Failed to load dashboard data',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   const stats = [
     {
       name: 'Total Customers',
-      value: '1,234',
+      value: dashboardData.totalCustomers.toLocaleString(),
       change: '+12%',
       changeType: 'positive',
       icon: Users,
     },
     {
       name: 'Total Products',
-      value: '567',
+      value: dashboardData.totalProducts.toLocaleString(),
       change: '+8%',
       changeType: 'positive',
       icon: Package,
     },
     {
       name: 'Today\'s Sales',
-      value: '₹45,678',
+      value: `₹${dashboardData.todaySales.toLocaleString()}`,
       change: '+15%',
       changeType: 'positive',
       icon: ShoppingCart,
     },
     {
       name: 'Revenue Growth',
-      value: '23.5%',
+      value: `${dashboardData.revenueGrowth}%`,
       change: '+2.1%',
       changeType: 'positive',
       icon: TrendingUp,
     },
   ];
 
-  const recentActivities = [
+  const recentActivities = dashboardData.recentSales.map((sale, index) => ({
+    id: sale.id || index,
+    type: 'sale',
+    title: `Sale #${sale.sale_number || sale.id}`,
+    description: `Customer: ${sale.customer?.name || 'Walk-in'}`,
+    amount: `₹${sale.total_amount || 0}`,
+    time: new Date(sale.created_at).toLocaleTimeString(),
+    status: sale.status
+  }));
+
+  const staticActivities = [
     {
       id: 1,
       type: 'sale',
@@ -99,16 +164,35 @@ const Dashboard = () => {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner size="lg" text="Loading dashboard..." />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Welcome section */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {user?.full_name || user?.username}!
-        </h1>
-        <p className="text-gray-600 mt-1">
-          Here's what's happening with your business today.
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Welcome back, {user?.full_name || user?.username}!
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Here's what's happening with your business today.
+            </p>
+          </div>
+          <button
+            onClick={fetchDashboardData}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {/* Stats grid */}

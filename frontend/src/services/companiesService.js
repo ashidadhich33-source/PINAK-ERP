@@ -129,4 +129,41 @@ export const companiesService = {
       throw new Error(error.message || 'Failed to import companies');
     }
   },
+
+  // Company User Management
+  getCompanyUsers: async (companyId, params = {}) => {
+    try {
+      const users = await apiService.get(`/api/companies/${companyId}/users`, params);
+      return users;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch company users');
+    }
+  },
+
+  addCompanyUser: async (companyId, userData) => {
+    try {
+      const user = await apiService.post(`/api/companies/${companyId}/users`, userData);
+      return user;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to add user to company');
+    }
+  },
+
+  updateCompanyUser: async (companyId, userId, userData) => {
+    try {
+      const user = await apiService.put(`/api/companies/${companyId}/users/${userId}`, userData);
+      return user;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update company user');
+    }
+  },
+
+  removeCompanyUser: async (companyId, userId) => {
+    try {
+      await apiService.delete(`/api/companies/${companyId}/users/${userId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to remove user from company');
+    }
+  },
 };

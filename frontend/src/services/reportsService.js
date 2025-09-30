@@ -313,4 +313,230 @@ export const reportsService = {
       throw new Error(error.message || 'Failed to fetch scheduled reports');
     }
   },
+
+  // Custom Reports
+  getCustomReports: async (params = {}) => {
+    try {
+      const reports = await apiService.get('/api/reports/custom', params);
+      return reports;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch custom reports');
+    }
+  },
+
+  getCustomReport: async (reportId) => {
+    try {
+      const report = await apiService.get(`/api/reports/custom/${reportId}`);
+      return report;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch custom report');
+    }
+  },
+
+  createCustomReport: async (reportData) => {
+    try {
+      const report = await apiService.post('/api/reports/custom', reportData);
+      return report;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create custom report');
+    }
+  },
+
+  updateCustomReport: async (reportId, reportData) => {
+    try {
+      const report = await apiService.put(`/api/reports/custom/${reportId}`, reportData);
+      return report;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update custom report');
+    }
+  },
+
+  deleteCustomReport: async (reportId) => {
+    try {
+      await apiService.delete(`/api/reports/custom/${reportId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete custom report');
+    }
+  },
+
+  // Report Templates
+  getReportTemplates: async (params = {}) => {
+    try {
+      const templates = await apiService.get('/api/reports/templates', params);
+      return templates;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch report templates');
+    }
+  },
+
+  getReportTemplate: async (templateId) => {
+    try {
+      const template = await apiService.get(`/api/reports/templates/${templateId}`);
+      return template;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch report template');
+    }
+  },
+
+  createReportTemplate: async (templateData) => {
+    try {
+      const template = await apiService.post('/api/reports/templates', templateData);
+      return template;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create report template');
+    }
+  },
+
+  updateReportTemplate: async (templateId, templateData) => {
+    try {
+      const template = await apiService.put(`/api/reports/templates/${templateId}`, templateData);
+      return template;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update report template');
+    }
+  },
+
+  deleteReportTemplate: async (templateId) => {
+    try {
+      await apiService.delete(`/api/reports/templates/${templateId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete report template');
+    }
+  },
+
+  // Report Schedules
+  getReportSchedules: async (params = {}) => {
+    try {
+      const schedules = await apiService.get('/api/reports/schedules', params);
+      return schedules;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch report schedules');
+    }
+  },
+
+  getReportSchedule: async (scheduleId) => {
+    try {
+      const schedule = await apiService.get(`/api/reports/schedules/${scheduleId}`);
+      return schedule;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch report schedule');
+    }
+  },
+
+  createReportSchedule: async (scheduleData) => {
+    try {
+      const schedule = await apiService.post('/api/reports/schedules', scheduleData);
+      return schedule;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create report schedule');
+    }
+  },
+
+  updateReportSchedule: async (scheduleId, scheduleData) => {
+    try {
+      const schedule = await apiService.put(`/api/reports/schedules/${scheduleId}`, scheduleData);
+      return schedule;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update report schedule');
+    }
+  },
+
+  deleteReportSchedule: async (scheduleId) => {
+    try {
+      await apiService.delete(`/api/reports/schedules/${scheduleId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete report schedule');
+    }
+  },
+
+  // Report Categories
+  getReportCategories: async (params = {}) => {
+    try {
+      const categories = await apiService.get('/api/reports/categories', params);
+      return categories;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch report categories');
+    }
+  },
+
+  getReportCategory: async (categoryId) => {
+    try {
+      const category = await apiService.get(`/api/reports/categories/${categoryId}`);
+      return category;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch report category');
+    }
+  },
+
+  createReportCategory: async (categoryData) => {
+    try {
+      const category = await apiService.post('/api/reports/categories', categoryData);
+      return category;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create report category');
+    }
+  },
+
+  updateReportCategory: async (categoryId, categoryData) => {
+    try {
+      const category = await apiService.put(`/api/reports/categories/${categoryId}`, categoryData);
+      return category;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update report category');
+    }
+  },
+
+  deleteReportCategory: async (categoryId) => {
+    try {
+      await apiService.delete(`/api/reports/categories/${categoryId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete report category');
+    }
+  },
+
+  // Report Generation
+  generateReport: async (reportId, parameters = {}) => {
+    try {
+      const report = await apiService.post(`/api/reports/custom/${reportId}/generate`, parameters);
+      return report;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to generate report');
+    }
+  },
+
+  // Report Export
+  exportReport: async (reportId, format, parameters = {}) => {
+    try {
+      const response = await apiService.post(`/api/reports/custom/${reportId}/export`, {
+        format,
+        parameters
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to export report');
+    }
+  },
+
+  // Report Favorites
+  addReportFavorite: async (reportId) => {
+    try {
+      const response = await apiService.post(`/api/reports/custom/${reportId}/favorite`);
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to add report to favorites');
+    }
+  },
+
+  removeReportFavorite: async (reportId) => {
+    try {
+      await apiService.delete(`/api/reports/custom/${reportId}/favorite`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to remove report from favorites');
+    }
+  }
 };

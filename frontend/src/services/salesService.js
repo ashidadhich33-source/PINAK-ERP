@@ -230,4 +230,173 @@ export const salesService = {
       throw new Error(error.message || 'Failed to fetch sales by date range');
     }
   },
+
+  // Enhanced Sales - Sale Challans
+  createSaleChallan: async (challanData) => {
+    try {
+      const challan = await apiService.post('/api/sales/sale-challans', challanData);
+      return challan;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create sale challan');
+    }
+  },
+
+  addChallanItem: async (challanId, itemData) => {
+    try {
+      const item = await apiService.post(`/api/sales/sale-challans/${challanId}/items`, itemData);
+      return item;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to add challan item');
+    }
+  },
+
+  deliverChallan: async (challanId, deliveryData) => {
+    try {
+      const result = await apiService.post(`/api/sales/sale-challans/${challanId}/deliver`, deliveryData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to deliver challan');
+    }
+  },
+
+  // Enhanced Sales - Bill Series
+  createBillSeries: async (seriesData) => {
+    try {
+      const series = await apiService.post('/api/sales/bill-series', seriesData);
+      return series;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create bill series');
+    }
+  },
+
+  getBillSeries: async (params = {}) => {
+    try {
+      const series = await apiService.get('/api/sales/bill-series', params);
+      return series;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch bill series');
+    }
+  },
+
+  generateBillNumber: async (seriesId) => {
+    try {
+      const number = await apiService.get(`/api/sales/bill-series/generate-number?series_id=${seriesId}`);
+      return number;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to generate bill number');
+    }
+  },
+
+  // Enhanced Sales - Payment Modes
+  createPaymentMode: async (modeData) => {
+    try {
+      const mode = await apiService.post('/api/sales/payment-modes', modeData);
+      return mode;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create payment mode');
+    }
+  },
+
+  getPaymentModes: async (params = {}) => {
+    try {
+      const modes = await apiService.get('/api/sales/payment-modes', params);
+      return modes;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch payment modes');
+    }
+  },
+
+  // Enhanced Sales - Staff Management
+  createStaff: async (staffData) => {
+    try {
+      const staff = await apiService.post('/api/sales/staff', staffData);
+      return staff;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create staff');
+    }
+  },
+
+  getStaff: async (params = {}) => {
+    try {
+      const staff = await apiService.get('/api/sales/staff', params);
+      return staff;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch staff');
+    }
+  },
+
+  createStaffTarget: async (targetData) => {
+    try {
+      const target = await apiService.post('/api/sales/staff-targets', targetData);
+      return target;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create staff target');
+    }
+  },
+
+  updateStaffAchievement: async (staffId, achievementData) => {
+    try {
+      const result = await apiService.post(`/api/sales/staff-targets/${staffId}/update-achievement`, achievementData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update staff achievement');
+    }
+  },
+
+  // Enhanced Sales - Sale Returns
+  createSaleReturn: async (returnData) => {
+    try {
+      const returnSale = await apiService.post('/api/sales/sale-returns', returnData);
+      return returnSale;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create sale return');
+    }
+  },
+
+  addReturnItem: async (returnId, itemData) => {
+    try {
+      const item = await apiService.post(`/api/sales/sale-returns/${returnId}/items`, itemData);
+      return item;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to add return item');
+    }
+  },
+
+  processReturn: async (returnId, processData) => {
+    try {
+      const result = await apiService.post(`/api/sales/sale-returns/${returnId}/process`, processData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to process return');
+    }
+  },
+
+  // Enhanced Sales - POS Sessions
+  startPosSession: async (sessionData) => {
+    try {
+      const session = await apiService.post('/api/sales/pos-sessions/start', sessionData);
+      return session;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to start POS session');
+    }
+  },
+
+  closePosSession: async (sessionId, closeData) => {
+    try {
+      const result = await apiService.post(`/api/sales/pos-sessions/${sessionId}/close`, closeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to close POS session');
+    }
+  },
+
+  // Enhanced Sales - Analytics
+  getSalesAnalytics: async (params = {}) => {
+    try {
+      const analytics = await apiService.get('/api/sales/analytics', params);
+      return analytics;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch sales analytics');
+    }
+  },
 };

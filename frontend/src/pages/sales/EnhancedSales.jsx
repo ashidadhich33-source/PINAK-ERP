@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { marketingService } from '../../services/marketingService';
+import { enhancedSalesService } from '../../services/enhancedSalesService';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Alert from '../../components/common/Alert';
@@ -12,36 +12,29 @@ import {
   Search, 
   Download, 
   Upload,
-  MessageSquare,
+  ShoppingBag,
   Eye,
   Edit,
   Trash2,
   CheckCircle,
   XCircle,
   Clock,
+  Truck,
+  FileText,
   Filter,
   Calendar,
-  Send,
+  DollarSign,
   Users,
-  Target,
-  Settings,
-  Play,
-  Pause,
-  RefreshCw,
-  FileText,
-  BarChart3,
-  TrendingUp,
-  Bell,
-  Share
+  Settings
 } from 'lucide-react';
 
-const WhatsAppIntegration = () => {
+const EnhancedSales = () => {
   const { addNotification } = useApp();
-  const [activeTab, setActiveTab] = useState('templates');
-  const [templates, setTemplates] = useState([]);
-  const [campaigns, setCampaigns] = useState([]);
-  const [messageHistory, setMessageHistory] = useState([]);
-  const [webhooks, setWebhooks] = useState([]);
+  const [activeTab, setActiveTab] = useState('challans');
+  const [challans, setChallans] = useState([]);
+  const [billSeries, setBillSeries] = useState([]);
+  const [paymentModes, setPaymentModes] = useState([]);
+  const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,21 +61,21 @@ const WhatsAppIntegration = () => {
       
       let data;
       switch (activeTab) {
-        case 'templates':
-          data = await marketingService.getWhatsAppTemplates(params);
-          setTemplates(data);
+        case 'challans':
+          data = await enhancedSalesService.getSaleChallans(params);
+          setChallans(data);
           break;
-        case 'campaigns':
-          data = await marketingService.getWhatsAppCampaigns(params);
-          setCampaigns(data);
+        case 'bill-series':
+          data = await enhancedSalesService.getBillSeries(params);
+          setBillSeries(data);
           break;
-        case 'message-history':
-          data = await marketingService.getWhatsAppMessages(params);
-          setMessageHistory(data);
+        case 'payment-modes':
+          data = await enhancedSalesService.getPaymentModes(params);
+          setPaymentModes(data);
           break;
-        case 'webhooks':
-          data = await marketingService.getWhatsAppWebhooks(params);
-          setWebhooks(data);
+        case 'staff':
+          data = await enhancedSalesService.getStaff(params);
+          setStaff(data);
           break;
         default:
           break;
@@ -121,17 +114,21 @@ const WhatsAppIntegration = () => {
 
     try {
       switch (activeTab) {
-        case 'templates':
-          await marketingService.deleteWhatsAppTemplate(id);
-          setTemplates(prev => prev.filter(item => item.id !== id));
+        case 'challans':
+          await enhancedSalesService.deleteSaleChallan(id);
+          setChallans(prev => prev.filter(item => item.id !== id));
           break;
-        case 'campaigns':
-          await marketingService.deleteWhatsAppCampaign(id);
-          setCampaigns(prev => prev.filter(item => item.id !== id));
+        case 'bill-series':
+          await enhancedSalesService.deleteBillSeries(id);
+          setBillSeries(prev => prev.filter(item => item.id !== id));
           break;
-        case 'webhooks':
-          await marketingService.deleteWhatsAppWebhook(id);
-          setWebhooks(prev => prev.filter(item => item.id !== id));
+        case 'payment-modes':
+          await enhancedSalesService.deletePaymentMode(id);
+          setPaymentModes(prev => prev.filter(item => item.id !== id));
+          break;
+        case 'staff':
+          await enhancedSalesService.deleteStaff(id);
+          setStaff(prev => prev.filter(item => item.id !== id));
           break;
         default:
           break;
@@ -150,19 +147,19 @@ const WhatsAppIntegration = () => {
     }
   };
 
-  // Handle start campaign
-  const handleStartCampaign = async (campaignId) => {
+  // Handle confirm challan
+  const handleConfirmChallan = async (challanId) => {
     try {
-      await marketingService.startWhatsAppCampaign(campaignId);
-      setCampaigns(prev => prev.map(campaign => 
-        campaign.id === campaignId 
-          ? { ...campaign, status: 'running' }
-          : campaign
+      await enhancedSalesService.confirmSaleChallan(challanId);
+      setChallans(prev => prev.map(challan => 
+        challan.id === challanId 
+          ? { ...challan, status: 'confirmed' }
+          : challan
       ));
       addNotification({
         type: 'success',
         title: 'Success',
-        message: 'Campaign started successfully',
+        message: 'Challan confirmed successfully',
       });
     } catch (err) {
       addNotification({
@@ -173,19 +170,19 @@ const WhatsAppIntegration = () => {
     }
   };
 
-  // Handle stop campaign
-  const handleStopCampaign = async (campaignId) => {
+  // Handle deliver challan
+  const handleDeliverChallan = async (challanId) => {
     try {
-      await marketingService.stopWhatsAppCampaign(campaignId);
-      setCampaigns(prev => prev.map(campaign => 
-        campaign.id === campaignId 
-          ? { ...campaign, status: 'stopped' }
-          : campaign
+      await enhancedSalesService.deliverSaleChallan(challanId);
+      setChallans(prev => prev.map(challan => 
+        challan.id === challanId 
+          ? { ...challan, status: 'delivered' }
+          : challan
       ));
       addNotification({
         type: 'success',
         title: 'Success',
-        message: 'Campaign stopped successfully',
+        message: 'Challan delivered successfully',
       });
     } catch (err) {
       addNotification({
@@ -199,7 +196,7 @@ const WhatsAppIntegration = () => {
   // Handle export
   const handleExport = async () => {
     try {
-      await marketingService.exportWhatsAppData('csv', activeTab, filters);
+      await enhancedSalesService.exportSalesData('csv', activeTab, filters);
       addNotification({
         type: 'success',
         title: 'Export Started',
@@ -217,14 +214,14 @@ const WhatsAppIntegration = () => {
   // Get current data based on active tab
   const getCurrentData = () => {
     switch (activeTab) {
-      case 'templates':
-        return templates;
-      case 'campaigns':
-        return campaigns;
-      case 'message-history':
-        return messageHistory;
-      case 'webhooks':
-        return webhooks;
+      case 'challans':
+        return challans;
+      case 'bill-series':
+        return billSeries;
+      case 'payment-modes':
+        return paymentModes;
+      case 'staff':
+        return staff;
       default:
         return [];
     }
@@ -233,63 +230,68 @@ const WhatsAppIntegration = () => {
   // Get columns based on active tab
   const getColumns = () => {
     switch (activeTab) {
-      case 'templates':
+      case 'challans':
         return [
           {
-            key: 'template_name',
-            label: 'Template Name',
-            render: (template) => (
+            key: 'challan_number',
+            label: 'Challan Number',
+            render: (challan) => (
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-primary-600" />
+                  <FileText className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{template.template_name}</p>
-                  <p className="text-sm text-gray-500">{template.template_code}</p>
+                  <p className="font-medium text-gray-900">#{challan.challan_number}</p>
+                  <p className="text-sm text-gray-500">{new Date(challan.challan_date).toLocaleDateString()}</p>
                 </div>
               </div>
             ),
           },
           {
-            key: 'template_type',
+            key: 'customer',
+            label: 'Customer',
+            render: (challan) => (
+              <div>
+                <p className="font-medium text-gray-900">{challan.customer?.name || 'Walk-in Customer'}</p>
+                <p className="text-sm text-gray-500">{challan.customer?.email || '-'}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'challan_type',
             label: 'Type',
-            render: (template) => (
+            render: (challan) => (
               <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                {template.template_type}
+                {challan.challan_type}
               </span>
             ),
           },
           {
-            key: 'content',
-            label: 'Content',
-            render: (template) => (
-              <div className="max-w-xs">
-                <p className="text-sm text-gray-900 truncate">{template.content || '-'}</p>
+            key: 'amounts',
+            label: 'Amounts',
+            render: (challan) => (
+              <div>
+                <p className="font-medium text-gray-900">Qty: {challan.total_quantity}</p>
+                <p className="text-sm text-gray-500">₹{challan.total_amount}</p>
               </div>
-            ),
-          },
-          {
-            key: 'language',
-            label: 'Language',
-            render: (template) => (
-              <span className="text-sm text-gray-900">{template.language || 'English'}</span>
             ),
           },
           {
             key: 'status',
             label: 'Status',
-            render: (template) => {
+            render: (challan) => {
               const statusInfo = {
-                approved: { icon: CheckCircle, color: 'text-success-600', bgColor: 'bg-success-100' },
-                pending: { icon: Clock, color: 'text-warning-600', bgColor: 'bg-warning-100' },
-                rejected: { icon: XCircle, color: 'text-danger-600', bgColor: 'bg-danger-100' },
-              }[template.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
+                draft: { icon: Clock, color: 'text-warning-600', bgColor: 'bg-warning-100' },
+                confirmed: { icon: CheckCircle, color: 'text-blue-600', bgColor: 'bg-blue-100' },
+                delivered: { icon: Truck, color: 'text-success-600', bgColor: 'bg-success-100' },
+                cancelled: { icon: XCircle, color: 'text-danger-600', bgColor: 'bg-danger-100' },
+              }[challan.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
               
               const Icon = statusInfo.icon;
               return (
                 <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
                   <Icon className="w-3 h-3 mr-1" />
-                  {template.status}
+                  {challan.status}
                 </span>
               );
             },
@@ -297,323 +299,320 @@ const WhatsAppIntegration = () => {
           {
             key: 'actions',
             label: 'Actions',
-            render: (template) => (
+            render: (challan) => (
               <div className="flex items-center space-x-2">
                 <Link
-                  to={`/whatsapp/templates/${template.id}`}
+                  to={`/sales/challans/${challan.id}`}
                   className="text-primary-600 hover:text-primary-900"
                 >
                   <Eye className="w-4 h-4" />
                 </Link>
                 <Link
-                  to={`/whatsapp/templates/${template.id}/edit`}
+                  to={`/sales/challans/${challan.id}/edit`}
                   className="text-secondary-600 hover:text-secondary-900"
                 >
                   <Edit className="w-4 h-4" />
                 </Link>
-                <button
-                  onClick={() => handleDelete(template.id)}
-                  className="text-danger-600 hover:text-danger-900"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ),
-          },
-        ];
-      case 'campaigns':
-        return [
-          {
-            key: 'campaign_name',
-            label: 'Campaign',
-            render: (campaign) => (
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <Target className="w-5 h-5 text-primary-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{campaign.campaign_name}</p>
-                  <p className="text-sm text-gray-500">{campaign.campaign_code}</p>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'template',
-            label: 'Template',
-            render: (campaign) => (
-              <div>
-                <p className="font-medium text-gray-900">{campaign.template?.template_name || '-'}</p>
-                <p className="text-sm text-gray-500">{campaign.template?.template_type || ''}</p>
-              </div>
-            ),
-          },
-          {
-            key: 'recipients',
-            label: 'Recipients',
-            render: (campaign) => (
-              <div className="text-center">
-                <p className="font-medium text-gray-900">{campaign.recipient_count || 0}</p>
-                <p className="text-sm text-gray-500">recipients</p>
-              </div>
-            ),
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            render: (campaign) => {
-              const statusInfo = {
-                running: { icon: Play, color: 'text-success-600', bgColor: 'bg-success-100' },
-                stopped: { icon: Pause, color: 'text-warning-600', bgColor: 'bg-warning-100' },
-                completed: { icon: CheckCircle, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-                draft: { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' },
-              }[campaign.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
-              
-              const Icon = statusInfo.icon;
-              return (
-                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
-                  <Icon className="w-3 h-3 mr-1" />
-                  {campaign.status}
-                </span>
-              );
-            },
-          },
-          {
-            key: 'progress',
-            label: 'Progress',
-            render: (campaign) => (
-              <div className="w-full">
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                  <span>{campaign.sent_count || 0} sent</span>
-                  <span>{Math.round(((campaign.sent_count || 0) / (campaign.recipient_count || 1)) * 100)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-primary-600 h-2 rounded-full" 
-                    style={{ width: `${Math.round(((campaign.sent_count || 0) / (campaign.recipient_count || 1)) * 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'actions',
-            label: 'Actions',
-            render: (campaign) => (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to={`/whatsapp/campaigns/${campaign.id}`}
-                  className="text-primary-600 hover:text-primary-900"
-                >
-                  <Eye className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={`/whatsapp/campaigns/${campaign.id}/edit`}
-                  className="text-secondary-600 hover:text-secondary-900"
-                >
-                  <Edit className="w-4 h-4" />
-                </Link>
-                {campaign.status === 'draft' && (
+                {challan.status === 'draft' && (
                   <button
-                    onClick={() => handleStartCampaign(campaign.id)}
-                    className="text-success-600 hover:text-success-900"
-                    title="Start Campaign"
-                  >
-                    <Play className="w-4 h-4" />
-                  </button>
-                )}
-                {campaign.status === 'running' && (
-                  <button
-                    onClick={() => handleStopCampaign(campaign.id)}
-                    className="text-warning-600 hover:text-warning-900"
-                    title="Stop Campaign"
-                  >
-                    <Pause className="w-4 h-4" />
-                  </button>
-                )}
-                <button
-                  onClick={() => handleDelete(campaign.id)}
-                  className="text-danger-600 hover:text-danger-900"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ),
-          },
-        ];
-      case 'message-history':
-        return [
-          {
-            key: 'message_info',
-            label: 'Message',
-            render: (message) => (
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-primary-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{message.recipient_name || 'Unknown'}</p>
-                  <p className="text-sm text-gray-500">{message.recipient_phone}</p>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'content',
-            label: 'Content',
-            render: (message) => (
-              <div className="max-w-xs">
-                <p className="text-sm text-gray-900 truncate">{message.content || '-'}</p>
-              </div>
-            ),
-          },
-          {
-            key: 'message_type',
-            label: 'Type',
-            render: (message) => (
-              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                {message.message_type}
-              </span>
-            ),
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            render: (message) => {
-              const statusInfo = {
-                sent: { icon: CheckCircle, color: 'text-success-600', bgColor: 'bg-success-100' },
-                delivered: { icon: CheckCircle, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-                read: { icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-100' },
-                failed: { icon: XCircle, color: 'text-danger-600', bgColor: 'bg-danger-100' },
-                pending: { icon: Clock, color: 'text-warning-600', bgColor: 'bg-warning-100' },
-              }[message.status] || { icon: Clock, color: 'text-gray-600', bgColor: 'bg-gray-100' };
-              
-              const Icon = statusInfo.icon;
-              return (
-                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
-                  <Icon className="w-3 h-3 mr-1" />
-                  {message.status}
-                </span>
-              );
-            },
-          },
-          {
-            key: 'sent_at',
-            label: 'Sent At',
-            render: (message) => (
-              <div>
-                <p className="font-medium text-gray-900">
-                  {new Date(message.sent_at).toLocaleDateString()}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {new Date(message.sent_at).toLocaleTimeString()}
-                </p>
-              </div>
-            ),
-          },
-          {
-            key: 'actions',
-            label: 'Actions',
-            render: (message) => (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to={`/whatsapp/messages/${message.id}`}
-                  className="text-primary-600 hover:text-primary-900"
-                >
-                  <Eye className="w-4 h-4" />
-                </Link>
-                {message.status === 'failed' && (
-                  <button
-                    onClick={() => {/* Handle resend */}}
+                    onClick={() => handleConfirmChallan(challan.id)}
                     className="text-blue-600 hover:text-blue-900"
-                    title="Resend Message"
+                    title="Confirm Challan"
                   >
-                    <RefreshCw className="w-4 h-4" />
+                    <CheckCircle className="w-4 h-4" />
                   </button>
                 )}
+                {challan.status === 'confirmed' && (
+                  <button
+                    onClick={() => handleDeliverChallan(challan.id)}
+                    className="text-green-600 hover:text-green-900"
+                    title="Mark as Delivered"
+                  >
+                    <Truck className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDelete(challan.id)}
+                  className="text-danger-600 hover:text-danger-900"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
             ),
           },
         ];
-      case 'webhooks':
+      case 'bill-series':
         return [
           {
-            key: 'webhook_name',
-            label: 'Webhook',
-            render: (webhook) => (
+            key: 'series_name',
+            label: 'Series Name',
+            render: (series) => (
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <Bell className="w-5 h-5 text-primary-600" />
+                  <FileText className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{webhook.webhook_name}</p>
-                  <p className="text-sm text-gray-500">{webhook.url}</p>
+                  <p className="font-medium text-gray-900">{series.series_name}</p>
+                  <p className="text-sm text-gray-500">{series.series_code}</p>
                 </div>
               </div>
             ),
           },
           {
-            key: 'events',
-            label: 'Events',
-            render: (webhook) => (
-              <div className="flex flex-wrap gap-1">
-                {webhook.events?.map((event, index) => (
-                  <span key={index} className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">
-                    {event}
-                  </span>
-                ))}
+            key: 'document_type',
+            label: 'Document Type',
+            render: (series) => (
+              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                {series.document_type}
+              </span>
+            ),
+          },
+          {
+            key: 'number_format',
+            label: 'Number Format',
+            render: (series) => (
+              <div>
+                <p className="font-medium text-gray-900">{series.prefix}{series.suffix || ''}</p>
+                <p className="text-sm text-gray-500">Length: {series.number_length}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'current_number',
+            label: 'Current Number',
+            render: (series) => (
+              <div>
+                <p className="font-medium text-gray-900">{series.current_number}</p>
+                <p className="text-sm text-gray-500">Next: {series.current_number + 1}</p>
               </div>
             ),
           },
           {
             key: 'is_active',
             label: 'Status',
-            render: (webhook) => (
+            render: (series) => (
               <div className="flex items-center space-x-2">
-                {webhook.is_active ? (
+                {series.is_active ? (
                   <CheckCircle className="w-4 h-4 text-success-500" />
                 ) : (
                   <XCircle className="w-4 h-4 text-danger-500" />
                 )}
                 <span className="text-sm text-gray-900">
-                  {webhook.is_active ? 'Active' : 'Inactive'}
+                  {series.is_active ? 'Active' : 'Inactive'}
                 </span>
-              </div>
-            ),
-          },
-          {
-            key: 'last_triggered',
-            label: 'Last Triggered',
-            render: (webhook) => (
-              <div>
-                <p className="font-medium text-gray-900">
-                  {webhook.last_triggered ? new Date(webhook.last_triggered).toLocaleDateString() : 'Never'}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {webhook.trigger_count || 0} times
-                </p>
               </div>
             ),
           },
           {
             key: 'actions',
             label: 'Actions',
-            render: (webhook) => (
+            render: (series) => (
               <div className="flex items-center space-x-2">
                 <Link
-                  to={`/whatsapp/webhooks/${webhook.id}`}
+                  to={`/sales/bill-series/${series.id}`}
                   className="text-primary-600 hover:text-primary-900"
                 >
                   <Eye className="w-4 h-4" />
                 </Link>
                 <Link
-                  to={`/whatsapp/webhooks/${webhook.id}/edit`}
+                  to={`/sales/bill-series/${series.id}/edit`}
                   className="text-secondary-600 hover:text-secondary-900"
                 >
                   <Edit className="w-4 h-4" />
                 </Link>
                 <button
-                  onClick={() => handleDelete(webhook.id)}
+                  onClick={() => handleDelete(series.id)}
+                  className="text-danger-600 hover:text-danger-900"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ),
+          },
+        ];
+      case 'payment-modes':
+        return [
+          {
+            key: 'mode_name',
+            label: 'Payment Mode',
+            render: (mode) => (
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-primary-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{mode.mode_name}</p>
+                  <p className="text-sm text-gray-500">{mode.mode_code}</p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'mode_type',
+            label: 'Type',
+            render: (mode) => (
+              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                {mode.mode_type}
+              </span>
+            ),
+          },
+          {
+            key: 'requirements',
+            label: 'Requirements',
+            render: (mode) => (
+              <div className="space-y-1">
+                {mode.requires_reference && (
+                  <span className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
+                    Reference Required
+                  </span>
+                )}
+                {mode.requires_approval && (
+                  <span className="inline-block px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded">
+                    Approval Required
+                  </span>
+                )}
+              </div>
+            ),
+          },
+          {
+            key: 'limits',
+            label: 'Amount Limits',
+            render: (mode) => (
+              <div>
+                <p className="text-sm text-gray-900">
+                  Min: ₹{mode.minimum_amount || 0}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Max: ₹{mode.maximum_amount || 'No limit'}
+                </p>
+              </div>
+            ),
+          },
+          {
+            key: 'is_active',
+            label: 'Status',
+            render: (mode) => (
+              <div className="flex items-center space-x-2">
+                {mode.is_active ? (
+                  <CheckCircle className="w-4 h-4 text-success-500" />
+                ) : (
+                  <XCircle className="w-4 h-4 text-danger-500" />
+                )}
+                <span className="text-sm text-gray-900">
+                  {mode.is_active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+            ),
+          },
+          {
+            key: 'actions',
+            label: 'Actions',
+            render: (mode) => (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to={`/sales/payment-modes/${mode.id}`}
+                  className="text-primary-600 hover:text-primary-900"
+                >
+                  <Eye className="w-4 h-4" />
+                </Link>
+                <Link
+                  to={`/sales/payment-modes/${mode.id}/edit`}
+                  className="text-secondary-600 hover:text-secondary-900"
+                >
+                  <Edit className="w-4 h-4" />
+                </Link>
+                <button
+                  onClick={() => handleDelete(mode.id)}
+                  className="text-danger-600 hover:text-danger-900"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ),
+          },
+        ];
+      case 'staff':
+        return [
+          {
+            key: 'employee_info',
+            label: 'Employee',
+            render: (member) => (
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5 text-primary-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{member.first_name} {member.last_name}</p>
+                  <p className="text-sm text-gray-500">{member.employee_id}</p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'contact',
+            label: 'Contact',
+            render: (member) => (
+              <div>
+                <p className="text-sm text-gray-900">{member.email || '-'}</p>
+                <p className="text-sm text-gray-500">{member.phone || '-'}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'position',
+            label: 'Position',
+            render: (member) => (
+              <div>
+                <p className="font-medium text-gray-900">{member.designation || '-'}</p>
+                <p className="text-sm text-gray-500">{member.department || '-'}</p>
+              </div>
+            ),
+          },
+          {
+            key: 'salary',
+            label: 'Salary',
+            render: (member) => (
+              <div>
+                <p className="font-medium text-gray-900">₹{member.salary || 0}</p>
+                <p className="text-sm text-gray-500">Commission: {member.commission_percentage || 0}%</p>
+              </div>
+            ),
+          },
+          {
+            key: 'is_active',
+            label: 'Status',
+            render: (member) => (
+              <div className="flex items-center space-x-2">
+                {member.is_active ? (
+                  <CheckCircle className="w-4 h-4 text-success-500" />
+                ) : (
+                  <XCircle className="w-4 h-4 text-danger-500" />
+                )}
+                <span className="text-sm text-gray-900">
+                  {member.is_active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+            ),
+          },
+          {
+            key: 'actions',
+            label: 'Actions',
+            render: (member) => (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to={`/sales/staff/${member.id}`}
+                  className="text-primary-600 hover:text-primary-900"
+                >
+                  <Eye className="w-4 h-4" />
+                </Link>
+                <Link
+                  to={`/sales/staff/${member.id}/edit`}
+                  className="text-secondary-600 hover:text-secondary-900"
+                >
+                  <Edit className="w-4 h-4" />
+                </Link>
+                <button
+                  onClick={() => handleDelete(member.id)}
                   className="text-danger-600 hover:text-danger-900"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -630,7 +629,7 @@ const WhatsAppIntegration = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" text="Loading WhatsApp data..." />
+        <LoadingSpinner size="lg" text="Loading enhanced sales data..." />
       </div>
     );
   }
@@ -640,8 +639,8 @@ const WhatsAppIntegration = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">WhatsApp Integration</h1>
-          <p className="text-gray-600">Manage WhatsApp messaging, campaigns, and templates</p>
+          <h1 className="text-2xl font-bold text-gray-900">Enhanced Sales Management</h1>
+          <p className="text-gray-600">Manage sale challans, bill series, payment modes, and staff</p>
         </div>
         <div className="flex items-center space-x-3">
           <Button
@@ -667,10 +666,10 @@ const WhatsAppIntegration = () => {
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8 px-6">
             {[
-              { id: 'templates', name: 'Message Templates', icon: FileText },
-              { id: 'campaigns', name: 'Campaigns', icon: Target },
-              { id: 'message-history', name: 'Message History', icon: MessageSquare },
-              { id: 'webhooks', name: 'Webhooks', icon: Bell },
+              { id: 'challans', name: 'Sale Challans', icon: FileText },
+              { id: 'bill-series', name: 'Bill Series', icon: Settings },
+              { id: 'payment-modes', name: 'Payment Modes', icon: DollarSign },
+              { id: 'staff', name: 'Staff', icon: Users },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -718,8 +717,9 @@ const WhatsAppIntegration = () => {
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
-                  <option value="running">Running</option>
-                  <option value="stopped">Stopped</option>
+                  <option value="draft">Draft</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="delivered">Delivered</option>
                 </select>
               </div>
               
@@ -770,4 +770,4 @@ const WhatsAppIntegration = () => {
   );
 };
 
-export default WhatsAppIntegration;
+export default EnhancedSales;

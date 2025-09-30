@@ -460,5 +460,203 @@ export const localizationService = {
     } catch (error) {
       throw new Error(error.message || 'Failed to update localization settings');
     }
+  },
+
+  // GST Management
+  getGSTSlabs: async (params = {}) => {
+    try {
+      const slabs = await apiService.get('/api/localization/indian/gst/slabs', params);
+      return slabs;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch GST slabs');
+    }
+  },
+
+  getGSTSlab: async (slabId) => {
+    try {
+      const slab = await apiService.get(`/api/localization/indian/gst/slabs/${slabId}`);
+      return slab;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch GST slab');
+    }
+  },
+
+  createGSTSlab: async (slabData) => {
+    try {
+      const result = await apiService.post('/api/localization/indian/gst/slabs', slabData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create GST slab');
+    }
+  },
+
+  updateGSTSlab: async (slabId, slabData) => {
+    try {
+      const result = await apiService.put(`/api/localization/indian/gst/slabs/${slabId}`, slabData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update GST slab');
+    }
+  },
+
+  deleteGSTSlab: async (slabId) => {
+    try {
+      await apiService.delete(`/api/localization/indian/gst/slabs/${slabId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete GST slab');
+    }
+  },
+
+  // HSN Codes
+  getHSNCodes: async (params = {}) => {
+    try {
+      const codes = await apiService.get('/api/localization/indian/gst/hsn-codes', params);
+      return codes;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch HSN codes');
+    }
+  },
+
+  getHSNCode: async (codeId) => {
+    try {
+      const code = await apiService.get(`/api/localization/indian/gst/hsn-codes/${codeId}`);
+      return code;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch HSN code');
+    }
+  },
+
+  createHSNCode: async (codeData) => {
+    try {
+      const result = await apiService.post('/api/localization/indian/gst/hsn-codes', codeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create HSN code');
+    }
+  },
+
+  updateHSNCode: async (codeId, codeData) => {
+    try {
+      const result = await apiService.put(`/api/localization/indian/gst/hsn-codes/${codeId}`, codeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update HSN code');
+    }
+  },
+
+  deleteHSNCode: async (codeId) => {
+    try {
+      await apiService.delete(`/api/localization/indian/gst/hsn-codes/${codeId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete HSN code');
+    }
+  },
+
+  // SAC Codes
+  getSACCodes: async (params = {}) => {
+    try {
+      const codes = await apiService.get('/api/localization/indian/gst/sac-codes', params);
+      return codes;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch SAC codes');
+    }
+  },
+
+  getSACCode: async (codeId) => {
+    try {
+      const code = await apiService.get(`/api/localization/indian/gst/sac-codes/${codeId}`);
+      return code;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch SAC code');
+    }
+  },
+
+  createSACCode: async (codeData) => {
+    try {
+      const result = await apiService.post('/api/localization/indian/gst/sac-codes', codeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create SAC code');
+    }
+  },
+
+  updateSACCode: async (codeId, codeData) => {
+    try {
+      const result = await apiService.put(`/api/localization/indian/gst/sac-codes/${codeId}`, codeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update SAC code');
+    }
+  },
+
+  deleteSACCode: async (codeId) => {
+    try {
+      await apiService.delete(`/api/localization/indian/gst/sac-codes/${codeId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete SAC code');
+    }
+  },
+
+  // State Codes
+  getStateCodes: async (params = {}) => {
+    try {
+      const codes = await apiService.get('/api/localization/indian/geography/state-codes', params);
+      return codes;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch state codes');
+    }
+  },
+
+  getStateCode: async (codeId) => {
+    try {
+      const code = await apiService.get(`/api/localization/indian/geography/state-codes/${codeId}`);
+      return code;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch state code');
+    }
+  },
+
+  createStateCode: async (codeData) => {
+    try {
+      const result = await apiService.post('/api/localization/indian/geography/state-codes', codeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create state code');
+    }
+  },
+
+  updateStateCode: async (codeId, codeData) => {
+    try {
+      const result = await apiService.put(`/api/localization/indian/geography/state-codes/${codeId}`, codeData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update state code');
+    }
+  },
+
+  deleteStateCode: async (codeId) => {
+    try {
+      await apiService.delete(`/api/localization/indian/geography/state-codes/${codeId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete state code');
+    }
+  },
+
+  // Export Localization Data
+  exportLocalizationData: async (format, data, filters = {}) => {
+    try {
+      const response = await apiService.post('/api/localization/export', {
+        format,
+        data,
+        filters
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to export localization data');
+    }
   }
 };

@@ -405,5 +405,158 @@ export const marketingService = {
     } catch (error) {
       throw new Error(error.message || 'Failed to validate customer segment');
     }
-  }
+  },
+
+  // WhatsApp Messages
+  getWhatsAppMessages: async (params = {}) => {
+    try {
+      const messages = await apiService.get('/api/marketing/whatsapp/messages', params);
+      return messages;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch WhatsApp messages');
+    }
+  },
+
+  // WhatsApp Webhooks
+  getWhatsAppWebhooks: async (params = {}) => {
+    try {
+      const webhooks = await apiService.get('/api/marketing/whatsapp/webhooks', params);
+      return webhooks;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch WhatsApp webhooks');
+    }
+  },
+
+  createWhatsAppWebhook: async (webhookData) => {
+    try {
+      const result = await apiService.post('/api/marketing/whatsapp/webhooks', webhookData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create WhatsApp webhook');
+    }
+  },
+
+  updateWhatsAppWebhook: async (webhookId, webhookData) => {
+    try {
+      const result = await apiService.put(`/api/marketing/whatsapp/webhooks/${webhookId}`, webhookData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update WhatsApp webhook');
+    }
+  },
+
+  deleteWhatsAppWebhook: async (webhookId) => {
+    try {
+      const result = await apiService.delete(`/api/marketing/whatsapp/webhooks/${webhookId}`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete WhatsApp webhook');
+    }
+  },
+
+  // WhatsApp Campaign Actions
+  startWhatsAppCampaign: async (campaignId) => {
+    try {
+      const result = await apiService.post(`/api/marketing/whatsapp/campaigns/${campaignId}/start`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to start WhatsApp campaign');
+    }
+  },
+
+  stopWhatsAppCampaign: async (campaignId) => {
+    try {
+      const result = await apiService.post(`/api/marketing/whatsapp/campaigns/${campaignId}/stop`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to stop WhatsApp campaign');
+    }
+  },
+
+  // WhatsApp Export
+  exportWhatsAppData: async (format, data, filters = {}) => {
+    try {
+      const response = await apiService.post('/api/marketing/whatsapp/export', {
+        format,
+        data,
+        filters
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to export WhatsApp data');
+    }
+  },
+
+  // WhatsApp Integration
+  sendPosReceipt: async (receiptData) => {
+    try {
+      const result = await apiService.post('/api/whatsapp/integration/pos/receipt', receiptData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to send POS receipt via WhatsApp');
+    }
+  },
+
+  sendLoyaltyPoints: async (pointsData) => {
+    try {
+      const result = await apiService.post('/api/whatsapp/integration/loyalty/points', pointsData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to send loyalty points via WhatsApp');
+    }
+  },
+
+  sendInvoice: async (invoiceData) => {
+    try {
+      const result = await apiService.post('/api/whatsapp/integration/invoice', invoiceData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to send invoice via WhatsApp');
+    }
+  },
+
+  sendMarketingMessage: async (messageData) => {
+    try {
+      const result = await apiService.post('/api/whatsapp/integration/marketing', messageData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to send marketing message via WhatsApp');
+    }
+  },
+
+  optInCustomer: async (optInData) => {
+    try {
+      const result = await apiService.post('/api/whatsapp/integration/opt-in', optInData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to opt-in customer for WhatsApp');
+    }
+  },
+
+  optOutCustomer: async (optOutData) => {
+    try {
+      const result = await apiService.post('/api/whatsapp/integration/opt-out', optOutData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to opt-out customer from WhatsApp');
+    }
+  },
+
+  getCustomerPreferences: async (customerId) => {
+    try {
+      const preferences = await apiService.get(`/api/whatsapp/integration/customer/${customerId}/preferences`);
+      return preferences;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch customer WhatsApp preferences');
+    }
+  },
+
+  getCustomerMessages: async (customerId) => {
+    try {
+      const messages = await apiService.get(`/api/whatsapp/integration/messages/${customerId}`);
+      return messages;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch customer WhatsApp messages');
+    }
+  },
 };

@@ -309,5 +309,208 @@ export const paymentService = {
     } catch (error) {
       throw new Error(error.message || 'Failed to generate compliance report');
     }
+  },
+
+  // Banking & Reconciliation
+  getBankStatements: async (params = {}) => {
+    try {
+      const statements = await apiService.get('/api/banking/statements', params);
+      return statements;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch bank statements');
+    }
+  },
+
+  getBankStatement: async (statementId) => {
+    try {
+      const statement = await apiService.get(`/api/banking/statements/${statementId}`);
+      return statement;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch bank statement');
+    }
+  },
+
+  createBankStatement: async (statementData) => {
+    try {
+      const statement = await apiService.post('/api/banking/statements', statementData);
+      return statement;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create bank statement');
+    }
+  },
+
+  updateBankStatement: async (statementId, statementData) => {
+    try {
+      const statement = await apiService.put(`/api/banking/statements/${statementId}`, statementData);
+      return statement;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update bank statement');
+    }
+  },
+
+  deleteBankStatement: async (statementId) => {
+    try {
+      await apiService.delete(`/api/banking/statements/${statementId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete bank statement');
+    }
+  },
+
+  importBankStatement: async (accountId, fileData) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', fileData.file);
+      formData.append('account_id', accountId);
+      formData.append('statement_date', fileData.statement_date);
+      
+      const statement = await apiService.post('/api/banking/statements/import', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return statement;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to import bank statement');
+    }
+  },
+
+  getReconciliations: async (params = {}) => {
+    try {
+      const reconciliations = await apiService.get('/api/banking/reconciliations', params);
+      return reconciliations;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch reconciliations');
+    }
+  },
+
+  getReconciliation: async (reconciliationId) => {
+    try {
+      const reconciliation = await apiService.get(`/api/banking/reconciliations/${reconciliationId}`);
+      return reconciliation;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch reconciliation');
+    }
+  },
+
+  createReconciliation: async (reconciliationData) => {
+    try {
+      const reconciliation = await apiService.post('/api/banking/reconciliations', reconciliationData);
+      return reconciliation;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create reconciliation');
+    }
+  },
+
+  updateReconciliation: async (reconciliationId, reconciliationData) => {
+    try {
+      const reconciliation = await apiService.put(`/api/banking/reconciliations/${reconciliationId}`, reconciliationData);
+      return reconciliation;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update reconciliation');
+    }
+  },
+
+  deleteReconciliation: async (reconciliationId) => {
+    try {
+      await apiService.delete(`/api/banking/reconciliations/${reconciliationId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete reconciliation');
+    }
+  },
+
+  autoReconcile: async (reconciliationId) => {
+    try {
+      const result = await apiService.post(`/api/banking/reconciliations/${reconciliationId}/auto-reconcile`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to auto reconcile');
+    }
+  },
+
+  manualReconcile: async (reconciliationId, reconcileData) => {
+    try {
+      const result = await apiService.post(`/api/banking/reconciliations/${reconciliationId}/manual-reconcile`, reconcileData);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to manual reconcile');
+    }
+  },
+
+  getPaymentMethods: async (params = {}) => {
+    try {
+      const methods = await apiService.get('/api/banking/payment-methods', params);
+      return methods;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch payment methods');
+    }
+  },
+
+  getPaymentMethod: async (methodId) => {
+    try {
+      const method = await apiService.get(`/api/banking/payment-methods/${methodId}`);
+      return method;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch payment method');
+    }
+  },
+
+  createPaymentMethod: async (methodData) => {
+    try {
+      const method = await apiService.post('/api/banking/payment-methods', methodData);
+      return method;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to create payment method');
+    }
+  },
+
+  updatePaymentMethod: async (methodId, methodData) => {
+    try {
+      const method = await apiService.put(`/api/banking/payment-methods/${methodId}`, methodData);
+      return method;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to update payment method');
+    }
+  },
+
+  deletePaymentMethod: async (methodId) => {
+    try {
+      await apiService.delete(`/api/banking/payment-methods/${methodId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete payment method');
+    }
+  },
+
+  getBankingAnalytics: async (params = {}) => {
+    try {
+      const analytics = await apiService.get('/api/banking/analytics', params);
+      return analytics;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch banking analytics');
+    }
+  },
+
+  getBankingDashboard: async () => {
+    try {
+      const dashboard = await apiService.get('/api/banking/dashboard');
+      return dashboard;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch banking dashboard');
+    }
+  },
+
+  exportBankingData: async (format, data, filters = {}) => {
+    try {
+      const response = await apiService.post('/api/banking/export', {
+        format,
+        data,
+        filters
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to export banking data');
+    }
   }
 };
