@@ -29,11 +29,11 @@ from .api.endpoints import (
     # Advanced Accounting endpoints
     advanced_workflows, advanced_reporting, banking, analytic,
     # Sales endpoints
-    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features, sales_enhanced_integration, sales_return_comprehensive, sales_exchange_comprehensive,
+    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features, sales_enhanced_integration, sales_return_comprehensive, sales_exchange_comprehensive, sales_bill_modification,
     # POS endpoints
     pos_comprehensive,
     # Purchase endpoints
-    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features, purchase_enhanced_integration, purchase_return_comprehensive,
+    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features, purchase_enhanced_integration, purchase_return_comprehensive, purchase_bill_modification,
     # Inventory endpoints
     items, enhanced_item_master, advanced_inventory,
     # Customer endpoints
@@ -428,6 +428,7 @@ api_routers = [
     (sales_enhanced_integration.router, "/sales-enhanced-integration", ["⚡ Sales Enhanced Integration"]),
     (sales_return_comprehensive.router, "/sales-returns", ["🔄 Sales Returns Management"]),
     (sales_exchange_comprehensive.router, "/sales-exchanges", ["🔄 B2C Sales Exchanges"]),
+    (sales_bill_modification.router, "/sales", ["✏️ Sales Bill Modification"]),
     
     # POS endpoints
     (pos_comprehensive.router, "/pos", ["🖥️ Point of Sale (POS)"]),
@@ -440,6 +441,7 @@ api_routers = [
     (purchase_advanced_features.router, "/purchase-advanced-features", ["🚀 Purchase Advanced Features"]),
     (purchase_enhanced_integration.router, "/purchase-enhanced-integration", ["⚡ Purchase Enhanced Integration"]),
     (purchase_return_comprehensive.router, "/purchase-returns", ["🔄 Purchase Returns Management"]),
+    (purchase_bill_modification.router, "/purchase", ["✏️ Purchase Bill Modification"]),
     
     # Inventory endpoints
     (items.router, "/items", ["📦 Items & Inventory"]),
