@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - pinak-network
+
+  backend:
+    image: pinak-erp-backend:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/pinak_erp
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - pinak-network
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=pinak_erp
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pinak-network
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - pinak-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - pinak-network
+
+volumes:
+  postgres_data:
+
+networks:
+  pinak-network:
+    driver: bridge
