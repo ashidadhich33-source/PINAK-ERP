@@ -361,6 +361,114 @@ async def create_pos_transaction(
             detail=f"Failed to create POS transaction: {str(e)}"
         )
 
+@router.post("/pos-transactions/{transaction_id}/complete")
+async def complete_pos_transaction(
+    transaction_id: int,
+    company_id: int = Query(...),
+    send_whatsapp: bool = Query(True, description="Send WhatsApp receipt to customer"),
+    current_user: User = Depends(require_permission("pos.manage")),
+    db: Session = Depends(get_db)
+):
+    """Complete POS transaction and send WhatsApp receipt if enabled"""
+    
+    try:
+        # Get the transaction
+        transaction = db.query(POSTransaction).filter(
+            POSTransaction.id == transaction_id,
+            POSTransaction.company_id == company_id
+        ).first()
+        
+        if not transaction:
+            raise HTTPException(
+                status_code=404,
+                detail="POS transaction not found"
+            )
+        
+        # Complete the transaction
+        transaction.status = "completed"
+        transaction.completed_at = datetime.utcnow()
+        transaction.completed_by = current_user.id
+        db.commit()
+        
+        # Send WhatsApp receipt if enabled and customer exists
+        whatsapp_result = None
+        if send_whatsapp and transaction.customer_id:
+            try:
+                from ...services.whatsapp.whatsapp_integration_service import WhatsAppIntegrationService
+                whatsapp_service = WhatsAppIntegrationService()
+                
+                # Prepare receipt data
+                receipt_data = {
+                    "store_name": "Our Store",  # You can get this from company settings
+                    "transaction_id": transaction.transaction_number,
+                    "total_amount": float(transaction.total_amount),
+                    "items_count": len(transaction.items) if hasattr(transaction, 'items') else 0,
+                    "customer_name": transaction.customer.name if transaction.customer else "Valued Customer",
+                    "date": transaction.created_at.strftime("%Y-%m-%d %H:%M"),
+                    "payment_method": transaction.payment_method
+                }
+                
+                # Send receipt
+                whatsapp_result = whatsapp_service.send_pos_receipt(
+                    db=db,
+                    customer_id=transaction.customer_id,
+                    transaction_id=transaction.id,
+                    receipt_data=receipt_data
+                )
+                
+            except Exception as whatsapp_error:
+                # Log WhatsApp error but don't fail the transaction
+                print(f"WhatsApp error: {whatsapp_error}")
+                whatsapp_result = {"success": False, "error": str(whatsapp_error)}
+        
+        # Send loyalty points update if customer has loyalty account
+        loyalty_result = None
+        if transaction.customer_id:
+            try:
+                from ...services.loyalty.loyalty_service import loyalty_service
+                
+                # Calculate loyalty points (example: 1 point per 100 rupees)
+                points_earned = int(float(transaction.total_amount) / 100)
+                
+                # Get current loyalty balance
+                loyalty_balance = loyalty_service.get_customer_loyalty_balance(
+                    db=db,
+                    customer_id=transaction.customer_id
+                )
+                
+                # Send loyalty points update via WhatsApp
+                if whatsapp_result and whatsapp_result.get("success"):
+                    from ...services.whatsapp.whatsapp_integration_service import WhatsAppIntegrationService
+                    whatsapp_service = WhatsAppIntegrationService()
+                    
+                    loyalty_result = whatsapp_service.send_loyalty_points_update(
+                        db=db,
+                        customer_id=transaction.customer_id,
+                        points_earned=points_earned,
+                        points_redeemed=0,  # No redemption in this transaction
+                        current_balance=loyalty_balance.get("total_points", 0) + points_earned,
+                        transaction_id=transaction.id
+                    )
+                
+            except Exception as loyalty_error:
+                print(f"Loyalty error: {loyalty_error}")
+                loyalty_result = {"success": False, "error": str(loyalty_error)}
+        
+        return {
+            "message": "POS transaction completed successfully",
+            "transaction_id": transaction.id,
+            "whatsapp_receipt": whatsapp_result,
+            "loyalty_update": loyalty_result
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to complete POS transaction: {str(e)}"
+        )
+
 @router.get("/pos-transactions", response_model=List[POSTransactionResponse])
 async def get_pos_transactions(
     company_id: int = Query(...),
