@@ -37,7 +37,11 @@ import {
   Star,
   MessageSquare,
   Target,
-  Zap
+  Zap,
+  Globe,
+  Map,
+  Calculator,
+  CreditCard
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -281,6 +285,27 @@ const Sidebar = () => {
     },
   ];
 
+  const localizationNavigation = [
+    {
+      name: 'Indian Geography',
+      href: '/localization/geography',
+      icon: Map,
+      permission: 'localization.geography',
+    },
+    {
+      name: 'Indian GST',
+      href: '/localization/gst',
+      icon: Calculator,
+      permission: 'localization.gst',
+    },
+    {
+      name: 'Indian Banking',
+      href: '/localization/banking',
+      icon: CreditCard,
+      permission: 'localization.banking',
+    },
+  ];
+
   const filteredNavigation = navigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
@@ -306,6 +331,10 @@ const Sidebar = () => {
   );
 
   const filteredMarketingNavigation = marketingNavigation.filter(item => 
+    !item.permission || hasPermission(item.permission)
+  );
+
+  const filteredLocalizationNavigation = localizationNavigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
 
@@ -569,6 +598,44 @@ const Sidebar = () => {
                 </div>
                 
                 {filteredMarketingNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive
+                            ? 'bg-primary-100 text-primary-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`
+                      }
+                    >
+                      <Icon className="flex-shrink-0 h-5 w-5" />
+                      {!sidebarCollapsed && (
+                        <span className="ml-3">{item.name}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Localization Section */}
+            {filteredLocalizationNavigation.length > 0 && (
+              <>
+                <div className="pt-6">
+                  <div className="flex items-center px-3 py-2">
+                    <Globe className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    {!sidebarCollapsed && (
+                      <span className="ml-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Localization
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {filteredLocalizationNavigation.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavLink

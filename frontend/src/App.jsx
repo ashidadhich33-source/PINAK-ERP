@@ -72,6 +72,11 @@ const LoyaltyTransactions = lazy(() => import('./pages/loyalty/LoyaltyTransactio
 const WhatsAppIntegration = lazy(() => import('./pages/marketing/WhatsAppIntegration'));
 const MarketingAutomation = lazy(() => import('./pages/marketing/MarketingAutomation'));
 
+// Localization routes
+const IndianGeography = lazy(() => import('./pages/localization/IndianGeography'));
+const IndianGST = lazy(() => import('./pages/localization/IndianGST'));
+const IndianBanking = lazy(() => import('./pages/localization/IndianBanking'));
+
 function App() {
   return (
     <AppProvider>
@@ -316,6 +321,23 @@ function App() {
                       <Route path="/marketing/automation" element={
                         <LazyComponent>
                           <MarketingAutomation />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Localization routes */}
+                      <Route path="/localization/geography" element={
+                        <LazyComponent>
+                          <IndianGeography />
+                        </LazyComponent>
+                      } />
+                      <Route path="/localization/gst" element={
+                        <LazyComponent>
+                          <IndianGST />
+                        </LazyComponent>
+                      } />
+                      <Route path="/localization/banking" element={
+                        <LazyComponent>
+                          <IndianBanking />
                         </LazyComponent>
                       } />
                       
