@@ -93,6 +93,12 @@ const Sidebar = () => {
       permission: 'sales.view',
     },
     {
+      name: 'Enhanced Sales',
+      href: '/sales/enhanced',
+      icon: FileText,
+      permission: 'sales.view',
+    },
+    {
       name: 'Purchases',
       href: '/purchases',
       icon: ShoppingBag,
@@ -107,7 +113,7 @@ const Sidebar = () => {
     {
       name: 'Accounting',
       href: '/accounting',
-      icon: FileText,
+      icon: Calculator,
       permission: 'accounting.view',
     },
     {

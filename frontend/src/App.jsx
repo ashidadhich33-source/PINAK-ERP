@@ -51,6 +51,7 @@ const ChartOfAccounts = lazy(() => import('./pages/accounting/ChartOfAccounts'))
 const JournalEntries = lazy(() => import('./pages/accounting/JournalEntries'));
 const GeneralLedger = lazy(() => import('./pages/accounting/GeneralLedger'));
 const AccountingReports = lazy(() => import('./pages/accounting/FinancialReports'));
+const TrialBalance = lazy(() => import('./pages/accounting/TrialBalance'));
 
 // Purchase routes
 const PurchaseOrders = lazy(() => import('./pages/purchases/PurchaseOrders'));
@@ -76,6 +77,9 @@ const MarketingAutomation = lazy(() => import('./pages/marketing/MarketingAutoma
 const IndianGeography = lazy(() => import('./pages/localization/IndianGeography'));
 const IndianGST = lazy(() => import('./pages/localization/IndianGST'));
 const IndianBanking = lazy(() => import('./pages/localization/IndianBanking'));
+
+// Enhanced Sales routes
+const EnhancedSales = lazy(() => import('./pages/sales/EnhancedSales'));
 
 // Store routes
 const StoreManagement = lazy(() => import('./pages/store/StoreManagement'));
@@ -200,6 +204,11 @@ function App() {
                           <SalesList />
                         </LazyComponent>
                       } />
+                      <Route path="/sales/enhanced" element={
+                        <LazyComponent>
+                          <EnhancedSales />
+                        </LazyComponent>
+                      } />
                       
                       {/* Reports routes */}
                       <Route path="/reports" element={
@@ -254,6 +263,11 @@ function App() {
                       <Route path="/accounting/journal-entries" element={
                         <LazyComponent>
                           <JournalEntries />
+                        </LazyComponent>
+                      } />
+                      <Route path="/accounting/trial-balance" element={
+                        <LazyComponent>
+                          <TrialBalance />
                         </LazyComponent>
                       } />
                       <Route path="/accounting/general-ledger" element={
