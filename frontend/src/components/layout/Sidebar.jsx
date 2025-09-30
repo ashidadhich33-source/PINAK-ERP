@@ -44,7 +44,11 @@ import {
   CreditCard,
   Store,
   Monitor,
-  Receipt
+  Receipt,
+  Wallet,
+  DollarSign,
+  Database,
+  Zap
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -330,6 +334,33 @@ const Sidebar = () => {
     },
   ];
 
+  const paymentNavigation = [
+    {
+      name: 'Payment Management',
+      href: '/payment/management',
+      icon: CreditCard,
+      permission: 'payment.management',
+    },
+    {
+      name: 'Payment Modes',
+      href: '/payment/modes',
+      icon: Wallet,
+      permission: 'payment.modes',
+    },
+    {
+      name: 'Financial Transactions',
+      href: '/payment/transactions',
+      icon: Database,
+      permission: 'payment.transactions',
+    },
+    {
+      name: 'Financial Integration',
+      href: '/payment/integration',
+      icon: Zap,
+      permission: 'payment.integration',
+    },
+  ];
+
   const filteredNavigation = navigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
@@ -363,6 +394,10 @@ const Sidebar = () => {
   );
 
   const filteredStoreNavigation = storeNavigation.filter(item => 
+    !item.permission || hasPermission(item.permission)
+  );
+
+  const filteredPaymentNavigation = paymentNavigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
 
@@ -702,6 +737,44 @@ const Sidebar = () => {
                 </div>
                 
                 {filteredStoreNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive
+                            ? 'bg-primary-100 text-primary-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`
+                      }
+                    >
+                      <Icon className="flex-shrink-0 h-5 w-5" />
+                      {!sidebarCollapsed && (
+                        <span className="ml-3">{item.name}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Payment Section */}
+            {filteredPaymentNavigation.length > 0 && (
+              <>
+                <div className="pt-6">
+                  <div className="flex items-center px-3 py-2">
+                    <DollarSign className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    {!sidebarCollapsed && (
+                      <span className="ml-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Payment & Finance
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {filteredPaymentNavigation.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavLink

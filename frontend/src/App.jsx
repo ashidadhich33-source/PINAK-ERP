@@ -82,6 +82,12 @@ const StoreManagement = lazy(() => import('./pages/store/StoreManagement'));
 const POSSessions = lazy(() => import('./pages/store/POSSessions'));
 const POSReceipts = lazy(() => import('./pages/store/POSReceipts'));
 
+// Payment routes
+const PaymentManagement = lazy(() => import('./pages/payment/PaymentManagement'));
+const PaymentModes = lazy(() => import('./pages/payment/PaymentModes'));
+const FinancialTransactions = lazy(() => import('./pages/payment/FinancialTransactions'));
+const FinancialIntegration = lazy(() => import('./pages/payment/FinancialIntegration'));
+
 function App() {
   return (
     <AppProvider>
@@ -360,6 +366,28 @@ function App() {
                       <Route path="/store/receipts" element={
                         <LazyComponent>
                           <POSReceipts />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Payment routes */}
+                      <Route path="/payment/management" element={
+                        <LazyComponent>
+                          <PaymentManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/payment/modes" element={
+                        <LazyComponent>
+                          <PaymentModes />
+                        </LazyComponent>
+                      } />
+                      <Route path="/payment/transactions" element={
+                        <LazyComponent>
+                          <FinancialTransactions />
+                        </LazyComponent>
+                      } />
+                      <Route path="/payment/integration" element={
+                        <LazyComponent>
+                          <FinancialIntegration />
                         </LazyComponent>
                       } />
                       
