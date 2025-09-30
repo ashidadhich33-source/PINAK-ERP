@@ -26,7 +26,11 @@ import {
   Calculator,
   BookOpen,
   TrendingUp,
-  PieChart
+  PieChart,
+  ShoppingBag,
+  FileText,
+  Building2,
+  BarChart3
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -186,6 +190,33 @@ const Sidebar = () => {
     },
   ];
 
+  const purchaseNavigation = [
+    {
+      name: 'Purchase Orders',
+      href: '/purchases/orders',
+      icon: ShoppingBag,
+      permission: 'purchases.orders',
+    },
+    {
+      name: 'Purchase Invoices',
+      href: '/purchases/invoices',
+      icon: FileText,
+      permission: 'purchases.invoices',
+    },
+    {
+      name: 'Vendor Management',
+      href: '/purchases/vendors',
+      icon: Building2,
+      permission: 'purchases.vendors',
+    },
+    {
+      name: 'Purchase Analytics',
+      href: '/purchases/analytics',
+      icon: BarChart3,
+      permission: 'purchases.analytics',
+    },
+  ];
+
   const filteredNavigation = navigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
@@ -195,6 +226,10 @@ const Sidebar = () => {
   );
 
   const filteredAccountingNavigation = accountingNavigation.filter(item => 
+    !item.permission || hasPermission(item.permission)
+  );
+
+  const filteredPurchaseNavigation = purchaseNavigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
 
@@ -306,6 +341,44 @@ const Sidebar = () => {
                 </div>
                 
                 {filteredAccountingNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive
+                            ? 'bg-primary-100 text-primary-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`
+                      }
+                    >
+                      <Icon className="flex-shrink-0 h-5 w-5" />
+                      {!sidebarCollapsed && (
+                        <span className="ml-3">{item.name}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Purchase Section */}
+            {filteredPurchaseNavigation.length > 0 && (
+              <>
+                <div className="pt-6">
+                  <div className="flex items-center px-3 py-2">
+                    <ShoppingBag className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    {!sidebarCollapsed && (
+                      <span className="ml-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Purchases
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {filteredPurchaseNavigation.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavLink

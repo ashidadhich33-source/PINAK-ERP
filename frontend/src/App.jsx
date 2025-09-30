@@ -52,6 +52,12 @@ const JournalEntries = lazy(() => import('./pages/accounting/JournalEntries'));
 const GeneralLedger = lazy(() => import('./pages/accounting/GeneralLedger'));
 const FinancialReports = lazy(() => import('./pages/accounting/FinancialReports'));
 
+// Purchase routes
+const PurchaseOrders = lazy(() => import('./pages/purchases/PurchaseOrders'));
+const PurchaseInvoices = lazy(() => import('./pages/purchases/PurchaseInvoices'));
+const VendorManagement = lazy(() => import('./pages/purchases/VendorManagement'));
+const PurchaseAnalytics = lazy(() => import('./pages/purchases/PurchaseAnalytics'));
+
 function App() {
   return (
     <AppProvider>
@@ -228,6 +234,28 @@ function App() {
                       <Route path="/accounting/financial-reports" element={
                         <LazyComponent>
                           <FinancialReports />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Purchase routes */}
+                      <Route path="/purchases/orders" element={
+                        <LazyComponent>
+                          <PurchaseOrders />
+                        </LazyComponent>
+                      } />
+                      <Route path="/purchases/invoices" element={
+                        <LazyComponent>
+                          <PurchaseInvoices />
+                        </LazyComponent>
+                      } />
+                      <Route path="/purchases/vendors" element={
+                        <LazyComponent>
+                          <VendorManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/purchases/analytics" element={
+                        <LazyComponent>
+                          <PurchaseAnalytics />
                         </LazyComponent>
                       } />
                       
