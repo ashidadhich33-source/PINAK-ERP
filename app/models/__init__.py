@@ -21,5 +21,8 @@ from .core import *
 # Loyalty Models
 from .loyalty import *
 
+# WhatsApp Models
+from .whatsapp import *
+
 # Base Model
 from .base import Base

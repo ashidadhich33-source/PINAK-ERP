@@ -1,5 +1,5 @@
 # backend/app/api/__init__.py
-from .endpoints import auth, setup, items, enhanced_sales, purchases, reports, customers, suppliers, backup, expenses, staff, settings, payments
+from .endpoints import auth, setup, items, enhanced_sales, purchases, reports, customers, suppliers, backup, expenses, staff, settings, payments, whatsapp
 
 __all__ = [
     "auth",
@@ -14,5 +14,6 @@ __all__ = [
     "expenses",
     "staff",
     "settings",
-    "payments"
+    "payments",
+    "whatsapp"
 ]
