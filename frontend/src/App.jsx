@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './contexts/AppContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { PosProvider } from './contexts/PosContext';
 import Layout from './components/layout/Layout';
 import Login from './pages/auth/Login';
 import Dashboard from './pages/Dashboard';
@@ -22,22 +23,33 @@ import InventoryList from './pages/inventory/InventoryList';
 import ItemDetails from './pages/inventory/ItemDetails';
 import ItemFormPage from './pages/inventory/ItemFormPage';
 
+// POS routes
+import POSDashboard from './pages/pos/POSDashboard';
+import POSTerminal from './pages/pos/POSTerminal';
+
+// Sales routes
+import SalesList from './pages/sales/SalesList';
+
+// Reports routes
+import ReportsDashboard from './pages/reports/ReportsDashboard';
+
 function App() {
   return (
     <AppProvider>
       <AuthProvider>
-        <div className="App">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* Protected Routes */}
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Routes>
+        <PosProvider>
+          <div className="App">
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<Login />} />
+              
+              {/* Protected Routes */}
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Routes>
                       <Route path="/" element={<Navigate to="/dashboard" replace />} />
                       <Route path="/dashboard" element={<Dashboard />} />
                       
@@ -59,14 +71,25 @@ function App() {
                       <Route path="/inventory/items/:id" element={<ItemDetails />} />
                       <Route path="/inventory/items/:id/edit" element={<ItemFormPage />} />
                       
+                      {/* POS routes */}
+                      <Route path="/pos" element={<POSDashboard />} />
+                      <Route path="/pos/terminal" element={<POSTerminal />} />
+                      
+                      {/* Sales routes */}
+                      <Route path="/sales" element={<SalesList />} />
+                      
+                      {/* Reports routes */}
+                      <Route path="/reports" element={<ReportsDashboard />} />
+                      
                       {/* Add more routes here as we build them */}
-                    </Routes>
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </div>
+                      </Routes>
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </div>
+        </PosProvider>
       </AuthProvider>
     </AppProvider>
   );
