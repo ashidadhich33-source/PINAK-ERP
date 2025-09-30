@@ -37,6 +37,15 @@ const SalesList = lazy(() => import('./pages/sales/SalesList'));
 // Reports routes
 const ReportsDashboard = lazy(() => import('./pages/reports/ReportsDashboard'));
 
+// Admin routes
+const SettingsDashboard = lazy(() => import('./pages/admin/SettingsDashboard'));
+const CompanySettings = lazy(() => import('./pages/admin/CompanySettings'));
+const PrintTemplates = lazy(() => import('./pages/admin/PrintTemplates'));
+const SystemInfo = lazy(() => import('./pages/admin/SystemInfo'));
+const DatabaseManagement = lazy(() => import('./pages/admin/DatabaseManagement'));
+const BackupRecovery = lazy(() => import('./pages/admin/BackupRecovery'));
+const AutomationDashboard = lazy(() => import('./pages/admin/AutomationDashboard'));
+
 function App() {
   return (
     <AppProvider>
@@ -154,6 +163,43 @@ function App() {
                       <Route path="/reports" element={
                         <LazyComponent>
                           <ReportsDashboard />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Admin routes */}
+                      <Route path="/admin/settings" element={
+                        <LazyComponent>
+                          <SettingsDashboard />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/company" element={
+                        <LazyComponent>
+                          <CompanySettings />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/templates" element={
+                        <LazyComponent>
+                          <PrintTemplates />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/system" element={
+                        <LazyComponent>
+                          <SystemInfo />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/database" element={
+                        <LazyComponent>
+                          <DatabaseManagement />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/backup" element={
+                        <LazyComponent>
+                          <BackupRecovery />
+                        </LazyComponent>
+                      } />
+                      <Route path="/admin/automation" element={
+                        <LazyComponent>
+                          <AutomationDashboard />
                         </LazyComponent>
                       } />
                       
