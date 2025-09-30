@@ -315,5 +315,38 @@ export const loyaltyService = {
     } catch (error) {
       throw new Error(error.message || 'Failed to validate points redemption');
     }
+  },
+
+  // Loyalty Program Status Management
+  activateLoyaltyProgram: async (programId) => {
+    try {
+      const result = await apiService.post(`/api/loyalty/programs/${programId}/activate`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to activate loyalty program');
+    }
+  },
+
+  deactivateLoyaltyProgram: async (programId) => {
+    try {
+      const result = await apiService.post(`/api/loyalty/programs/${programId}/deactivate`);
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to deactivate loyalty program');
+    }
+  },
+
+  // Loyalty Export
+  exportLoyaltyData: async (format, data, filters = {}) => {
+    try {
+      const response = await apiService.post('/api/loyalty/export', {
+        format,
+        data,
+        filters
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to export loyalty data');
+    }
   }
 };

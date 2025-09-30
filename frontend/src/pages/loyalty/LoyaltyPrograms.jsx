@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { loyaltyProgramService } from '../../services/loyaltyProgramService';
+import { loyaltyService } from '../../services/loyaltyService';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Alert from '../../components/common/Alert';
@@ -53,7 +53,7 @@ const LoyaltyPrograms = () => {
         sort_order: filters.sortOrder,
       };
       
-      const data = await loyaltyProgramService.getLoyaltyPrograms(params);
+      const data = await loyaltyService.getLoyaltyPrograms(params);
       setLoyaltyPrograms(data);
     } catch (err) {
       setError(err.message);
@@ -88,7 +88,7 @@ const LoyaltyPrograms = () => {
     }
 
     try {
-      await loyaltyProgramService.deleteLoyaltyProgram(programId);
+      await loyaltyService.deleteLoyaltyProgram(programId);
       setLoyaltyPrograms(prev => prev.filter(program => program.id !== programId));
       addNotification({
         type: 'success',
@@ -108,9 +108,9 @@ const LoyaltyPrograms = () => {
   const handleToggleStatus = async (programId, currentStatus) => {
     try {
       if (currentStatus) {
-        await loyaltyProgramService.deactivateLoyaltyProgram(programId);
+        await loyaltyService.deactivateLoyaltyProgram(programId);
       } else {
-        await loyaltyProgramService.activateLoyaltyProgram(programId);
+        await loyaltyService.activateLoyaltyProgram(programId);
       }
       setLoyaltyPrograms(prev => prev.map(program => 
         program.id === programId 
@@ -134,7 +134,7 @@ const LoyaltyPrograms = () => {
   // Handle export
   const handleExport = async () => {
     try {
-      await loyaltyProgramService.exportLoyaltyData('csv', 'programs', filters);
+      await loyaltyService.exportLoyaltyData('csv', 'programs', filters);
       addNotification({
         type: 'success',
         title: 'Export Started',

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { advancedReportingService } from '../../services/advancedReportingService';
+import { reportService } from '../../services/reportService';
+import { reportsService } from '../../services/reportsService';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Alert from '../../components/common/Alert';
@@ -69,19 +70,19 @@ const AdvancedReporting = () => {
       let data;
       switch (activeTab) {
         case 'custom-reports':
-          data = await advancedReportingService.getCustomReports(params);
+          data = await reportsService.getCustomReports(params);
           setCustomReports(data);
           break;
         case 'templates':
-          data = await advancedReportingService.getReportTemplates(params);
+          data = await reportsService.getReportTemplates(params);
           setReportTemplates(data);
           break;
         case 'schedules':
-          data = await advancedReportingService.getReportSchedules(params);
+          data = await reportsService.getReportSchedules(params);
           setReportSchedules(data);
           break;
         case 'categories':
-          data = await advancedReportingService.getReportCategories(params);
+          data = await reportsService.getReportCategories(params);
           setReportCategories(data);
           break;
         default:
@@ -122,19 +123,19 @@ const AdvancedReporting = () => {
     try {
       switch (activeTab) {
         case 'custom-reports':
-          await advancedReportingService.deleteCustomReport(id);
+          await reportsService.deleteCustomReport(id);
           setCustomReports(prev => prev.filter(item => item.id !== id));
           break;
         case 'templates':
-          await advancedReportingService.deleteReportTemplate(id);
+          await reportsService.deleteReportTemplate(id);
           setReportTemplates(prev => prev.filter(item => item.id !== id));
           break;
         case 'schedules':
-          await advancedReportingService.deleteReportSchedule(id);
+          await reportsService.deleteReportSchedule(id);
           setReportSchedules(prev => prev.filter(item => item.id !== id));
           break;
         case 'categories':
-          await advancedReportingService.deleteReportCategory(id);
+          await reportsService.deleteReportCategory(id);
           setReportCategories(prev => prev.filter(item => item.id !== id));
           break;
         default:
@@ -157,7 +158,7 @@ const AdvancedReporting = () => {
   // Handle generate report
   const handleGenerateReport = async (reportId) => {
     try {
-      await advancedReportingService.generateReport(reportId);
+      await reportsService.generateReport(reportId);
       addNotification({
         type: 'success',
         title: 'Success',
@@ -175,7 +176,7 @@ const AdvancedReporting = () => {
   // Handle export
   const handleExport = async (reportId, format = 'pdf') => {
     try {
-      await advancedReportingService.exportReport(reportId, format);
+      await reportsService.exportReport(reportId, format);
       addNotification({
         type: 'success',
         title: 'Export Started',
@@ -193,7 +194,7 @@ const AdvancedReporting = () => {
   // Handle add to favorites
   const handleAddToFavorites = async (reportId) => {
     try {
-      await advancedReportingService.addReportFavorite(reportId);
+      await reportsService.addReportFavorite(reportId);
       addNotification({
         type: 'success',
         title: 'Success',

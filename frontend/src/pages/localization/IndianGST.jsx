@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { indianLocalizationService } from '../../services/indianLocalizationService';
+import { localizationService } from '../../services/localizationService';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Alert from '../../components/common/Alert';
@@ -67,19 +67,19 @@ const IndianGST = () => {
       let data;
       switch (activeTab) {
         case 'gst-slabs':
-          data = await indianLocalizationService.getGSTSlabs(params);
+          data = await localizationService.getGSTSlabs(params);
           setGstSlabs(data);
           break;
         case 'hsn-codes':
-          data = await indianLocalizationService.getHSNCodes(params);
+          data = await localizationService.getHSNCodes(params);
           setHsnCodes(data);
           break;
         case 'sac-codes':
-          data = await indianLocalizationService.getSACCodes(params);
+          data = await localizationService.getSACCodes(params);
           setSacCodes(data);
           break;
         case 'state-codes':
-          data = await indianLocalizationService.getStateCodes(params);
+          data = await localizationService.getStateCodes(params);
           setStateCodes(data);
           break;
         default:
@@ -114,7 +114,7 @@ const IndianGST = () => {
   // Handle GST calculation
   const handleGSTCalculation = async () => {
     try {
-      const result = await indianLocalizationService.calculateGST(gstCalculation);
+      const result = await localizationService.calculateGST(gstCalculation);
       setCalculationResult(result);
     } catch (err) {
       addNotification({
@@ -134,15 +134,15 @@ const IndianGST = () => {
     try {
       switch (activeTab) {
         case 'gst-slabs':
-          await indianLocalizationService.deleteGSTSlab(id);
+          await localizationService.deleteGSTSlab(id);
           setGstSlabs(prev => prev.filter(item => item.id !== id));
           break;
         case 'hsn-codes':
-          await indianLocalizationService.deleteHSNCode(id);
+          await localizationService.deleteHSNCode(id);
           setHsnCodes(prev => prev.filter(item => item.id !== id));
           break;
         case 'sac-codes':
-          await indianLocalizationService.deleteSACCode(id);
+          await localizationService.deleteSACCode(id);
           setSacCodes(prev => prev.filter(item => item.id !== id));
           break;
         default:
@@ -165,7 +165,7 @@ const IndianGST = () => {
   // Handle export
   const handleExport = async () => {
     try {
-      await indianLocalizationService.exportAccountingData('csv', activeTab, filters);
+      await localizationService.exportLocalizationData('csv', activeTab, filters);
       addNotification({
         type: 'success',
         title: 'Export Started',
