@@ -50,13 +50,19 @@ const AutomationDashboard = lazy(() => import('./pages/admin/AutomationDashboard
 const ChartOfAccounts = lazy(() => import('./pages/accounting/ChartOfAccounts'));
 const JournalEntries = lazy(() => import('./pages/accounting/JournalEntries'));
 const GeneralLedger = lazy(() => import('./pages/accounting/GeneralLedger'));
-const FinancialReports = lazy(() => import('./pages/accounting/FinancialReports'));
+const AccountingReports = lazy(() => import('./pages/accounting/FinancialReports'));
 
 // Purchase routes
 const PurchaseOrders = lazy(() => import('./pages/purchases/PurchaseOrders'));
 const PurchaseInvoices = lazy(() => import('./pages/purchases/PurchaseInvoices'));
 const VendorManagement = lazy(() => import('./pages/purchases/VendorManagement'));
 const PurchaseAnalytics = lazy(() => import('./pages/purchases/PurchaseAnalytics'));
+
+// Reporting routes
+const FinancialReports = lazy(() => import('./pages/reports/FinancialReports'));
+const StockReports = lazy(() => import('./pages/reports/StockReports'));
+const DashboardReports = lazy(() => import('./pages/reports/DashboardReports'));
+const AdvancedReporting = lazy(() => import('./pages/reports/AdvancedReporting'));
 
 function App() {
   return (
@@ -233,7 +239,7 @@ function App() {
                       } />
                       <Route path="/accounting/financial-reports" element={
                         <LazyComponent>
-                          <FinancialReports />
+                          <AccountingReports />
                         </LazyComponent>
                       } />
                       
@@ -256,6 +262,28 @@ function App() {
                       <Route path="/purchases/analytics" element={
                         <LazyComponent>
                           <PurchaseAnalytics />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Reporting routes */}
+                      <Route path="/reports/financial" element={
+                        <LazyComponent>
+                          <FinancialReports />
+                        </LazyComponent>
+                      } />
+                      <Route path="/reports/stock" element={
+                        <LazyComponent>
+                          <StockReports />
+                        </LazyComponent>
+                      } />
+                      <Route path="/reports/dashboards" element={
+                        <LazyComponent>
+                          <DashboardReports />
+                        </LazyComponent>
+                      } />
+                      <Route path="/reports/advanced" element={
+                        <LazyComponent>
+                          <AdvancedReporting />
                         </LazyComponent>
                       } />
                       

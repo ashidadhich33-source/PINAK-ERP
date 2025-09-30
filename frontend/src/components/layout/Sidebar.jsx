@@ -30,7 +30,9 @@ import {
   ShoppingBag,
   FileText,
   Building2,
-  BarChart3
+  BarChart3,
+  Package,
+  Settings
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -217,6 +219,33 @@ const Sidebar = () => {
     },
   ];
 
+  const reportingNavigation = [
+    {
+      name: 'Financial Reports',
+      href: '/reports/financial',
+      icon: TrendingUp,
+      permission: 'reports.financial',
+    },
+    {
+      name: 'Stock Reports',
+      href: '/reports/stock',
+      icon: Package,
+      permission: 'reports.stock',
+    },
+    {
+      name: 'Dashboard Reports',
+      href: '/reports/dashboards',
+      icon: BarChart3,
+      permission: 'reports.dashboards',
+    },
+    {
+      name: 'Advanced Reporting',
+      href: '/reports/advanced',
+      icon: Settings,
+      permission: 'reports.advanced',
+    },
+  ];
+
   const filteredNavigation = navigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
@@ -230,6 +259,10 @@ const Sidebar = () => {
   );
 
   const filteredPurchaseNavigation = purchaseNavigation.filter(item => 
+    !item.permission || hasPermission(item.permission)
+  );
+
+  const filteredReportingNavigation = reportingNavigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
 
@@ -379,6 +412,44 @@ const Sidebar = () => {
                 </div>
                 
                 {filteredPurchaseNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive
+                            ? 'bg-primary-100 text-primary-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`
+                      }
+                    >
+                      <Icon className="flex-shrink-0 h-5 w-5" />
+                      {!sidebarCollapsed && (
+                        <span className="ml-3">{item.name}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Reporting Section */}
+            {filteredReportingNavigation.length > 0 && (
+              <>
+                <div className="pt-6">
+                  <div className="flex items-center px-3 py-2">
+                    <BarChart3 className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    {!sidebarCollapsed && (
+                      <span className="ml-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Reporting
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {filteredReportingNavigation.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavLink
