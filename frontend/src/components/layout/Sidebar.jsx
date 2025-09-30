@@ -22,7 +22,11 @@ import {
   HardDrive,
   Bell,
   Monitor,
-  FileText as FileTextIcon
+  FileText as FileTextIcon,
+  Calculator,
+  BookOpen,
+  TrendingUp,
+  PieChart
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -155,11 +159,42 @@ const Sidebar = () => {
     },
   ];
 
+  const accountingNavigation = [
+    {
+      name: 'Chart of Accounts',
+      href: '/accounting/chart-of-accounts',
+      icon: Calculator,
+      permission: 'accounting.accounts',
+    },
+    {
+      name: 'Journal Entries',
+      href: '/accounting/journal-entries',
+      icon: BookOpen,
+      permission: 'accounting.journal',
+    },
+    {
+      name: 'General Ledger',
+      href: '/accounting/general-ledger',
+      icon: FileText,
+      permission: 'accounting.ledger',
+    },
+    {
+      name: 'Financial Reports',
+      href: '/accounting/financial-reports',
+      icon: TrendingUp,
+      permission: 'accounting.reports',
+    },
+  ];
+
   const filteredNavigation = navigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
 
   const filteredAdminNavigation = adminNavigation.filter(item => 
+    !item.permission || hasPermission(item.permission)
+  );
+
+  const filteredAccountingNavigation = accountingNavigation.filter(item => 
     !item.permission || hasPermission(item.permission)
   );
 
@@ -233,6 +268,44 @@ const Sidebar = () => {
                 </div>
                 
                 {filteredAdminNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive
+                            ? 'bg-primary-100 text-primary-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`
+                      }
+                    >
+                      <Icon className="flex-shrink-0 h-5 w-5" />
+                      {!sidebarCollapsed && (
+                        <span className="ml-3">{item.name}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Accounting Section */}
+            {filteredAccountingNavigation.length > 0 && (
+              <>
+                <div className="pt-6">
+                  <div className="flex items-center px-3 py-2">
+                    <Calculator className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    {!sidebarCollapsed && (
+                      <span className="ml-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Accounting
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {filteredAccountingNavigation.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavLink

@@ -46,6 +46,12 @@ const DatabaseManagement = lazy(() => import('./pages/admin/DatabaseManagement')
 const BackupRecovery = lazy(() => import('./pages/admin/BackupRecovery'));
 const AutomationDashboard = lazy(() => import('./pages/admin/AutomationDashboard'));
 
+// Accounting routes
+const ChartOfAccounts = lazy(() => import('./pages/accounting/ChartOfAccounts'));
+const JournalEntries = lazy(() => import('./pages/accounting/JournalEntries'));
+const GeneralLedger = lazy(() => import('./pages/accounting/GeneralLedger'));
+const FinancialReports = lazy(() => import('./pages/accounting/FinancialReports'));
+
 function App() {
   return (
     <AppProvider>
@@ -200,6 +206,28 @@ function App() {
                       <Route path="/admin/automation" element={
                         <LazyComponent>
                           <AutomationDashboard />
+                        </LazyComponent>
+                      } />
+                      
+                      {/* Accounting routes */}
+                      <Route path="/accounting/chart-of-accounts" element={
+                        <LazyComponent>
+                          <ChartOfAccounts />
+                        </LazyComponent>
+                      } />
+                      <Route path="/accounting/journal-entries" element={
+                        <LazyComponent>
+                          <JournalEntries />
+                        </LazyComponent>
+                      } />
+                      <Route path="/accounting/general-ledger" element={
+                        <LazyComponent>
+                          <GeneralLedger />
+                        </LazyComponent>
+                      } />
+                      <Route path="/accounting/financial-reports" element={
+                        <LazyComponent>
+                          <FinancialReports />
                         </LazyComponent>
                       } />
                       
