@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { bankingService } from '../../services/bankingService';
+import { paymentService } from '../../services/paymentService';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Alert from '../../components/common/Alert';
@@ -65,19 +65,19 @@ const BankingReconciliation = () => {
       let data;
       switch (activeTab) {
         case 'bank-accounts':
-          data = await bankingService.getBankAccounts(params);
+          data = await paymentService.getBankAccounts(params);
           setBankAccounts(data);
           break;
         case 'bank-statements':
-          data = await bankingService.getBankStatements(params);
+          data = await paymentService.getBankStatements(params);
           setBankStatements(data);
           break;
         case 'reconciliations':
-          data = await bankingService.getReconciliations(params);
+          data = await paymentService.getReconciliations(params);
           setReconciliations(data);
           break;
         case 'payment-methods':
-          data = await bankingService.getPaymentMethods(params);
+          data = await paymentService.getPaymentMethods(params);
           setPaymentMethods(data);
           break;
         default:
@@ -118,19 +118,19 @@ const BankingReconciliation = () => {
     try {
       switch (activeTab) {
         case 'bank-accounts':
-          await bankingService.deleteBankAccount(id);
+          await paymentService.deleteBankAccount(id);
           setBankAccounts(prev => prev.filter(item => item.id !== id));
           break;
         case 'bank-statements':
-          await bankingService.deleteBankStatement(id);
+          await paymentService.deleteBankStatement(id);
           setBankStatements(prev => prev.filter(item => item.id !== id));
           break;
         case 'reconciliations':
-          await bankingService.deleteReconciliation(id);
+          await paymentService.deleteReconciliation(id);
           setReconciliations(prev => prev.filter(item => item.id !== id));
           break;
         case 'payment-methods':
-          await bankingService.deletePaymentMethod(id);
+          await paymentService.deletePaymentMethod(id);
           setPaymentMethods(prev => prev.filter(item => item.id !== id));
           break;
         default:
@@ -153,7 +153,7 @@ const BankingReconciliation = () => {
   // Handle auto reconcile
   const handleAutoReconcile = async (reconciliationId) => {
     try {
-      await bankingService.autoReconcile(reconciliationId);
+      await paymentService.autoReconcile(reconciliationId);
       addNotification({
         type: 'success',
         title: 'Success',
@@ -172,7 +172,7 @@ const BankingReconciliation = () => {
   // Handle export
   const handleExport = async () => {
     try {
-      await bankingService.exportBankingData('csv', activeTab, filters);
+      await paymentService.exportBankingData('csv', activeTab, filters);
       addNotification({
         type: 'success',
         title: 'Export Started',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { whatsappService } from '../../services/whatsappService';
+import { marketingService } from '../../services/marketingService';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Alert from '../../components/common/Alert';
@@ -69,19 +69,19 @@ const WhatsAppIntegration = () => {
       let data;
       switch (activeTab) {
         case 'templates':
-          data = await whatsappService.getMessageTemplates(params);
+          data = await marketingService.getWhatsAppTemplates(params);
           setTemplates(data);
           break;
         case 'campaigns':
-          data = await whatsappService.getCampaigns(params);
+          data = await marketingService.getWhatsAppCampaigns(params);
           setCampaigns(data);
           break;
         case 'message-history':
-          data = await whatsappService.getMessageHistory(params);
+          data = await marketingService.getWhatsAppMessages(params);
           setMessageHistory(data);
           break;
         case 'webhooks':
-          data = await whatsappService.getWebhooks(params);
+          data = await marketingService.getWhatsAppWebhooks(params);
           setWebhooks(data);
           break;
         default:
@@ -122,15 +122,15 @@ const WhatsAppIntegration = () => {
     try {
       switch (activeTab) {
         case 'templates':
-          await whatsappService.deleteMessageTemplate(id);
+          await marketingService.deleteWhatsAppTemplate(id);
           setTemplates(prev => prev.filter(item => item.id !== id));
           break;
         case 'campaigns':
-          await whatsappService.deleteCampaign(id);
+          await marketingService.deleteWhatsAppCampaign(id);
           setCampaigns(prev => prev.filter(item => item.id !== id));
           break;
         case 'webhooks':
-          await whatsappService.deleteWebhook(id);
+          await marketingService.deleteWhatsAppWebhook(id);
           setWebhooks(prev => prev.filter(item => item.id !== id));
           break;
         default:
@@ -153,7 +153,7 @@ const WhatsAppIntegration = () => {
   // Handle start campaign
   const handleStartCampaign = async (campaignId) => {
     try {
-      await whatsappService.startCampaign(campaignId);
+      await marketingService.startWhatsAppCampaign(campaignId);
       setCampaigns(prev => prev.map(campaign => 
         campaign.id === campaignId 
           ? { ...campaign, status: 'running' }
@@ -176,7 +176,7 @@ const WhatsAppIntegration = () => {
   // Handle stop campaign
   const handleStopCampaign = async (campaignId) => {
     try {
-      await whatsappService.stopCampaign(campaignId);
+      await marketingService.stopWhatsAppCampaign(campaignId);
       setCampaigns(prev => prev.map(campaign => 
         campaign.id === campaignId 
           ? { ...campaign, status: 'stopped' }
@@ -199,7 +199,7 @@ const WhatsAppIntegration = () => {
   // Handle export
   const handleExport = async () => {
     try {
-      await whatsappService.exportWhatsAppData('csv', activeTab, filters);
+      await marketingService.exportWhatsAppData('csv', activeTab, filters);
       addNotification({
         type: 'success',
         title: 'Export Started',

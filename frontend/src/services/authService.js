@@ -126,4 +126,34 @@ export const authService = {
     if (!user) return false;
     return user.roles?.some(role => role.name === roleName) || false;
   },
+
+  // Delete user (admin only)
+  deleteUser: async (userId) => {
+    try {
+      await apiService.delete(`/api/auth/users/${userId}`);
+      return true;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to delete user');
+    }
+  },
+
+  // Get permissions
+  getPermissions: async () => {
+    try {
+      const permissions = await apiService.get('/api/auth/permissions');
+      return permissions;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to get permissions');
+    }
+  },
+
+  // Export users
+  exportUsers: async (filters = {}) => {
+    try {
+      const response = await apiService.post('/api/auth/export', filters);
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to export users');
+    }
+  },
 };
