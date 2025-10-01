@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, date
 from decimal import Decimal
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class EInvoiceStatus(PyEnum):
     """E-invoice Status"""

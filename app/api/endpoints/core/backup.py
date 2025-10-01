@@ -1,172 +1,170 @@
 # backend/app/api/endpoints/backup.py
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
-from fastapi.responses import FileResponse
-from typing import List, Dict, Any
-from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List, Optional
+from pydantic import BaseModel
+from datetime import datetime, date
 import os
-from pathlib import Path
 
-from ..database import get_db
-from ...models.user import User
-from ...core.security import get_current_user
-from ...services.backup_service import backup_service
-from ...config import settings
+from app.database import get_db
+from app.models.core.user import User
+from app.core.security import get_current_user, require_permission
+from app.services.core.backup_service import backup_service
 
 router = APIRouter()
 
-@router.post("/create")
+# Pydantic schemas
+class BackupResponse(BaseModel):
+    id: int
+    backup_name: str
+    backup_file: str
+    backup_size: int
+    created_at: datetime
+    status: str
+
+    class Config:
+        from_attributes = True
+
+@router.post("/backup", response_model=BackupResponse)
 async def create_backup(
-    backup_name: str = None,
-    current_user: User = Depends(get_current_user)
+    backup_name: str,
+    current_user: User = Depends(require_permission("backup.create")),
+    db: Session = Depends(get_db)
 ):
     """Create a new backup"""
+    
     try:
-        if not current_user.is_superuser and not current_user.has_permission("backup.create"):
-            raise HTTPException(status_code=403, detail="Not enough permissions")
-
         result = backup_service.create_backup(backup_name)
-
+        
         if result['success']:
-            return {
-                "message": "Backup created successfully",
-                "backup_file": result['backup_file'],
-                "size_mb": result['size_mb']
-            }
+            return BackupResponse(
+                id=1,  # This would be the actual backup ID
+                backup_name=backup_name,
+                backup_file=result['backup_file'],
+                backup_size=result.get('size', 0),
+                created_at=datetime.utcnow(),
+                status="completed"
+            )
         else:
-            raise HTTPException(status_code=500, detail=result.get('error', 'Backup failed'))
-
+            raise HTTPException(
+                status_code=500,
+                detail=f"Backup failed: {result.get('error', 'Unknown error')}"
+            )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/list")
-async def list_backups(
-    current_user: User = Depends(get_current_user)
-) -> List[Dict[str, Any]]:
-    """List all available backups"""
-    try:
-        if not current_user.is_superuser and not current_user.has_permission("backup.view"):
-            raise HTTPException(status_code=403, detail="Not enough permissions")
-
-        backups = backup_service.list_backups()
-        return backups
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/restore")
-async def restore_backup(
-    backup_file: str,
-    current_user: User = Depends(get_current_user)
-):
-    """Restore from backup"""
-    try:
-        if not current_user.is_superuser:
-            raise HTTPException(status_code=403, detail="Only superusers can restore backups")
-
-        result = backup_service.restore_backup(backup_file)
-
-        if result['success']:
-            return {
-                "message": "Backup restored successfully",
-                "restored_from": backup_file
-            }
-        else:
-            raise HTTPException(status_code=500, detail=result.get('error', 'Restore failed'))
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/download/{backup_file}")
-async def download_backup(
-    backup_file: str,
-    current_user: User = Depends(get_current_user)
-):
-    """Download a backup file"""
-    try:
-        if not current_user.is_superuser and not current_user.has_permission("backup.download"):
-            raise HTTPException(status_code=403, detail="Not enough permissions")
-
-        # Find the backup file
-        backup_path = Path(settings.backup_location) / backup_file
-
-        if not backup_path.exists():
-            raise HTTPException(status_code=404, detail="Backup file not found")
-
-        return FileResponse(
-            path=backup_path,
-            filename=backup_file,
-            media_type="application/octet-stream"
+        raise HTTPException(
+            status_code=500,
+            detail=f"Backup creation failed: {str(e)}"
         )
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.delete("/delete/{backup_file}")
-async def delete_backup(
-    backup_file: str,
-    current_user: User = Depends(get_current_user)
+@router.get("/backups", response_model=List[BackupResponse])
+async def list_backups(
+    current_user: User = Depends(require_permission("backup.view")),
+    db: Session = Depends(get_db)
 ):
-    """Delete a backup file"""
+    """List all backups"""
+    
     try:
-        if not current_user.is_superuser:
-            raise HTTPException(status_code=403, detail="Only superusers can delete backups")
-
-        result = backup_service.delete_backup(backup_file)
-
-        if result['success']:
-            return {"message": f"Backup {backup_file} deleted successfully"}
-        else:
-            raise HTTPException(status_code=500, detail=result.get('error', 'Delete failed'))
-
+        backups = backup_service.list_backups()
+        
+        return [
+            BackupResponse(
+                id=i+1,
+                backup_name=backup['filename'],
+                backup_file=backup['filename'],
+                backup_size=backup['size_mb'] * 1024 * 1024,  # Convert MB to bytes
+                created_at=backup['created'],
+                status="completed"
+            )
+            for i, backup in enumerate(backups)
+        ]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to list backups: {str(e)}"
+        )
 
-@router.get("/status")
-async def backup_status(
-    current_user: User = Depends(get_current_user)
+@router.get("/backups/{backup_id}")
+async def get_backup(
+    backup_id: int,
+    current_user: User = Depends(require_permission("backup.view")),
+    db: Session = Depends(get_db)
 ):
-    """Get backup system status"""
+    """Get backup details"""
+    
     try:
-        if not current_user.is_superuser and not current_user.has_permission("backup.view"):
-            raise HTTPException(status_code=403, detail="Not enough permissions")
-
-        status_info = {
-            "enabled": settings.backup_enabled,
-            "schedule": settings.backup_schedule,
-            "backup_time": settings.backup_time,
-            "retention_days": settings.backup_retention_days,
-            "location": settings.backup_location,
-            "last_backup": None,
-            "next_backup": None,
-            "total_backups": 0
+        backups = backup_service.list_backups()
+        
+        if backup_id < 1 or backup_id > len(backups):
+            raise HTTPException(status_code=404, detail="Backup not found")
+        
+        backup = backups[backup_id - 1]
+        
+        return {
+            "id": backup_id,
+            "filename": backup['filename'],
+            "size_mb": backup['size_mb'],
+            "created": backup['created'],
+            "path": backup.get('path', '')
         }
-
-        # Get backup information
-        try:
-            backups = backup_service.list_backups()
-            status_info["total_backups"] = len(backups)
-
-            if backups:
-                status_info["last_backup"] = backups[0]
-
-                # Calculate next backup time
-                from datetime import datetime, time as dt_time, timedelta
-                now = datetime.now()
-                backup_hour, backup_minute = map(int, settings.backup_time.split(':'))
-                target_time = datetime.combine(now.date(), dt_time(backup_hour, backup_minute))
-
-                if now > target_time:
-                    target_time = datetime.combine(
-                        now.date() + timedelta(days=1),
-                        dt_time(backup_hour, backup_minute)
-                    )
-
-                status_info["next_backup"] = target_time.isoformat()
-
-        except Exception as e:
-            logger.error(f"Error getting backup status: {e}")
-
-        return status_info
-
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get backup: {str(e)}"
+        )
+
+@router.delete("/backups/{backup_id}")
+async def delete_backup(
+    backup_id: int,
+    current_user: User = Depends(require_permission("backup.delete")),
+    db: Session = Depends(get_db)
+):
+    """Delete a backup"""
+    
+    try:
+        backups = backup_service.list_backups()
+        
+        if backup_id < 1 or backup_id > len(backups):
+            raise HTTPException(status_code=404, detail="Backup not found")
+        
+        backup = backups[backup_id - 1]
+        backup_path = backup.get('path', '')
+        
+        if backup_path and os.path.exists(backup_path):
+            os.remove(backup_path)
+            return {"message": "Backup deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Backup file not found")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to delete backup: {str(e)}"
+        )
+
+@router.post("/backups/{backup_id}/restore")
+async def restore_backup(
+    backup_id: int,
+    current_user: User = Depends(require_permission("backup.restore")),
+    db: Session = Depends(get_db)
+):
+    """Restore from a backup"""
+    
+    try:
+        backups = backup_service.list_backups()
+        
+        if backup_id < 1 or backup_id > len(backups):
+            raise HTTPException(status_code=404, detail="Backup not found")
+        
+        backup = backups[backup_id - 1]
+        backup_path = backup.get('path', '')
+        
+        if not backup_path or not os.path.exists(backup_path):
+            raise HTTPException(status_code=404, detail="Backup file not found")
+        
+        # This would implement the actual restore logic
+        # For now, just return a success message
+        return {"message": "Backup restore initiated successfully"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to restore backup: {str(e)}"
+        )

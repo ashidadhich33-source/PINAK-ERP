@@ -1,319 +1,158 @@
 # backend/app/models/pos/pos_models.py
-from sqlalchemy import Column, Integer, String, Numeric, Date, DateTime, Text, Boolean, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from ..core.base import BaseModel
-import enum
+from datetime import datetime, date
+from decimal import Decimal
+from ..base import BaseModel
 
-class POSSessionStatus(str, enum.Enum):
-    """POS session status enumeration"""
-    OPEN = "open"
-    CLOSED = "closed"
-    SUSPENDED = "suspended"
-    LOCKED = "locked"
-
-class POSPaymentMethod(str, enum.Enum):
-    """POS payment method enumeration"""
-    CASH = "cash"
-    DEBIT_CARD = "debit_card"
-    CREDIT_CARD = "credit_card"
-    UPI = "upi"
-    DIGITAL_WALLET = "digital_wallet"
-    NET_BANKING = "net_banking"
-    CHEQUE = "cheque"
-    GIFT_CARD = "gift_card"
-    LOYALTY_POINTS = "loyalty_points"
-
-class POSTransactionType(str, enum.Enum):
-    """POS transaction type enumeration"""
-    SALE = "sale"
-    RETURN = "return"
-    EXCHANGE = "exchange"
-    REFUND = "refund"
-    VOID = "void"
-    DISCOUNT = "discount"
-
-# Core POS Models
 class POSSession(BaseModel):
-    """POS session management"""
-    __tablename__ = "pos_session"
+    """POS Session model for managing POS sessions"""
+    __tablename__ = "pos_module_session"
     
-    session_number = Column(String(100), unique=True, nullable=False)
-    session_date = Column(Date, nullable=False)
-    store_id = Column(Integer, ForeignKey('store.id'), nullable=False)
-    cashier_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    opening_cash = Column(Numeric(12, 2), default=0)
-    closing_cash = Column(Numeric(12, 2), nullable=True)
-    expected_cash = Column(Numeric(12, 2), nullable=True)
-    cash_difference = Column(Numeric(12, 2), nullable=True)
-    total_sales = Column(Numeric(12, 2), default=0)
+    session_name = Column(String(100), nullable=False)
+    start_time = Column(DateTime, nullable=False, default=datetime.utcnow)
+    end_time = Column(DateTime, nullable=True)
+    status = Column(String(20), default='active')  # active, closed, suspended
+    opening_cash = Column(Numeric(10, 2), default=0)
+    closing_cash = Column(Numeric(10, 2), nullable=True)
+    total_sales = Column(Numeric(10, 2), default=0)
     total_transactions = Column(Integer, default=0)
-    total_returns = Column(Numeric(12, 2), default=0)
-    total_exchanges = Column(Numeric(12, 2), default=0)
-    status = Column(String(20), default='open')
-    opened_at = Column(DateTime, default=func.now())
-    closed_at = Column(DateTime, nullable=True)
-    notes = Column(Text, nullable=True)
+    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
+    staff_id = Column(Integer, ForeignKey('staff.id'), nullable=False)
     
     # Relationships
-    store = relationship("Store")
-    cashier = relationship("User")
+    company = relationship("Company", back_populates="pos_sessions")
+    staff = relationship("Staff", back_populates="pos_sessions")
     transactions = relationship("POSTransaction", back_populates="session")
+    payments = relationship("POSPayment", back_populates="session")
+    receipts = relationship("POSReceipt", back_populates="session")
     
     def __repr__(self):
-        return f"<POSSession(number='{self.session_number}', cashier_id={self.cashier_id})>"
+        return f"<POSSession(session_name='{self.session_name}', status='{self.status}')>"
 
 class POSTransaction(BaseModel):
-    """POS transaction management"""
+    """POS Transaction model for managing POS transactions"""
     __tablename__ = "pos_transaction"
     
-    transaction_number = Column(String(100), unique=True, nullable=False)
-    session_id = Column(Integer, ForeignKey('pos_session.id'), nullable=False)
+    transaction_number = Column(String(50), nullable=False, unique=True)
+    transaction_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=True)
-    transaction_type = Column(String(20), default='sale')
-    transaction_date = Column(DateTime, default=func.now())
-    
-    # Transaction amounts
-    subtotal = Column(Numeric(12, 2), nullable=False)
-    discount_amount = Column(Numeric(10, 2), default=0)
+    staff_id = Column(Integer, ForeignKey('staff.id'), nullable=False)
+    session_id = Column(Integer, ForeignKey('pos_session.id'), nullable=False)
+    subtotal = Column(Numeric(10, 2), nullable=False)
     tax_amount = Column(Numeric(10, 2), default=0)
-    total_amount = Column(Numeric(12, 2), nullable=False)
-    
-    # Payment details
-    payment_method = Column(String(20), nullable=False)
-    payment_reference = Column(String(100), nullable=True)
-    payment_status = Column(String(20), default='completed')
-    
-    # GST details
-    cgst_amount = Column(Numeric(10, 2), default=0)
-    sgst_amount = Column(Numeric(10, 2), default=0)
-    igst_amount = Column(Numeric(10, 2), default=0)
-    total_gst_amount = Column(Numeric(10, 2), default=0)
-    
-    # Transaction status
-    status = Column(String(20), default='completed')
-    is_void = Column(Boolean, default=False)
-    void_reason = Column(String(200), nullable=True)
-    void_date = Column(DateTime, nullable=True)
-    
-    # Exchange/Return details
-    original_transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=True)
-    exchange_id = Column(Integer, ForeignKey('sales_exchange.id'), nullable=True)
-    return_id = Column(Integer, ForeignKey('sale_return.id'), nullable=True)
+    discount_amount = Column(Numeric(10, 2), default=0)
+    total_amount = Column(Numeric(10, 2), nullable=False)
+    payment_status = Column(String(20), default='pending')  # pending, paid, refunded
+    status = Column(String(20), default='active')  # active, cancelled, refunded
+    notes = Column(Text, nullable=True)
+    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
     
     # Relationships
+    customer = relationship("Customer", back_populates="pos_transactions")
+    staff = relationship("Staff", back_populates="pos_transactions")
     session = relationship("POSSession", back_populates="transactions")
-    customer = relationship("Customer")
-    original_transaction = relationship("POSTransaction", remote_side="POSTransaction.id")
-    exchange = relationship("SalesExchange")
-    return_record = relationship("SaleReturn")
-    items = relationship("POSTransactionItem", back_populates="transaction")
+    company = relationship("Company", back_populates="pos_transactions")
     payments = relationship("POSPayment", back_populates="transaction")
-    
-    # Discount and CRM relationships
-    discounts = relationship("POSTransactionDiscount", back_populates="transaction")
-    customer_discounts = relationship("POSCustomerDiscount", back_populates="transaction")
-    loyalty_transactions = relationship("POSLoyaltyTransaction", back_populates="transaction")
-    discount_calculations = relationship("POSDiscountCalculation", back_populates="transaction")
-    promotion_usage = relationship("POSPromotionUsage")
-    discount_audit = relationship("POSDiscountAudit", back_populates="transaction")
+    receipts = relationship("POSReceipt", back_populates="transaction")
+    discounts = relationship("POSDiscount", back_populates="transaction")
     
     def __repr__(self):
-        return f"<POSTransaction(number='{self.transaction_number}', amount={self.total_amount})>"
-
-class POSTransactionItem(BaseModel):
-    """Individual items in POS transaction"""
-    __tablename__ = "pos_transaction_item"
-    
-    transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=False)
-    item_id = Column(Integer, ForeignKey('item.id'), nullable=False)
-    variant_id = Column(Integer, ForeignKey('inventory_variant.id'), nullable=True)
-    quantity = Column(Numeric(10, 2), nullable=False)
-    unit_price = Column(Numeric(10, 2), nullable=False)
-    total_price = Column(Numeric(10, 2), nullable=False)
-    discount_amount = Column(Numeric(10, 2), default=0)
-    tax_rate = Column(Numeric(5, 2), default=0)
-    tax_amount = Column(Numeric(10, 2), default=0)
-    net_amount = Column(Numeric(10, 2), nullable=False)
-    
-    # Serial/Batch tracking
-    serial_numbers = Column(Text, nullable=True)  # JSON array
-    batch_numbers = Column(Text, nullable=True)  # JSON array
-    expiry_dates = Column(Text, nullable=True)  # JSON array
-    
-    # Relationships
-    transaction = relationship("POSTransaction", back_populates="items")
-    item = relationship("Item")
-    variant = relationship("InventoryVariant")
-    
-    def __repr__(self):
-        return f"<POSTransactionItem(item_id={self.item_id}, quantity={self.quantity})>"
+        return f"<POSTransaction(transaction_number='{self.transaction_number}', total_amount={self.total_amount})>"
 
 class POSPayment(BaseModel):
-    """POS payment processing"""
+    """POS Payment model for managing POS payments"""
     __tablename__ = "pos_payment"
     
     transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=False)
-    payment_method = Column(String(20), nullable=False)
-    payment_amount = Column(Numeric(12, 2), nullable=False)
-    payment_reference = Column(String(100), nullable=True)
-    payment_date = Column(DateTime, default=func.now())
-    payment_status = Column(String(20), default='completed')
-    
-    # Card payment details
-    card_number = Column(String(20), nullable=True)
-    card_type = Column(String(20), nullable=True)
-    card_holder_name = Column(String(100), nullable=True)
-    authorization_code = Column(String(50), nullable=True)
-    
-    # UPI/Digital wallet details
-    upi_id = Column(String(100), nullable=True)
-    wallet_type = Column(String(20), nullable=True)
-    wallet_transaction_id = Column(String(100), nullable=True)
-    
-    # Bank transfer details
-    bank_name = Column(String(100), nullable=True)
-    account_number = Column(String(50), nullable=True)
-    transaction_id_bank = Column(String(100), nullable=True)
+    session_id = Column(Integer, ForeignKey('pos_session.id'), nullable=False)
+    payment_method = Column(String(50), nullable=False)  # cash, card, upi, etc.
+    amount = Column(Numeric(10, 2), nullable=False)
+    payment_date = Column(DateTime, nullable=False, default=datetime.utcnow)
+    reference_number = Column(String(100), nullable=True)
+    status = Column(String(20), default='completed')  # completed, pending, failed
+    notes = Column(Text, nullable=True)
+    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
     
     # Relationships
     transaction = relationship("POSTransaction", back_populates="payments")
+    session = relationship("POSSession", back_populates="payments")
+    company = relationship("Company", back_populates="pos_payments")
     
     def __repr__(self):
-        return f"<POSPayment(transaction_id={self.transaction_id}, amount={self.payment_amount})>"
+        return f"<POSPayment(payment_method='{self.payment_method}', amount={self.amount})>"
 
-# POS Store Management
-class Store(BaseModel):
-    """Store management for POS"""
-    __tablename__ = "store"
-    
-    store_code = Column(String(50), unique=True, nullable=False)
-    store_name = Column(String(200), nullable=False)
-    store_address = Column(Text, nullable=True)
-    store_city = Column(String(100), nullable=True)
-    store_state = Column(String(100), nullable=True)
-    store_pincode = Column(String(10), nullable=True)
-    store_phone = Column(String(20), nullable=True)
-    store_email = Column(String(100), nullable=True)
-    
-    # Store settings
-    currency = Column(String(3), default='INR')
-    timezone = Column(String(50), default='Asia/Kolkata')
-    tax_number = Column(String(50), nullable=True)
-    gst_number = Column(String(15), nullable=True)
-    
-    # Store status
-    is_active = Column(Boolean, default=True)
-    opening_time = Column(String(10), nullable=True)
-    closing_time = Column(String(10), nullable=True)
-    
-    # Relationships
-    sessions = relationship("POSSession")
-    staff = relationship("StoreStaff")
-    
-    def __repr__(self):
-        return f"<Store(code='{self.store_code}', name='{self.store_name}')>"
-
-class StoreStaff(BaseModel):
-    """Store staff management"""
-    __tablename__ = "store_staff"
-    
-    store_id = Column(Integer, ForeignKey('store.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    role = Column(String(50), nullable=False)  # manager, cashier, supervisor
-    is_active = Column(Boolean, default=True)
-    assigned_date = Column(Date, default=func.now())
-    
-    # Relationships
-    store = relationship("Store")
-    user = relationship("User")
-    
-    def __repr__(self):
-        return f"<StoreStaff(store_id={self.store_id}, user_id={self.user_id})>"
-
-# POS Receipt Management
 class POSReceipt(BaseModel):
-    """POS receipt management"""
+    """POS Receipt model for managing POS receipts"""
     __tablename__ = "pos_receipt"
     
     transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=False)
-    receipt_number = Column(String(100), unique=True, nullable=False)
-    receipt_date = Column(DateTime, default=func.now())
-    receipt_type = Column(String(20), default='sale')  # sale, return, exchange
-    receipt_template = Column(String(50), default='standard')
-    
-    # Receipt content
-    receipt_header = Column(Text, nullable=True)
-    receipt_footer = Column(Text, nullable=True)
-    receipt_content = Column(Text, nullable=True)
-    
-    # Receipt status
-    is_printed = Column(Boolean, default=False)
-    printed_at = Column(DateTime, nullable=True)
-    print_count = Column(Integer, default=0)
-    
-    # Digital receipt
-    digital_receipt_url = Column(String(500), nullable=True)
-    qr_code = Column(Text, nullable=True)
+    session_id = Column(Integer, ForeignKey('pos_session.id'), nullable=False)
+    receipt_number = Column(String(50), nullable=False, unique=True)
+    receipt_date = Column(DateTime, nullable=False, default=datetime.utcnow)
+    receipt_type = Column(String(20), default='sale')  # sale, refund, exchange
+    total_amount = Column(Numeric(10, 2), nullable=False)
+    tax_amount = Column(Numeric(10, 2), default=0)
+    discount_amount = Column(Numeric(10, 2), default=0)
+    status = Column(String(20), default='printed')  # printed, reprint, void
+    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
     
     # Relationships
-    transaction = relationship("POSTransaction")
+    transaction = relationship("POSTransaction", back_populates="receipts")
+    session = relationship("POSSession", back_populates="receipts")
+    company = relationship("Company", back_populates="pos_receipts")
     
     def __repr__(self):
-        return f"<POSReceipt(number='{self.receipt_number}', transaction_id={self.transaction_id})>"
+        return f"<POSReceipt(receipt_number='{self.receipt_number}', total_amount={self.total_amount})>"
 
-# POS Inventory Integration
-class POSInventory(BaseModel):
-    """POS inventory integration"""
-    __tablename__ = "pos_inventory"
+class POSDiscount(BaseModel):
+    """POS Discount model for managing POS discounts"""
+    __tablename__ = "pos_discount"
     
     transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=False)
-    item_id = Column(Integer, ForeignKey('item.id'), nullable=False)
-    variant_id = Column(Integer, ForeignKey('inventory_variant.id'), nullable=True)
-    warehouse_id = Column(Integer, ForeignKey('warehouse.id'), nullable=False)
-    quantity_sold = Column(Numeric(10, 2), nullable=False)
-    quantity_returned = Column(Numeric(10, 2), default=0)
-    stock_adjustment = Column(Boolean, default=True)
-    adjustment_type = Column(String(20), default='decrease')  # decrease, increase
-    serial_numbers = Column(Text, nullable=True)  # JSON array
-    batch_numbers = Column(Text, nullable=True)  # JSON array
-    expiry_dates = Column(Text, nullable=True)  # JSON array
+    discount_type = Column(String(50), nullable=False)  # percentage, fixed, item
+    discount_value = Column(Numeric(10, 2), nullable=False)
+    discount_amount = Column(Numeric(10, 2), nullable=False)
+    reason = Column(String(200), nullable=True)
+    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
     
     # Relationships
-    transaction = relationship("POSTransaction")
-    item = relationship("Item")
-    variant = relationship("InventoryVariant")
-    warehouse = relationship("Warehouse")
+    transaction = relationship("POSTransaction", back_populates="discounts")
+    company = relationship("Company", back_populates="pos_discounts")
     
     def __repr__(self):
-        return f"<POSInventory(transaction_id={self.transaction_id}, item_id={self.item_id})>"
+        return f"<POSDiscount(discount_type='{self.discount_type}', discount_amount={self.discount_amount})>"
 
-# POS Analytics
-class POSAnalytics(BaseModel):
-    """POS analytics tracking"""
-    __tablename__ = "pos_analytics"
+class POSStaff(BaseModel):
+    """POS Staff model for managing POS staff"""
+    __tablename__ = "pos_staff"
     
-    transaction_id = Column(Integer, ForeignKey('pos_transaction.id'), nullable=False)
-    analytics_provider = Column(String(50), nullable=False)  # google_analytics, mixpanel, custom
-    event_type = Column(String(50), nullable=False)  # sale, return, exchange, payment
-    event_data = Column(Text, nullable=True)  # JSON data
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=True)
-    session_id = Column(String(100), nullable=True)
-    page_url = Column(String(500), nullable=True)
-    referrer = Column(String(500), nullable=True)
-    user_agent = Column(String(500), nullable=True)
-    ip_address = Column(String(45), nullable=True)
-    timestamp = Column(DateTime, default=func.now())
-    
-    # POS specific analytics
-    transaction_duration_seconds = Column(Integer, nullable=True)
-    items_count = Column(Integer, nullable=True)
-    payment_method_used = Column(String(20), nullable=True)
-    customer_type = Column(String(20), nullable=True)  # new, returning, vip
+    staff_id = Column(Integer, ForeignKey('staff.id'), nullable=False)
+    pos_access = Column(Boolean, default=True)
+    can_void_transactions = Column(Boolean, default=False)
+    can_apply_discounts = Column(Boolean, default=True)
+    can_manage_sessions = Column(Boolean, default=False)
+    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
     
     # Relationships
-    transaction = relationship("POSTransaction")
-    user = relationship("User")
+    staff = relationship("Staff", back_populates="pos_staff")
+    company = relationship("Company", back_populates="pos_staff")
     
     def __repr__(self):
-        return f"<POSAnalytics(transaction_id={self.transaction_id}, provider='{self.analytics_provider}')>"
+        return f"<POSStaff(staff_id={self.staff_id}, pos_access={self.pos_access})>"
+
+class POSShift(BaseModel):
+    """POS Shift model for managing POS shifts"""
+    __tablename__ = "pos_shift"
+    
+    shift_name = Column(String(100), nullable=False)
+    start_time = Column(DateTime, nullable=False)
+    end_time = Column(DateTime, nullable=True)
+    status = Column(String(20), default='active')  # active, completed, cancelled
+    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
+    
+    # Relationships
+    company = relationship("Company", back_populates="pos_shifts")
+    
+    def __repr__(self):
+        return f"<POSShift(shift_name='{self.shift_name}', status='{self.status}')>"

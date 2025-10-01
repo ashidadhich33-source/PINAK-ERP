@@ -21,31 +21,45 @@ sys.path.append(str(Path(__file__).parent))
 
 from .config import settings
 from .database import create_tables, get_db, engine, Base, check_database_connection
-from .api.endpoints import (
-    # Core endpoints
-    auth, setup, companies, settings as settings_api, payments, expenses, reports, backup, gst, discount_management, report_studio, system_integration, whatsapp, database_setup,
-    # Accounting endpoints  
-    double_entry_accounting, chart_of_accounts, financial_year, financial_year_management,
-    # Advanced Accounting endpoints
-    advanced_workflows, advanced_reporting, banking, analytic,
-    # Sales endpoints
-    enhanced_sales, sale_returns, sales_accounting_integration, sales_indian_localization, sales_advanced_features, sales_enhanced_integration, sales_return_comprehensive, sales_exchange_comprehensive, sales_bill_modification,
-    # POS endpoints
-    pos_comprehensive,
-    # Purchase endpoints
-    enhanced_purchase, purchases, purchase_accounting_integration, purchase_indian_localization, purchase_advanced_features, purchase_enhanced_integration, purchase_return_comprehensive, purchase_bill_modification,
-    # Inventory endpoints
-    items, enhanced_item_master, advanced_inventory,
-    # Customer endpoints
-    customers, suppliers,
-    # Loyalty endpoints
-    loyalty_program,
-    # Indian Localization endpoints
+from .api.endpoints.core import (
+    auth, setup, companies, settings as settings_api, payments, expenses, reports, backup, gst, database_setup
+)
+from .api.endpoints.accounting import (
+    double_entry_accounting, chart_of_accounts, financial_year_management, banking
+)
+from .api.endpoints.sales import (
+    enhanced_sales, sale_returns, sales_accounting_integration, sales_gst_integration, sales_return_integration
+)
+from .api.endpoints.purchase import (
+    enhanced_purchase, purchases, purchase_accounting_integration, purchase_gst_integration, purchase_return_integration
+)
+from .api.endpoints.inventory import (
+    items, enhanced_item_master, advanced_inventory
+)
+from .api.endpoints.customers import (
+    customers, suppliers
+)
+from .api.endpoints.loyalty import (
+    loyalty_program
+)
+from .api.endpoints.l10n_in import (
     indian_gst, indian_geography, pincode_lookup
+)
+from .api.endpoints.pos import (
+    pos_sessions, pos_transactions, pos_payments, pos_receipts
+)
+from .api.endpoints.whatsapp import (
+    whatsapp_templates, whatsapp_campaigns, whatsapp_messages, whatsapp_contacts
+)
+from .api.endpoints.ai import (
+    ai_analytics, ai_predictions, ai_models, ai_insights
+)
+from .api.endpoints.advanced_api import (
+    api_monitoring, api_logs, api_rate_limits, api_cache
 )
 from .core.security import get_current_user
 from .services.core.backup_service import backup_service
-from .core.init_data import initialize_default_data
+from .init_data import init_default_data
 from .core.exceptions import setup_exception_handlers
 from .core.middleware import setup_middlewares
 
@@ -171,7 +185,7 @@ async def lifespan(app: FastAPI):
     
     # Initialize default data
     try:
-        from .init_data import init_default_data
+        from .database import get_db_session
         with get_db_session() as db:
             init_default_data(db)
         logger.info("✅ Default data initialized")
@@ -401,47 +415,27 @@ api_routers = [
     (reports.router, "/reports", ["📊 Reports & Analytics"]),
     (backup.router, "/backup", ["💾 Backup & Restore"]),
     (gst.router, "/gst", ["🏛️ GST Management"]),
-    (discount_management.router, "/discount-management", ["💰 Discount Management"]),
-    (report_studio.router, "/report-studio", ["📊 Report Studio"]),
-    (system_integration.router, "/system-integration", ["🔧 System Integration"]),
-    (whatsapp.router, "/whatsapp", ["📱 WhatsApp Integration"]),
     (database_setup.router, "/database-setup", ["🗄️ Database Setup Wizard"]),
     
     # Accounting endpoints
     (double_entry_accounting.router, "/double-entry-accounting", ["📊 Double Entry Accounting"]),
     (chart_of_accounts.router, "/chart-of-accounts", ["📊 Chart of Accounts"]),
-    (financial_year.router, "/financial-years", ["📅 Financial Year Management"]),
     (financial_year_management.router, "/financial-year-management", ["📅 Financial Year Management"]),
-    
-    # Advanced Accounting endpoints
-    (advanced_workflows.router, "/advanced-workflows", ["🔄 Advanced Workflows"]),
-    (advanced_reporting.router, "/advanced-reporting", ["📊 Advanced Reporting"]),
     (banking.router, "/banking", ["🏦 Banking & Reconciliation"]),
-    (analytic.router, "/analytic", ["📈 Analytic Accounting"]),
     
     # Sales endpoints
     (enhanced_sales.router, "/enhanced-sales", ["💰 Enhanced Sales Management"]),
     (sale_returns.router, "/sale-returns", ["🔄 Sales Returns"]),
     (sales_accounting_integration.router, "/sales-accounting", ["📊 Sales Accounting Integration"]),
-    (sales_indian_localization.router, "/sales-indian-localization", ["🇮🇳 Sales Indian Localization"]),
-    (sales_advanced_features.router, "/sales-advanced-features", ["🚀 Sales Advanced Features"]),
-    (sales_enhanced_integration.router, "/sales-enhanced-integration", ["⚡ Sales Enhanced Integration"]),
-    (sales_return_comprehensive.router, "/sales-returns", ["🔄 Sales Returns Management"]),
-    (sales_exchange_comprehensive.router, "/sales-exchanges", ["🔄 B2C Sales Exchanges"]),
-    (sales_bill_modification.router, "/sales", ["✏️ Sales Bill Modification"]),
-    
-    # POS endpoints
-    (pos_comprehensive.router, "/pos", ["🖥️ Point of Sale (POS)"]),
+    (sales_gst_integration.router, "/sales-gst", ["🏛️ Sales GST Integration"]),
+    (sales_return_integration.router, "/sales-returns", ["🔄 Sales Returns Management"]),
     
     # Purchase endpoints
     (enhanced_purchase.router, "/enhanced-purchase", ["🛒 Enhanced Purchase Management"]),
     (purchases.router, "/purchases", ["🛒 Purchase Management"]),
     (purchase_accounting_integration.router, "/purchase-accounting", ["📊 Purchase Accounting Integration"]),
-    (purchase_indian_localization.router, "/purchase-indian-localization", ["🇮🇳 Purchase Indian Localization"]),
-    (purchase_advanced_features.router, "/purchase-advanced-features", ["🚀 Purchase Advanced Features"]),
-    (purchase_enhanced_integration.router, "/purchase-enhanced-integration", ["⚡ Purchase Enhanced Integration"]),
-    (purchase_return_comprehensive.router, "/purchase-returns", ["🔄 Purchase Returns Management"]),
-    (purchase_bill_modification.router, "/purchase", ["✏️ Purchase Bill Modification"]),
+    (purchase_gst_integration.router, "/purchase-gst", ["🏛️ Purchase GST Integration"]),
+    (purchase_return_integration.router, "/purchase-returns", ["🔄 Purchase Returns Management"]),
     
     # Inventory endpoints
     (items.router, "/items", ["📦 Items & Inventory"]),
@@ -455,10 +449,34 @@ api_routers = [
     # Loyalty endpoints
     (loyalty_program.router, "/loyalty-program", ["🎁 Loyalty Program"]),
     
-            # Indian Localization endpoints
-            (indian_gst.router, "/indian-gst", ["🏛️ Indian GST Compliance"]),
-            (indian_geography.router, "/indian-geography", ["🌍 Indian Geography"]),
-            (pincode_lookup.router, "/pincode-lookup", ["📍 Pincode Lookup"])
+    # Indian Localization endpoints
+    (indian_gst.router, "/indian-gst", ["🏛️ Indian GST Compliance"]),
+    (indian_geography.router, "/indian-geography", ["🌍 Indian Geography"]),
+    (pincode_lookup.router, "/pincode-lookup", ["📍 Pincode Lookup"]),
+    
+    # POS endpoints
+    (pos_sessions.router, "/pos/sessions", ["🛒 POS Sessions"]),
+    (pos_transactions.router, "/pos/transactions", ["🛒 POS Transactions"]),
+    (pos_payments.router, "/pos/payments", ["🛒 POS Payments"]),
+    (pos_receipts.router, "/pos/receipts", ["🛒 POS Receipts"]),
+    
+    # WhatsApp Integration endpoints
+    (whatsapp_templates.router, "/marketing/whatsapp/templates", ["📱 WhatsApp Templates"]),
+    (whatsapp_campaigns.router, "/marketing/whatsapp/campaigns", ["📱 WhatsApp Campaigns"]),
+    (whatsapp_messages.router, "/marketing/whatsapp/messages", ["📱 WhatsApp Messages"]),
+    (whatsapp_contacts.router, "/marketing/whatsapp/contacts", ["📱 WhatsApp Contacts"]),
+    
+    # AI/Analytics endpoints
+    (ai_analytics.router, "/ai/analytics", ["🤖 AI Analytics"]),
+    (ai_predictions.router, "/ai/predictions", ["🤖 AI Predictions"]),
+    (ai_models.router, "/ai/models", ["🤖 AI Models"]),
+    (ai_insights.router, "/ai/insights", ["🤖 AI Insights"]),
+    
+    # Advanced API endpoints
+    (api_monitoring.router, "/api/monitoring", ["🔧 API Monitoring"]),
+    (api_logs.router, "/api/logs", ["🔧 API Logs"]),
+    (api_rate_limits.router, "/api/rate-limits", ["🔧 API Rate Limits"]),
+    (api_cache.router, "/api/cache", ["🔧 API Cache"])
 ]
 
 for router, prefix, tags in api_routers:
@@ -506,9 +524,9 @@ async def get_user_profile(current_user=Depends(get_current_user)):
 @app.get(f"{settings.api_prefix}/dashboard")
 async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_db)):
     """Get dashboard summary data"""
-    from .models.sales import SalesInvoice
-    from .models.customers import Customer
-    from .models.inventory import Item
+    from .models.sales.enhanced_sales import SaleInvoice
+    from .models.customers.customer import Customer
+    from .models.inventory.item import Item
     from sqlalchemy import func
     from datetime import date
     
@@ -519,8 +537,8 @@ async def get_dashboard(current_user=Depends(get_current_user), db=Depends(get_d
     total_items = db.query(Item).filter(Item.status == 'active').count()
     
     # Today's sales
-    today_sales = db.query(func.sum(SalesInvoice.total_amount)).filter(
-        func.date(SalesInvoice.invoice_date) == today
+    today_sales = db.query(func.sum(SaleInvoice.total_amount)).filter(
+        func.date(SaleInvoice.invoice_date) == today
     ).scalar() or 0
     
     return {

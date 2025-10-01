@@ -6,10 +6,10 @@ from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel, EmailStr
 
-from ...database import get_db
-from ...models.user import User, Role
-from ...core.security import SecurityService, get_current_user
-from ...config import settings
+from app.database import get_db
+from app.models.core.user import User, Role
+from app.core.security import SecurityService, get_current_user
+from app.config import settings
 
 router = APIRouter()
 

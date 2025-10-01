@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, date
 from decimal import Decimal
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class PaymentMethodType(PyEnum):
     """Indian Payment Method Types"""
@@ -30,7 +30,7 @@ class UPIProvider(PyEnum):
 
 class BankAccount(BaseModel):
     """Indian Bank Account Model"""
-    __tablename__ = "bank_account"
+    __tablename__ = "indian_bank_account"
     
     # Basic Information
     account_holder_name = Column(String(200), nullable=False)
@@ -213,7 +213,7 @@ class PaymentGateway(BaseModel):
 
 class BankReconciliation(BaseModel):
     """Bank Reconciliation Model"""
-    __tablename__ = "bank_reconciliation"
+    __tablename__ = "indian_bank_reconciliation"
     
     # Reconciliation Information
     bank_account_id = Column(Integer, ForeignKey('bank_account.id'), nullable=False)

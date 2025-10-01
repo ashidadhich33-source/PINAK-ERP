@@ -91,7 +91,7 @@ class PurchaseBillItem(BaseModel):
 
 class PurchaseReturn(BaseModel):
     """Purchase return to supplier"""
-    __tablename__ = "purchase_return"
+    __tablename__ = "purchase_return_basic"
     
     # Return Information
     pr_no = Column(String(50), unique=True, nullable=False, index=True)
@@ -123,7 +123,7 @@ class PurchaseReturn(BaseModel):
 
 class PurchaseReturnItem(BaseModel):
     """Purchase return line items"""
-    __tablename__ = "purchase_return_item"
+    __tablename__ = "purchase_return_item_basic"
     
     purchase_return_id = Column(Integer, ForeignKey('purchase_return.id'), nullable=False)
     
@@ -155,7 +155,7 @@ class PurchaseReturnItem(BaseModel):
 
 class PurchaseOrder(BaseModel):
     """Purchase order to supplier"""
-    __tablename__ = "purchase_order"
+    __tablename__ = "purchase_order_basic"
     
     # Document Information
     order_number = Column(String(50), unique=True, nullable=False, index=True)
@@ -184,7 +184,7 @@ class PurchaseOrder(BaseModel):
 
 class PurchaseOrderItem(BaseModel):
     """Purchase order line items"""
-    __tablename__ = "purchase_order_item"
+    __tablename__ = "purchase_order_item_basic"
     
     order_id = Column(Integer, ForeignKey('purchase_order.id'), nullable=False)
     item_id = Column(Integer, ForeignKey('item.id'), nullable=False)
@@ -212,7 +212,7 @@ class PurchaseOrderItem(BaseModel):
 
 class PurchaseInvoice(BaseModel):
     """Purchase invoice from supplier"""
-    __tablename__ = "purchase_invoice"
+    __tablename__ = "purchase_invoice_basic"
     
     # Document Information
     invoice_number = Column(String(50), unique=True, nullable=False, index=True)
@@ -242,7 +242,7 @@ class PurchaseInvoice(BaseModel):
 
 class PurchaseInvoiceItem(BaseModel):
     """Purchase invoice line items"""
-    __tablename__ = "purchase_invoice_item"
+    __tablename__ = "purchase_invoice_item_basic"
     
     invoice_id = Column(Integer, ForeignKey('purchase_invoice.id'), nullable=False)
     item_id = Column(Integer, ForeignKey('item.id'), nullable=False)

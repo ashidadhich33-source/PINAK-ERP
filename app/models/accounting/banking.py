@@ -127,7 +127,7 @@ class BankStatementLine(BaseModel):
 
 class PaymentMethod(BaseModel):
     """Payment methods"""
-    __tablename__ = "payment_method"
+    __tablename__ = "banking_payment_method"
     
     name = Column(String(100), nullable=False)
     code = Column(String(50), nullable=False)

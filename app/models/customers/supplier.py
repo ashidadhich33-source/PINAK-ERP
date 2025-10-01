@@ -1,8 +1,8 @@
 # backend/app/models/supplier.py
-from sqlalchemy import Column, String, DateTime, Integer, Numeric, Text, ForeignKey
+from sqlalchemy import Column, String, DateTime, Integer, Numeric, Text, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import BaseModel
+from ..base import BaseModel
 
 class Supplier(BaseModel):
     __tablename__ = "supplier"
@@ -92,7 +92,7 @@ class SupplierGroup(BaseModel):
         return f"<SupplierGroup(name='{self.name}')>"
 
 class Staff(BaseModel):
-    __tablename__ = "staff"
+    __tablename__ = "supplier_staff"
     
     # Basic Information
     code = Column(String(20), unique=True, nullable=False, index=True)
@@ -118,7 +118,7 @@ class Staff(BaseModel):
         return f"<Staff(code='{self.code}', name='{self.name}')>"
 
 class StaffTarget(BaseModel):
-    __tablename__ = "staff_target"
+    __tablename__ = "supplier_staff_target"
     
     staff_id = Column(Integer, ForeignKey('staff.id'), nullable=False)
     period_start = Column(DateTime, nullable=False)
@@ -135,7 +135,7 @@ class StaffTarget(BaseModel):
         return f"<StaffTarget(staff_id={self.staff_id}, amount={self.target_amount})>"
 
 class PaymentMode(BaseModel):
-    __tablename__ = "payment_mode"
+    __tablename__ = "supplier_payment_mode"
     
     name = Column(String(50), unique=True, nullable=False)
     settlement_type = Column(String(20), nullable=False)  # cash, bank, supplier

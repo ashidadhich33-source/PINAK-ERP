@@ -1,32 +1,26 @@
 # Customer Models
 from .customer import (
-    Customer,
-    CustomerAddress,
-    CustomerContact,
-    CustomerGroup,
-    CustomerType
+    Customer
 )
 
 from .supplier import (
     Supplier,
-    SupplierAddress,
-    SupplierContact,
+    CustomerGroup,
     SupplierGroup,
-    SupplierType
+    Staff,
+    StaffTarget,
+    PaymentMode
 )
 
 __all__ = [
     # Customer Models
     "Customer",
-    "CustomerAddress",
-    "CustomerContact", 
-    "CustomerGroup",
-    "CustomerType",
     
     # Supplier Models
     "Supplier",
-    "SupplierAddress",
-    "SupplierContact",
-    "SupplierGroup", 
-    "SupplierType"
+    "CustomerGroup",
+    "SupplierGroup",
+    "Staff",
+    "StaffTarget",
+    "PaymentMode"
 ]

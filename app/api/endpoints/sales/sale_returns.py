@@ -6,20 +6,19 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 import uuid
 
-from ...database import get_db
-from ...models import (
-    Sale, SaleItem, SaleReturn, SaleReturnItem, ReturnCredit,
-    Customer, Item, Stock, BillSeries
-)
-from ...services.gst_service import GSTService
-from ...services.stock_service import StockService
-from ...services.whatsapp_service import WhatsAppService
-from ...core.security import get_current_user
-from ...core.constants import TaxRegion, ReturnCreditStatus
-from ...schemas.sale_return_schema import (
-    SaleReturnCreate, SaleReturnResponse, SaleReturnItemCreate,
-    SaleLineSearchResponse, ReturnCreditResponse
-)
+from app.database import get_db
+from app.models.sales.enhanced_sales import SaleChallan, SaleChallanItem, SaleReturn, SaleReturnItem
+from app.models.customers.customer import Customer
+from app.models.inventory.item import Item
+# from app.services.gst_service import GSTService
+# from app.services.stock_service import StockService
+# from app.services.whatsapp_service import WhatsAppService
+from app.core.security import get_current_user
+# from app.core.constants import TaxRegion, ReturnCreditStatus
+# from app.schemas.sale_return_schema import (
+#     SaleReturnCreate, SaleReturnResponse, SaleReturnItemCreate,
+#     SaleLineSearchResponse, ReturnCreditResponse
+# )
 
 router = APIRouter()
 
@@ -116,86 +115,86 @@ async def search_sale_line_for_return(
     
     return result
 
-@router.post("/return/create")
-async def create_sale_return(
-    return_data: SaleReturnCreate,
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
-):
-    """Create sale return with return credit generation"""
+# @router.post("/return/create")
+# async def create_sale_return(
+#     return_data: SaleReturnCreate,
+#     db: Session = Depends(get_db),
+#     current_user = Depends(get_current_user)
+# ):
+#     """Create sale return with return credit generation"""
+#     
+#     # Generate return number
+#     sr_no = get_next_return_number(db)
     
-    # Generate return number
-    sr_no = get_next_return_number(db)
+#     # Get tax region from company settings
+#     tax_region = return_data.tax_region or TaxRegion.LOCAL
     
-    # Get tax region from company settings
-    tax_region = return_data.tax_region or TaxRegion.LOCAL
+#     # Create sale return record
+#     sale_return = SaleReturn(
+#         id=str(uuid.uuid4()),
+#         sr_series_id=return_data.sr_series_id,
+#         sr_no=sr_no,
+#         sr_date=datetime.utcnow(),
+#         customer_mobile=return_data.customer_mobile,
+#         tax_region=tax_region,
+#         reason=return_data.reason,
+#         created_by=current_user.id
+#     )
     
-    # Create sale return record
-    sale_return = SaleReturn(
-        id=str(uuid.uuid4()),
-        sr_series_id=return_data.sr_series_id,
-        sr_no=sr_no,
-        sr_date=datetime.utcnow(),
-        customer_mobile=return_data.customer_mobile,
-        tax_region=tax_region,
-        reason=return_data.reason,
-        created_by=current_user.id
-    )
+#     total_return_amount = Decimal('0')
+#     customer_mobile_for_rc = None
     
-    total_return_amount = Decimal('0')
-    customer_mobile_for_rc = None
-    
-    for item_data in return_data.items:
-        # Validate original sale item
-        sale_item = db.query(SaleItem).filter(
-            SaleItem.id == item_data.sale_item_id
-        ).first()
+#     for item_data in return_data.items:
+#         # Validate original sale item
+#         sale_item = db.query(SaleItem).filter(
+#             SaleItem.id == item_data.sale_item_id
+#         ).first()
         
-        if not sale_item:
-            raise HTTPException(
-                status_code=404, 
-                detail=f"Original sale item not found"
-            )
+#         if not sale_item:
+#             raise HTTPException(
+#                 status_code=404, 
+#                 detail=f"Original sale item not found"
+#             )
         
-        sale = sale_item.sale
-        
-        # Check returnable quantity
-        already_returned = db.query(
+#         sale = sale_item.sale
+#         
+#         # Check returnable quantity
+#         already_returned = db.query(
             db.func.sum(SaleReturnItem.return_qty)
         ).filter(
             SaleReturnItem.sale_item_id == sale_item.id
-        ).scalar() or 0
+#         ).scalar() or 0
+#         
+#         returnable_qty = sale_item.qty - already_returned
+#         
+#         if item_data.return_qty > returnable_qty:
+#             raise HTTPException(
+#                 status_code=400,
+#                 detail=f"Return quantity exceeds returnable quantity. Max returnable: {returnable_qty}"
+#             )
         
-        returnable_qty = sale_item.qty - already_returned
+#         # Calculate return amount (based on original sale line amount, no coupon/points)
+#         unit_return_amount = sale_item.line_inclusive / sale_item.qty
+#         line_return_amount = unit_return_amount * item_data.return_qty
         
-        if item_data.return_qty > returnable_qty:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Return quantity exceeds returnable quantity. Max returnable: {returnable_qty}"
-            )
+#         # Extract GST info for return (informational)
+#         base_return = line_return_amount / (1 + sale_item.gst_rate / 100)
+#         tax_return = line_return_amount - base_return
         
-        # Calculate return amount (based on original sale line amount, no coupon/points)
-        unit_return_amount = sale_item.line_inclusive / sale_item.qty
-        line_return_amount = unit_return_amount * item_data.return_qty
-        
-        # Extract GST info for return (informational)
-        base_return = line_return_amount / (1 + sale_item.gst_rate / 100)
-        tax_return = line_return_amount - base_return
-        
-        # Create return item
-        return_item = SaleReturnItem(
-            id=str(uuid.uuid4()),
-            sales_return_id=sale_return.id,
-            sale_id=sale.id,
-            sale_item_id=sale_item.id,
-            barcode=sale_item.barcode,
-            style_code=sale_item.style_code,
-            color=sale_item.color,
-            size=sale_item.size,
-            hsn=sale_item.hsn,
-            gst_rate=sale_item.gst_rate,
-            unit_mrp_incl=sale_item.mrp_incl,
-            disc_pct_at_sale=sale_item.disc_pct,
+#         # Create return item
+#         return_item = SaleReturnItem(
+#             id=str(uuid.uuid4()),
+#             sales_return_id=sale_return.id,
+#             sale_id=sale.id,
+#             sale_item_id=sale_item.id,
+#             barcode=sale_item.barcode,
+#             style_code=sale_item.style_code,
+#             color=sale_item.color,
+#             size=sale_item.size,
+#             hsn=sale_item.hsn,
+#             gst_rate=sale_item.gst_rate,
+#             unit_mrp_incl=sale_item.mrp_incl,
+#             disc_pct_at_sale=sale_item.disc_pct,
             return_qty=item_data.return_qty,
             line_inclusive=line_return_amount,
             base_excl_info=base_return,

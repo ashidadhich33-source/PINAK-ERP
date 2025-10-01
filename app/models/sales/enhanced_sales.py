@@ -132,7 +132,7 @@ class PaymentMode(BaseModel):
 
 class Staff(BaseModel):
     """Staff management"""
-    __tablename__ = "staff"
+    __tablename__ = "sales_staff"
     
     employee_id = Column(String(50), unique=True, nullable=False)
     first_name = Column(String(100), nullable=False)

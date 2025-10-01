@@ -2,25 +2,47 @@
 from .loyalty import (
     LoyaltyGrade,
     LoyaltyTransaction,
-    LoyaltyPoints,
-    LoyaltyReward
+    PointTransaction,
+    Coupon
 )
 
 from .loyalty_program import (
     LoyaltyProgram,
-    LoyaltyRule,
-    LoyaltyTier
+    LoyaltyTier,
+    CustomerLoyaltyTier,
+    LoyaltyPoint,
+    LoyaltyPointTransaction,
+    LoyaltyReward,
+    LoyaltyRewardRedemption,
+    LoyaltyTransaction,
+    LoyaltyAnalytics,
+    LoyaltyCampaign,
+    LoyaltyCampaignParticipant,
+    LoyaltyReferral,
+    LoyaltyNotification,
+    LoyaltyConfiguration
 )
 
 __all__ = [
     # Basic Loyalty Models
     "LoyaltyGrade",
     "LoyaltyTransaction",
-    "LoyaltyPoints", 
-    "LoyaltyReward",
+    "PointTransaction", 
+    "Coupon",
     
     # Advanced Loyalty Models
     "LoyaltyProgram",
-    "LoyaltyRule",
-    "LoyaltyTier"
+    "LoyaltyTier",
+    "CustomerLoyaltyTier",
+    "LoyaltyPoint",
+    "LoyaltyPointTransaction",
+    "LoyaltyReward",
+    "LoyaltyRewardRedemption",
+    "LoyaltyTransaction",
+    "LoyaltyAnalytics",
+    "LoyaltyCampaign",
+    "LoyaltyCampaignParticipant",
+    "LoyaltyReferral",
+    "LoyaltyNotification",
+    "LoyaltyConfiguration"
 ]

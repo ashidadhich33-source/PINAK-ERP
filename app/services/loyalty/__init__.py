@@ -1,14 +1,8 @@
 # Loyalty Services
-from .loyalty_service import LoyaltyService
-from .loyalty_program_service import LoyaltyProgramService
-
-# Service instances
-loyalty_service = LoyaltyService()
-loyalty_program_service = LoyaltyProgramService()
+from .loyalty_program_service import loyalty_program_service
+from .loyalty_service import loyalty_service
 
 __all__ = [
-    "LoyaltyService",
-    "LoyaltyProgramService",
-    "loyalty_service",
-    "loyalty_program_service"
+    "loyalty_program_service",
+    "loyalty_service"
 ]

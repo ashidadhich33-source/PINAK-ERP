@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import BaseModel
+from ..base import BaseModel
 
 class StockLocation(BaseModel):
     __tablename__ = "stock_location"

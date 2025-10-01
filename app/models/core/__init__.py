@@ -1,24 +1,21 @@
 # Core Models
 from .company import (
     Company,
-    ChartOfAccount,
+    UserCompany,
+    FinancialYear,
     GSTSlab,
-    SystemSettings,
-    CompanySettings
+    ChartOfAccount
 )
 
 from .user import (
     User,
     Role,
-    Permission,
-    UserRole,
-    UserPermission
+    Permission
 )
 
 from .payment import (
     Payment,
-    PaymentMethod,
-    PaymentGateway
+    PaymentMethod
 )
 
 from .staff import (
@@ -29,20 +26,7 @@ from .staff import (
 
 from .expense import (
     Expense,
-    ExpenseCategory,
-    ExpenseItem
-)
-
-from .discount_management import (
-    Discount,
-    DiscountRule,
-    DiscountCategory
-)
-
-from .report_studio import (
-    Report,
-    ReportTemplate,
-    ReportParameter
+    ExpenseHead
 )
 
 from .gst_state_codes import (
@@ -52,22 +36,19 @@ from .gst_state_codes import (
 __all__ = [
     # Company Models
     "Company",
-    "ChartOfAccount",
+    "UserCompany",
+    "FinancialYear",
     "GSTSlab", 
-    "SystemSettings",
-    "CompanySettings",
+    "ChartOfAccount",
     
     # User Models
     "User",
     "Role",
     "Permission",
-    "UserRole",
-    "UserPermission",
     
     # Payment Models
     "Payment",
     "PaymentMethod",
-    "PaymentGateway",
     
     # Staff Models
     "Staff",
@@ -76,18 +57,7 @@ __all__ = [
     
     # Expense Models
     "Expense",
-    "ExpenseCategory",
-    "ExpenseItem",
-    
-    # Discount Models
-    "Discount",
-    "DiscountRule",
-    "DiscountCategory",
-    
-    # Report Models
-    "Report",
-    "ReportTemplate",
-    "ReportParameter",
+    "ExpenseHead",
     
     # GST Models
     "GSTStateCode"

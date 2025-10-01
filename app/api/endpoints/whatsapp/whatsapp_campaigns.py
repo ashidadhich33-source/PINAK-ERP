@@ -1,318 +1,135 @@
-"""
-WhatsApp Campaign Management API Endpoints
-"""
+# backend/app/api/endpoints/whatsapp_campaigns.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from pydantic import BaseModel
+from datetime import datetime, date
+from decimal import Decimal
 
-from app.core.deps import get_db, get_current_user
-from app.models.whatsapp.whatsapp_models import WhatsAppCampaignStatus
-from app.services.whatsapp.whatsapp_campaign_service import WhatsAppCampaignService
-from app.schemas.whatsapp_schema import (
-    WhatsAppCampaignCreate,
-    WhatsAppCampaignResponse,
-    WhatsAppCampaignUpdate
-)
+from ...database import get_db
+from ...models.whatsapp.whatsapp_models import WhatsAppCampaign
+from ...models.core.user import User
+from ...core.security import get_current_user, require_permission
 
-router = APIRouter(prefix="/whatsapp/campaigns", tags=["WhatsApp Campaigns"])
+router = APIRouter()
 
-# Service instance
-campaign_service = WhatsAppCampaignService()
+# Pydantic schemas
+class WhatsAppCampaignCreate(BaseModel):
+    campaign_name: str
+    template_id: int
+    target_audience: str
+    scheduled_time: Optional[datetime] = None
+    company_id: int
 
+class WhatsAppCampaignResponse(BaseModel):
+    id: int
+    campaign_name: str
+    template_id: int
+    target_audience: str
+    scheduled_time: Optional[datetime]
+    status: str
+    total_recipients: int
+    sent_count: int
+    delivered_count: int
+    read_count: int
 
-@router.post("/", response_model=WhatsAppCampaignResponse)
-async def create_campaign(
+    class Config:
+        from_attributes = True
+
+@router.post("/campaigns", response_model=WhatsAppCampaignResponse)
+async def create_whatsapp_campaign(
     campaign_data: WhatsAppCampaignCreate,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: User = Depends(require_permission("whatsapp.create")),
+    db: Session = Depends(get_db)
 ):
-    """Create a new WhatsApp marketing campaign"""
-    try:
-        result = campaign_service.create_campaign(
-            db=db,
-            name=campaign_data.name,
-            description=campaign_data.description,
-            template_id=campaign_data.template_id,
-            target_audience=campaign_data.target_audience,
-            variables=campaign_data.variables,
-            scheduled_at=campaign_data.scheduled_at,
-            created_by=current_user.get("user_id", "system")
-        )
-        
-        if not result["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=result["error"]
-            )
-        
-        return result["campaign"]
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error creating campaign: {str(e)}"
-        )
+    """Create a new WhatsApp campaign"""
+    
+    # Create WhatsApp campaign
+    whatsapp_campaign = WhatsAppCampaign(
+        campaign_name=campaign_data.campaign_name,
+        template_id=campaign_data.template_id,
+        target_audience=campaign_data.target_audience,
+        scheduled_time=campaign_data.scheduled_time,
+        company_id=campaign_data.company_id,
+        created_by=current_user.id
+    )
+    
+    db.add(whatsapp_campaign)
+    db.commit()
+    db.refresh(whatsapp_campaign)
+    
+    return whatsapp_campaign
 
-
-@router.get("/", response_model=List[WhatsAppCampaignResponse])
-async def get_campaigns(
-    status: Optional[WhatsAppCampaignStatus] = None,
-    created_by: Optional[str] = None,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+@router.get("/campaigns", response_model=List[WhatsAppCampaignResponse])
+async def get_whatsapp_campaigns(
+    company_id: int,
+    current_user: User = Depends(require_permission("whatsapp.view")),
+    db: Session = Depends(get_db)
 ):
-    """Get WhatsApp campaigns with optional filters"""
-    try:
-        campaigns = campaign_service.get_campaigns(
-            db=db,
-            status=status,
-            created_by=created_by
-        )
-        
-        return campaigns
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error getting campaigns: {str(e)}"
-        )
+    """Get WhatsApp campaigns for a company"""
+    
+    campaigns = db.query(WhatsAppCampaign).filter(
+        WhatsAppCampaign.company_id == company_id
+    ).all()
+    
+    return campaigns
 
-
-@router.get("/{campaign_id}", response_model=WhatsAppCampaignResponse)
-async def get_campaign(
+@router.get("/campaigns/{campaign_id}", response_model=WhatsAppCampaignResponse)
+async def get_whatsapp_campaign(
     campaign_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: User = Depends(require_permission("whatsapp.view")),
+    db: Session = Depends(get_db)
 ):
     """Get a specific WhatsApp campaign"""
-    try:
-        from app.models.whatsapp.whatsapp_models import WhatsAppCampaign
-        
-        campaign = db.query(WhatsAppCampaign).filter(
-            WhatsAppCampaign.id == campaign_id
-        ).first()
-        
-        if not campaign:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Campaign not found"
-            )
-        
-        return campaign
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error getting campaign: {str(e)}"
-        )
+    
+    campaign = db.query(WhatsAppCampaign).filter(WhatsAppCampaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="WhatsApp campaign not found")
+    
+    return campaign
 
-
-@router.put("/{campaign_id}", response_model=WhatsAppCampaignResponse)
-async def update_campaign(
+@router.put("/campaigns/{campaign_id}/start")
+async def start_whatsapp_campaign(
     campaign_id: int,
-    campaign_data: WhatsAppCampaignUpdate,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
-):
-    """Update a WhatsApp campaign"""
-    try:
-        from app.models.whatsapp.whatsapp_models import WhatsAppCampaign
-        from datetime import datetime
-        
-        campaign = db.query(WhatsAppCampaign).filter(
-            WhatsAppCampaign.id == campaign_id
-        ).first()
-        
-        if not campaign:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Campaign not found"
-            )
-        
-        if campaign.status not in [WhatsAppCampaignStatus.DRAFT, WhatsAppCampaignStatus.PAUSED]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Only draft or paused campaigns can be updated"
-            )
-        
-        # Update campaign fields
-        for field, value in campaign_data.dict(exclude_unset=True).items():
-            setattr(campaign, field, value)
-        
-        campaign.updated_at = datetime.utcnow()
-        db.commit()
-        db.refresh(campaign)
-        
-        return campaign
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error updating campaign: {str(e)}"
-        )
-
-
-@router.post("/{campaign_id}/start")
-async def start_campaign(
-    campaign_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: User = Depends(require_permission("whatsapp.update")),
+    db: Session = Depends(get_db)
 ):
     """Start a WhatsApp campaign"""
-    try:
-        result = campaign_service.start_campaign(
-            db=db,
-            campaign_id=campaign_id
-        )
-        
-        if not result["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=result["error"]
-            )
-        
-        return result
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error starting campaign: {str(e)}"
-        )
+    
+    campaign = db.query(WhatsAppCampaign).filter(WhatsAppCampaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="WhatsApp campaign not found")
+    
+    if campaign.status == "running":
+        raise HTTPException(status_code=400, detail="Campaign is already running")
+    
+    # Start the campaign
+    campaign.status = "running"
+    campaign.updated_by = current_user.id
+    
+    db.commit()
+    
+    return {"message": "WhatsApp campaign started successfully"}
 
-
-@router.post("/{campaign_id}/pause")
-async def pause_campaign(
+@router.put("/campaigns/{campaign_id}/stop")
+async def stop_whatsapp_campaign(
     campaign_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: User = Depends(require_permission("whatsapp.update")),
+    db: Session = Depends(get_db)
 ):
-    """Pause a running campaign"""
-    try:
-        result = campaign_service.pause_campaign(
-            db=db,
-            campaign_id=campaign_id
-        )
-        
-        if not result["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=result["error"]
-            )
-        
-        return result
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error pausing campaign: {str(e)}"
-        )
-
-
-@router.post("/{campaign_id}/resume")
-async def resume_campaign(
-    campaign_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
-):
-    """Resume a paused campaign"""
-    try:
-        result = campaign_service.resume_campaign(
-            db=db,
-            campaign_id=campaign_id
-        )
-        
-        if not result["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=result["error"]
-            )
-        
-        return result
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error resuming campaign: {str(e)}"
-        )
-
-
-@router.get("/{campaign_id}/statistics")
-async def get_campaign_statistics(
-    campaign_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
-):
-    """Get campaign statistics"""
-    try:
-        result = campaign_service.get_campaign_statistics(
-            db=db,
-            campaign_id=campaign_id
-        )
-        
-        if not result["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=result["error"]
-            )
-        
-        return result["statistics"]
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error getting campaign statistics: {str(e)}"
-        )
-
-
-@router.delete("/{campaign_id}")
-async def delete_campaign(
-    campaign_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
-):
-    """Delete a WhatsApp campaign"""
-    try:
-        from app.models.whatsapp.whatsapp_models import WhatsAppCampaign
-        
-        campaign = db.query(WhatsAppCampaign).filter(
-            WhatsAppCampaign.id == campaign_id
-        ).first()
-        
-        if not campaign:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Campaign not found"
-            )
-        
-        if campaign.status == WhatsAppCampaignStatus.RUNNING:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Cannot delete running campaigns"
-            )
-        
-        db.delete(campaign)
-        db.commit()
-        
-        return {"message": "Campaign deleted successfully"}
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error deleting campaign: {str(e)}"
-        )
+    """Stop a WhatsApp campaign"""
+    
+    campaign = db.query(WhatsAppCampaign).filter(WhatsAppCampaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="WhatsApp campaign not found")
+    
+    if campaign.status != "running":
+        raise HTTPException(status_code=400, detail="Campaign is not running")
+    
+    # Stop the campaign
+    campaign.status = "completed"
+    campaign.updated_by = current_user.id
+    
+    db.commit()
+    
+    return {"message": "WhatsApp campaign stopped successfully"}

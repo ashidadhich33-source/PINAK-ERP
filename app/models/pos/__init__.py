@@ -1,30 +1,20 @@
-# backend/app/models/pos/__init__.py
+# POS Models
 from .pos_models import (
     POSSession,
     POSTransaction,
-    POSTransactionItem,
     POSPayment,
-    Store,
-    StoreStaff,
     POSReceipt,
-    POSInventory,
-    POSAnalytics,
-    POSSessionStatus,
-    POSPaymentMethod,
-    POSTransactionType
+    POSDiscount,
+    POSStaff,
+    POSShift
 )
 
 __all__ = [
     "POSSession",
     "POSTransaction", 
-    "POSTransactionItem",
     "POSPayment",
-    "Store",
-    "StoreStaff",
     "POSReceipt",
-    "POSInventory",
-    "POSAnalytics",
-    "POSSessionStatus",
-    "POSPaymentMethod",
-    "POSTransactionType"
+    "POSDiscount",
+    "POSStaff",
+    "POSShift"
 ]

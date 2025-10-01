@@ -7,10 +7,10 @@ from pydantic import BaseModel, validator
 from datetime import date, datetime
 import json
 
-from ...database import get_db
-from ...models.company import Company, UserCompany, FinancialYear, GSTSlab, ChartOfAccount
-from ...models.user import User
-from ...core.security import get_current_user, require_permission
+from app.database import get_db
+from app.models.core.company import Company, UserCompany, FinancialYear, GSTSlab, ChartOfAccount
+from app.models.core.user import User
+from app.core.security import get_current_user, require_permission
 
 router = APIRouter()
 

@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Numeric, Date
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import BaseModel
+from ..base import BaseModel
 
 class HSNCode(BaseModel):
     """HSN Code for GST compliance"""
@@ -119,7 +119,7 @@ class ItemSupplier(BaseModel):
 
 class ItemCategory(BaseModel):
     """Item categories for classification"""
-    __tablename__ = "item_category"
+    __tablename__ = "enhanced_item_category"
     
     name = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)

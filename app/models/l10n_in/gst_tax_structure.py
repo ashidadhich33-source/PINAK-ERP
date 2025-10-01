@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, date
 from decimal import Decimal
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class GSTTaxType(PyEnum):
     """GST Tax Types"""
@@ -31,7 +31,7 @@ class PlaceOfSupplyType(PyEnum):
 
 class GSTSlab(BaseModel):
     """GST Tax Slabs and Rates"""
-    __tablename__ = "gst_slab"
+    __tablename__ = "gst_tax_slab"
     
     # Basic Information
     name = Column(String(100), nullable=False)  # e.g., "GST 18%"
@@ -59,7 +59,7 @@ class GSTSlab(BaseModel):
 
 class HSNCode(BaseModel):
     """HSN (Harmonized System of Nomenclature) Codes"""
-    __tablename__ = "hsn_code"
+    __tablename__ = "gst_hsn_code"
     
     # HSN Code Information
     code = Column(String(8), nullable=False, unique=True, index=True)  # 4, 6, or 8 digit HSN code
@@ -107,7 +107,7 @@ class SACCode(BaseModel):
 
 class GSTStateCode(BaseModel):
     """GST State Codes for Indian States and Union Territories"""
-    __tablename__ = "gst_state_code"
+    __tablename__ = "gst_tax_state_code"
     
     # State Information
     code = Column(String(2), nullable=False, unique=True, index=True)  # 2 digit state code
