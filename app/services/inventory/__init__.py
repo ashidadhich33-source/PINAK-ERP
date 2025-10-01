@@ -1,18 +1,14 @@
 # Inventory Services
-from .stock_service import StockService
-from .enhanced_item_master_service import EnhancedItemMasterService
-from .advanced_inventory_service import AdvancedInventoryService
-
-# Service instances
-stock_service = StockService()
-enhanced_item_master_service = EnhancedItemMasterService()
-advanced_inventory_service = AdvancedInventoryService()
+from .item_service import item_service
+from .enhanced_item_master_service import enhanced_item_master_service
+from .advanced_inventory_service import advanced_inventory_service
+from .stock_service import stock_service
+from .inventory_group_service import inventory_group_service
 
 __all__ = [
-    "StockService",
-    "EnhancedItemMasterService",
-    "AdvancedInventoryService",
+    "item_service",
+    "enhanced_item_master_service",
+    "advanced_inventory_service",
     "stock_service",
-    "enhanced_item_master_service", 
-    "advanced_inventory_service"
+    "inventory_group_service"
 ]

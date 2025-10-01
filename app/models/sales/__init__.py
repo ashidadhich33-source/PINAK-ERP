@@ -38,27 +38,11 @@ from .sales_gst_integration import (
     PlaceOfSupplyType
 )
 
-from .sales_advanced_features_integration import (
-    SaleAdvancedWorkflow,
-    SaleDocumentManagement,
-    SaleAdvancedReporting,
-    SaleAuditTrailAdvanced,
-    SaleNotification,
-    SaleDashboard,
-    WorkflowStatus,
-    DocumentType,
-    ReportType
-)
-
-from .sales_enhanced_integration import (
-    SaleInventoryIntegration,
-    SaleCustomerIntegration,
-    SalePerformanceOptimization,
-    SaleUserExperience,
-    SaleRealTimeSync,
-    SaleAnalyticsIntegration,
-    IntegrationStatus,
-    SyncStatus
+from .sales_return_integration import (
+    SaleReturnComprehensive,
+    SaleReturnItemComprehensive,
+    SaleReturnReason,
+    SaleReturnStatus
 )
 
 __all__ = [
@@ -92,21 +76,8 @@ __all__ = [
     "SaleIndianGeography",
     "GSTTaxType",
     "PlaceOfSupplyType",
-    "SaleAdvancedWorkflow",
-    "SaleDocumentManagement",
-    "SaleAdvancedReporting",
-    "SaleAuditTrailAdvanced",
-    "SaleNotification",
-    "SaleDashboard",
-    "WorkflowStatus",
-    "DocumentType",
-    "ReportType",
-    "SaleInventoryIntegration",
-    "SaleCustomerIntegration",
-    "SalePerformanceOptimization",
-    "SaleUserExperience",
-    "SaleRealTimeSync",
-    "SaleAnalyticsIntegration",
-    "IntegrationStatus",
-    "SyncStatus"
+    "SaleReturnComprehensive",
+    "SaleReturnItemComprehensive",
+    "SaleReturnReason",
+    "SaleReturnStatus"
 ]

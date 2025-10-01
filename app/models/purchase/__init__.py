@@ -36,27 +36,11 @@ from .purchase_gst_integration import (
     PlaceOfSupplyType
 )
 
-from .purchase_advanced_features_integration import (
-    PurchaseAdvancedWorkflow,
-    PurchaseDocumentManagement,
-    PurchaseAdvancedReporting,
-    PurchaseAuditTrailAdvanced,
-    PurchaseNotification,
-    PurchaseDashboard,
-    WorkflowStatus,
-    DocumentType,
-    ReportType
-)
-
-from .purchase_enhanced_integration import (
-    PurchaseInventoryIntegration,
-    PurchaseSupplierIntegration,
-    PurchasePerformanceOptimization,
-    PurchaseUserExperience,
-    PurchaseRealTimeSync,
-    PurchaseAnalyticsIntegration,
-    IntegrationStatus,
-    SyncStatus
+from .purchase_return_integration import (
+    PurchaseReturnComprehensive,
+    PurchaseReturnItemComprehensive,
+    PurchaseReturnReason,
+    PurchaseReturnStatus
 )
 
 __all__ = [
@@ -90,21 +74,8 @@ __all__ = [
     "PurchaseIndianGeography",
     "GSTTaxType",
     "PlaceOfSupplyType",
-    "PurchaseAdvancedWorkflow",
-    "PurchaseDocumentManagement",
-    "PurchaseAdvancedReporting",
-    "PurchaseAuditTrailAdvanced",
-    "PurchaseNotification",
-    "PurchaseDashboard",
-    "WorkflowStatus",
-    "DocumentType",
-    "ReportType",
-    "PurchaseInventoryIntegration",
-    "PurchaseSupplierIntegration",
-    "PurchasePerformanceOptimization",
-    "PurchaseUserExperience",
-    "PurchaseRealTimeSync",
-    "PurchaseAnalyticsIntegration",
-    "IntegrationStatus",
-    "SyncStatus"
+    "PurchaseReturnComprehensive",
+    "PurchaseReturnItemComprehensive",
+    "PurchaseReturnReason",
+    "PurchaseReturnStatus"
 ]

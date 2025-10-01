@@ -1,5 +1,8 @@
 # Domain-based Model Imports
 
+# Core Models
+from .core import *
+
 # Accounting Models
 from .accounting import *
 
@@ -15,14 +18,14 @@ from .inventory import *
 # Customer Models
 from .customers import *
 
-# Core Models
-from .core import *
-
 # Loyalty Models
 from .loyalty import *
 
-# WhatsApp Models
-from .whatsapp import *
+# Indian Localization Models
+from .l10n_in import *
+
+# Compliance Models
+from .compliance import *
 
 # Base Model
 from .base import Base
