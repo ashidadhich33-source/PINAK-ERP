@@ -9,16 +9,16 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from datetime import datetime
 
-from ...database import get_db
+from app.database import get_db
 from sqlalchemy.orm import Session
-from ...core.security import get_current_user
-from ...core.rbac import require_role
-from ...models.user import User
-from ...services.settings_service import (
-    system_settings,
-    company_settings,
-    print_templates
-)
+from app.core.security import get_current_user
+from app.core.rbac import require_role
+from app.models.core.user import User
+# from app.services.settings_service import (
+#     system_settings,
+#     company_settings,
+#     print_templates
+# )
 
 router = APIRouter()
 

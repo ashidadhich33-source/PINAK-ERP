@@ -6,10 +6,10 @@ from pydantic import BaseModel
 from datetime import datetime, date
 from decimal import Decimal
 
-from ...database import get_db
-from ...models.core.expense import Expense, ExpenseCategory, ExpenseItem
-from ...models.core.user import User
-from ...core.security import get_current_user, require_permission
+from app.database import get_db
+from app.models.core.expense import Expense, ExpenseHead
+from app.models.core.user import User
+from app.core.security import get_current_user, require_permission
 
 router = APIRouter()
 

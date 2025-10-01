@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, DateTime, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import BaseModel
+from ..base import BaseModel
 
 class PaymentMethod(BaseModel):
     __tablename__ = "payment_method"

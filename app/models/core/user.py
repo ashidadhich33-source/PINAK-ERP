@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Table, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import BaseModel
+from ..base import BaseModel
 
 # Association table for many-to-many relationship between users and roles
 user_roles = Table(

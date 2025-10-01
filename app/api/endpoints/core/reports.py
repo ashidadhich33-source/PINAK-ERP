@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from datetime import datetime, date
 from decimal import Decimal
 
-from ...database import get_db
-from ...models.core.user import User
-from ...core.security import get_current_user, require_permission
+from app.database import get_db
+from app.models.core.user import User
+from app.core.security import get_current_user, require_permission
 
 router = APIRouter()
 
@@ -174,6 +174,7 @@ async def get_profit_loss_report(
                 "gross_profit": 40000.00,
                 "net_profit": 25000.00
             }
+        }
     except Exception as e:
         raise HTTPException(
             status_code=500,

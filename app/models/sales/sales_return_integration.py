@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, Numeric, Date, DateTime, Text, Boolean, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from ..core.base import BaseModel
+from ..base import BaseModel
 import enum
 
 class SaleReturnStatus(str, enum.Enum):

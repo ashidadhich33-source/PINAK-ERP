@@ -1,5 +1,5 @@
 # backend/app/models/compliance/indian_compliance.py
-from sqlalchemy import Column, Integer, String, DateTime, Date, Decimal, Boolean, Text, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, DateTime, Date, Numeric, Boolean, Text, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime, date
@@ -48,14 +48,14 @@ class GSTReturn(BaseModel):
     status = Column(String(20), default="draft")  # draft, filed, accepted, rejected
     
     # Financial details
-    total_sales = Column(Decimal(15, 2), default=0)
-    total_purchases = Column(Decimal(15, 2), default=0)
-    output_tax = Column(Decimal(15, 2), default=0)
-    input_tax = Column(Decimal(15, 2), default=0)
-    net_tax = Column(Decimal(15, 2), default=0)
-    interest_amount = Column(Decimal(15, 2), default=0)
-    penalty_amount = Column(Decimal(15, 2), default=0)
-    total_payable = Column(Decimal(15, 2), default=0)
+    total_sales = Column(Numeric(15, 2), default=0)
+    total_purchases = Column(Numeric(15, 2), default=0)
+    output_tax = Column(Numeric(15, 2), default=0)
+    input_tax = Column(Numeric(15, 2), default=0)
+    net_tax = Column(Numeric(15, 2), default=0)
+    interest_amount = Column(Numeric(15, 2), default=0)
+    penalty_amount = Column(Numeric(15, 2), default=0)
+    total_payable = Column(Numeric(15, 2), default=0)
     
     # Filing details
     acknowledgment_number = Column(String(20), nullable=True)
@@ -77,7 +77,7 @@ class GSTPayment(BaseModel):
     gst_registration_id = Column(Integer, ForeignKey("gst_registrations.id"), nullable=False)
     gst_return_id = Column(Integer, ForeignKey("gst_returns.id"), nullable=True)
     payment_date = Column(Date, nullable=False)
-    payment_amount = Column(Decimal(15, 2), nullable=False)
+    payment_amount = Column(Numeric(15, 2), nullable=False)
     payment_mode = Column(String(20), nullable=False)  # online, offline, challan
     payment_reference = Column(String(50), nullable=True)
     bank_name = Column(String(100), nullable=True)
@@ -120,11 +120,11 @@ class TDSReturn(BaseModel):
     status = Column(String(20), default="draft")
     
     # Financial details
-    total_tds_deducted = Column(Decimal(15, 2), default=0)
-    total_tds_deposited = Column(Decimal(15, 2), default=0)
-    interest_amount = Column(Decimal(15, 2), default=0)
-    penalty_amount = Column(Decimal(15, 2), default=0)
-    total_payable = Column(Decimal(15, 2), default=0)
+    total_tds_deducted = Column(Numeric(15, 2), default=0)
+    total_tds_deposited = Column(Numeric(15, 2), default=0)
+    interest_amount = Column(Numeric(15, 2), default=0)
+    penalty_amount = Column(Numeric(15, 2), default=0)
+    total_payable = Column(Numeric(15, 2), default=0)
     
     # Filing details
     acknowledgment_number = Column(String(20), nullable=True)
@@ -143,7 +143,7 @@ class TDSPayment(BaseModel):
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     tds_return_id = Column(Integer, ForeignKey("tds_returns.id"), nullable=True)
     payment_date = Column(Date, nullable=False)
-    payment_amount = Column(Decimal(15, 2), nullable=False)
+    payment_amount = Column(Numeric(15, 2), nullable=False)
     payment_mode = Column(String(20), nullable=False)
     payment_reference = Column(String(50), nullable=True)
     status = Column(String(20), default="pending")
@@ -182,11 +182,11 @@ class TCSReturn(BaseModel):
     status = Column(String(20), default="draft")
     
     # Financial details
-    total_tcs_collected = Column(Decimal(15, 2), default=0)
-    total_tcs_deposited = Column(Decimal(15, 2), default=0)
-    interest_amount = Column(Decimal(15, 2), default=0)
-    penalty_amount = Column(Decimal(15, 2), default=0)
-    total_payable = Column(Decimal(15, 2), default=0)
+    total_tcs_collected = Column(Numeric(15, 2), default=0)
+    total_tcs_deposited = Column(Numeric(15, 2), default=0)
+    interest_amount = Column(Numeric(15, 2), default=0)
+    penalty_amount = Column(Numeric(15, 2), default=0)
+    total_payable = Column(Numeric(15, 2), default=0)
     
     # Filing details
     acknowledgment_number = Column(String(20), nullable=True)
@@ -205,7 +205,7 @@ class TCSPayment(BaseModel):
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     tcs_return_id = Column(Integer, ForeignKey("tcs_returns.id"), nullable=True)
     payment_date = Column(Date, nullable=False)
-    payment_amount = Column(Decimal(15, 2), nullable=False)
+    payment_amount = Column(Numeric(15, 2), nullable=False)
     payment_mode = Column(String(20), nullable=False)
     payment_reference = Column(String(50), nullable=True)
     status = Column(String(20), default="pending")
@@ -241,8 +241,8 @@ class EInvoice(BaseModel):
     invoice_date = Column(Date, nullable=False)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
     customer_gst = Column(String(15), nullable=True)
-    total_amount = Column(Decimal(15, 2), nullable=False)
-    tax_amount = Column(Decimal(15, 2), nullable=False)
+    total_amount = Column(Numeric(15, 2), nullable=False)
+    tax_amount = Column(Numeric(15, 2), nullable=False)
     
     # E-Invoice specific fields
     irn = Column(String(64), nullable=True)  # Invoice Registration Number
@@ -266,11 +266,11 @@ class EInvoiceItem(BaseModel):
     item_id = Column(Integer, ForeignKey("items.id"), nullable=True)
     item_name = Column(String(200), nullable=False)
     hsn_code = Column(String(8), nullable=True)
-    quantity = Column(Decimal(10, 3), nullable=False)
-    unit_price = Column(Decimal(15, 2), nullable=False)
-    total_price = Column(Decimal(15, 2), nullable=False)
-    tax_rate = Column(Decimal(5, 2), default=0)
-    tax_amount = Column(Decimal(15, 2), default=0)
+    quantity = Column(Numeric(10, 3), nullable=False)
+    unit_price = Column(Numeric(15, 2), nullable=False)
+    total_price = Column(Numeric(15, 2), nullable=False)
+    tax_rate = Column(Numeric(5, 2), default=0)
+    tax_amount = Column(Numeric(15, 2), default=0)
     
     # Relationships
     e_invoice = relationship("EInvoice", back_populates="e_invoice_items")
@@ -289,7 +289,7 @@ class EWaybill(BaseModel):
     invoice_date = Column(Date, nullable=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
     customer_gst = Column(String(15), nullable=True)
-    total_amount = Column(Decimal(15, 2), nullable=False)
+    total_amount = Column(Numeric(15, 2), nullable=False)
     
     # E-Waybill specific fields
     ewb_number = Column(String(12), nullable=True)  # E-Waybill Number
@@ -316,9 +316,9 @@ class EWaybillItem(BaseModel):
     item_id = Column(Integer, ForeignKey("items.id"), nullable=True)
     item_name = Column(String(200), nullable=False)
     hsn_code = Column(String(8), nullable=True)
-    quantity = Column(Decimal(10, 3), nullable=False)
-    unit_price = Column(Decimal(15, 2), nullable=False)
-    total_price = Column(Decimal(15, 2), nullable=False)
+    quantity = Column(Numeric(10, 3), nullable=False)
+    unit_price = Column(Numeric(15, 2), nullable=False)
+    total_price = Column(Numeric(15, 2), nullable=False)
     
     # Relationships
     e_waybill = relationship("EWaybill", back_populates="e_waybill_items")
@@ -348,11 +348,11 @@ class ComplianceSettings(BaseModel):
     
     # E-Invoice Settings
     e_invoice_auto_generation = Column(Boolean, default=False)
-    e_invoice_threshold = Column(Decimal(15, 2), default=50000)
+    e_invoice_threshold = Column(Numeric(15, 2), default=50000)
     
     # E-Waybill Settings
     e_waybill_auto_generation = Column(Boolean, default=False)
-    e_waybill_threshold = Column(Decimal(15, 2), default=50000)
+    e_waybill_threshold = Column(Numeric(15, 2), default=50000)
     
     # Relationships
     company = relationship("Company", back_populates="compliance_settings")

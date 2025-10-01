@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, date
 from decimal import Decimal
 from enum import Enum as PyEnum
-from .base import BaseModel
+from ..base import BaseModel
 
 class AccountType(PyEnum):
     """Indian Chart of Accounts - Account Types"""
@@ -43,7 +43,6 @@ class AccountSubType(PyEnum):
 class IndianChartOfAccount(BaseModel):
     """Indian Chart of Accounts - Standard Format"""
     __tablename__ = "indian_chart_of_account"
-"
     
     # Basic Information
     account_code = Column(String(20), nullable=False, unique=True, index=True)

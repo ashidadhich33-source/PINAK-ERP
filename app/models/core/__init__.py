@@ -15,8 +15,7 @@ from .user import (
 
 from .payment import (
     Payment,
-    PaymentMethod,
-    PaymentGateway
+    PaymentMethod
 )
 
 from .staff import (
@@ -27,8 +26,7 @@ from .staff import (
 
 from .expense import (
     Expense,
-    ExpenseCategory,
-    ExpenseItem
+    ExpenseHead
 )
 
 from .gst_state_codes import (
@@ -51,7 +49,6 @@ __all__ = [
     # Payment Models
     "Payment",
     "PaymentMethod",
-    "PaymentGateway",
     
     # Staff Models
     "Staff",
@@ -60,8 +57,7 @@ __all__ = [
     
     # Expense Models
     "Expense",
-    "ExpenseCategory",
-    "ExpenseItem",
+    "ExpenseHead",
     
     # GST Models
     "GSTStateCode"

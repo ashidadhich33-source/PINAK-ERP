@@ -1,7 +1,7 @@
 # backend/app/models/customer.py
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, DateTime, Text, Date
 from sqlalchemy.orm import relationship
-from .base import BaseModel
+from ..base import BaseModel
 
 class Customer(BaseModel):
     __tablename__ = "customer"

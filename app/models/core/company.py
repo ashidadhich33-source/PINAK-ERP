@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime, date
-from .base import BaseModel
+from ..base import BaseModel
 
 class Company(BaseModel):
     """Company/Organization model for multi-tenant support"""

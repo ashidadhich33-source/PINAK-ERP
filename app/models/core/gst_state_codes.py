@@ -1,6 +1,6 @@
 # backend/app/models/gst_state_codes.py
 from sqlalchemy import Column, Integer, String, Boolean
-from .base import BaseModel
+from ..base import BaseModel
 
 class GSTStateCode(BaseModel):
     """GST State Codes for Indian states"""

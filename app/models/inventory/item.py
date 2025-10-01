@@ -1,7 +1,7 @@
 # backend/app/models/item.py
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from .base import BaseModel
+from ..base import BaseModel
 
 class ItemCategory(BaseModel):
     __tablename__ = "item_category"

@@ -1,5 +1,5 @@
 # backend/app/models/whatsapp/whatsapp_models.py
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Numeric, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Numeric, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from datetime import datetime, date
 from decimal import Decimal

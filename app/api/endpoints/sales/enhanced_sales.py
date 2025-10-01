@@ -7,10 +7,11 @@ from decimal import Decimal
 from datetime import datetime, date
 import json
 
-from ...database import get_db
-from ...models.core import Company, User
-from ...core.security import get_current_user, require_permission
-from ...services.sales import enhanced_sales_service
+from app.database import get_db
+from app.models.core.company import Company
+from app.models.core.user import User
+from app.core.security import get_current_user, require_permission
+from app.services.sales import enhanced_sales_service
 
 router = APIRouter()
 

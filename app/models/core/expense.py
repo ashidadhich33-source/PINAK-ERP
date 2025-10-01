@@ -1,9 +1,9 @@
 from sqlalchemy import Column, String, Numeric, ForeignKey, DateTime, Date, Boolean, Text
 from sqlalchemy.orm import relationship
-from ..database import Base
+from ..base import BaseModel
 from datetime import datetime
 
-class ExpenseHead(Base):
+class ExpenseHead(BaseModel):
     __tablename__ = "expense_heads"
     
     id = Column(String(36), primary_key=True)
@@ -21,7 +21,7 @@ class ExpenseHead(Base):
     # Relationships
     expenses = relationship("Expense", back_populates="head")
 
-class Expense(Base):
+class Expense(BaseModel):
     __tablename__ = "expenses"
     
     id = Column(String(36), primary_key=True)

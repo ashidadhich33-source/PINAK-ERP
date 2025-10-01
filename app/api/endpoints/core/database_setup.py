@@ -5,11 +5,11 @@ from pydantic import BaseModel
 from typing import Dict, Any
 import logging
 
-from ...database import get_db
-from ...models.core.user import User
-from ...core.security import get_current_user
-from ...init_data import init_default_data
-from ...database import create_tables, check_database_connection
+from app.database import get_db
+from app.models.core.user import User
+from app.core.security import get_current_user
+# from app.init_data import init_default_data
+from app.database import create_tables, check_database_connection
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ async def get_setup_status(
         admin_exists = False
         if db_connected:
             try:
-                from ...database import get_db
+                from app.database import get_db
                 with get_db() as db:
                     admin_exists = db.query(User).filter(User.is_superuser == True).first() is not None
             except Exception as e:
@@ -106,7 +106,7 @@ async def create_admin_user(
             raise HTTPException(status_code=403, detail="Only superusers can create admin users")
 
         # Check if admin already exists
-        from ...database import get_db
+        from app.database import get_db
         with get_db() as db:
             existing_admin = db.query(User).filter(User.is_superuser == True).first()
             if existing_admin:
@@ -153,7 +153,7 @@ async def system_health():
 
     try:
         # Check tables
-        from ...database import get_db
+        from app.database import get_db
         with get_db() as db:
             # Try to query a basic table
             result = db.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()

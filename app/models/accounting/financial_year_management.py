@@ -6,7 +6,7 @@ from ..base import BaseModel
 
 class FinancialYear(BaseModel):
     """Financial year management"""
-    __tablename__ = "financial_year"
+    __tablename__ = "financial_year_management"
     
     year_name = Column(String(100), nullable=False)
     year_code = Column(String(20), unique=True, nullable=False)

@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Numeric, Date, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import BaseModel
+from ..base import BaseModel
 
 class LoyaltyProgram(BaseModel):
     """Loyalty program management"""
@@ -175,7 +175,7 @@ class LoyaltyRewardRedemption(BaseModel):
 
 class LoyaltyTransaction(BaseModel):
     """Loyalty transaction management"""
-    __tablename__ = "loyalty_transaction"
+    __tablename__ = "loyalty_program_transaction"
     
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
     loyalty_program_id = Column(Integer, ForeignKey('loyalty_program.id'), nullable=False)

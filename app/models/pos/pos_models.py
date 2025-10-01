@@ -7,7 +7,7 @@ from ..base import BaseModel
 
 class POSSession(BaseModel):
     """POS Session model for managing POS sessions"""
-    __tablename__ = "pos_session"
+    __tablename__ = "pos_module_session"
     
     session_name = Column(String(100), nullable=False)
     start_time = Column(DateTime, nullable=False, default=datetime.utcnow)
