@@ -23,3 +23,15 @@ from .loyalty import *
 
 # Indian Localization Services
 from .l10n_in import *
+
+# POS Services
+from .pos import *
+
+# WhatsApp Services
+from .whatsapp import *
+
+# AI Services
+from .ai import *
+
+# Advanced API Services
+from .advanced_api import *

@@ -45,6 +45,18 @@ from .api.endpoints.loyalty import (
 from .api.endpoints.l10n_in import (
     indian_gst, indian_geography, pincode_lookup
 )
+from .api.endpoints.pos import (
+    pos_sessions, pos_transactions, pos_payments, pos_receipts
+)
+from .api.endpoints.whatsapp import (
+    whatsapp_templates, whatsapp_campaigns, whatsapp_messages, whatsapp_contacts
+)
+from .api.endpoints.ai import (
+    ai_analytics, ai_predictions, ai_models, ai_insights
+)
+from .api.endpoints.advanced_api import (
+    api_monitoring, api_logs, api_rate_limits, api_cache
+)
 from .core.security import get_current_user
 from .services.core.backup_service import backup_service
 from .init_data import init_default_data
@@ -440,7 +452,31 @@ api_routers = [
     # Indian Localization endpoints
     (indian_gst.router, "/indian-gst", ["🏛️ Indian GST Compliance"]),
     (indian_geography.router, "/indian-geography", ["🌍 Indian Geography"]),
-    (pincode_lookup.router, "/pincode-lookup", ["📍 Pincode Lookup"])
+    (pincode_lookup.router, "/pincode-lookup", ["📍 Pincode Lookup"]),
+    
+    # POS endpoints
+    (pos_sessions.router, "/pos/sessions", ["🛒 POS Sessions"]),
+    (pos_transactions.router, "/pos/transactions", ["🛒 POS Transactions"]),
+    (pos_payments.router, "/pos/payments", ["🛒 POS Payments"]),
+    (pos_receipts.router, "/pos/receipts", ["🛒 POS Receipts"]),
+    
+    # WhatsApp Integration endpoints
+    (whatsapp_templates.router, "/marketing/whatsapp/templates", ["📱 WhatsApp Templates"]),
+    (whatsapp_campaigns.router, "/marketing/whatsapp/campaigns", ["📱 WhatsApp Campaigns"]),
+    (whatsapp_messages.router, "/marketing/whatsapp/messages", ["📱 WhatsApp Messages"]),
+    (whatsapp_contacts.router, "/marketing/whatsapp/contacts", ["📱 WhatsApp Contacts"]),
+    
+    # AI/Analytics endpoints
+    (ai_analytics.router, "/ai/analytics", ["🤖 AI Analytics"]),
+    (ai_predictions.router, "/ai/predictions", ["🤖 AI Predictions"]),
+    (ai_models.router, "/ai/models", ["🤖 AI Models"]),
+    (ai_insights.router, "/ai/insights", ["🤖 AI Insights"]),
+    
+    # Advanced API endpoints
+    (api_monitoring.router, "/api/monitoring", ["🔧 API Monitoring"]),
+    (api_logs.router, "/api/logs", ["🔧 API Logs"]),
+    (api_rate_limits.router, "/api/rate-limits", ["🔧 API Rate Limits"]),
+    (api_cache.router, "/api/cache", ["🔧 API Cache"])
 ]
 
 for router, prefix, tags in api_routers:

@@ -23,3 +23,15 @@ from .loyalty import *
 
 # Indian Localization API Endpoints
 from .l10n_in import *
+
+# POS API Endpoints
+from .pos import *
+
+# WhatsApp API Endpoints
+from .whatsapp import *
+
+# AI API Endpoints
+from .ai import *
+
+# Advanced API Endpoints
+from .advanced_api import *

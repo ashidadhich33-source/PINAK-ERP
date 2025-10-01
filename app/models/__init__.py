@@ -27,5 +27,17 @@ from .l10n_in import *
 # Compliance Models
 from .compliance import *
 
+# POS Models
+from .pos import *
+
+# WhatsApp Models
+from .whatsapp import *
+
+# AI Models
+from .ai import *
+
+# Advanced API Models
+from .advanced_api import *
+
 # Base Model
 from .base import Base
